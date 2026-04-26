@@ -33,15 +33,21 @@ const SupportPage = () => {
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Your support cases</h2>
             <ul className="mt-4 divide-y">
               {cases.map((c) => (
-                <li key={c.id} className="flex items-center gap-3 py-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{c.title}</p>
-                    <p className="text-xs text-muted-foreground">{c.id} · updated {c.updated}</p>
-                  </div>
-                  <BadgeSoft variant={c.status === "open" ? "warning" : "success"}>
-                    {c.status === "open" ? "Open" : "Resolved"}
-                  </BadgeSoft>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    onClick={() => toast.info(`Case ${c.id} details coming soon.`)}
+                    className="w-full flex items-center gap-3 py-3 text-left hover:bg-muted/40 rounded-md px-2 -mx-2 transition-base"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{c.title}</p>
+                      <p className="text-xs text-muted-foreground">{c.id} · updated {c.updated}</p>
+                    </div>
+                    <BadgeSoft variant={c.status === "open" ? "warning" : "success"}>
+                      {c.status === "open" ? "Open" : "Resolved"}
+                    </BadgeSoft>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -52,7 +58,12 @@ const SupportPage = () => {
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Common help topics</h2>
             <div className="mt-3 grid md:grid-cols-3 gap-3">
               {helpTopics.map((t) => (
-                <button key={t.title} className="text-left rounded-2xl border bg-card p-5 shadow-card transition-base hover:shadow-elevated hover:-translate-y-0.5">
+                <button
+                  key={t.title}
+                  type="button"
+                  onClick={() => toast.info(`${t.title} — flow coming soon.`)}
+                  className="text-left rounded-2xl border bg-card p-5 shadow-card transition-base hover:shadow-elevated hover:-translate-y-0.5"
+                >
                   <div className="grid h-9 w-9 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
                     <t.icon className="h-4 w-4" />
                   </div>
@@ -67,10 +78,32 @@ const SupportPage = () => {
           <section className="rounded-2xl border bg-card p-5 md:p-6 shadow-card">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Contact support</h2>
             <p className="mt-1 text-sm text-muted-foreground">A real person will reply within 1 hour during your trip.</p>
-            <Textarea className="mt-4 min-h-32" placeholder="Tell us what's happening…" />
+            <Textarea
+              className="mt-4 min-h-32"
+              placeholder="Tell us what's happening…"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
             <div className="mt-4 flex justify-end gap-2">
-              <Button variant="outline">Save draft</Button>
-              <Button variant="hero"><MessageCircle className="h-4 w-4" /> Send message</Button>
+              <Button
+                variant="outline"
+                onClick={() => toast.success("Draft saved locally.")}
+              >
+                Save draft
+              </Button>
+              <Button
+                variant="hero"
+                onClick={() => {
+                  if (!message.trim()) {
+                    toast.error("Please write a message first.");
+                    return;
+                  }
+                  toast.info("Messaging will be available after account setup.");
+                  setMessage("");
+                }}
+              >
+                <MessageCircle className="h-4 w-4" /> Send message
+              </Button>
             </div>
           </section>
         </div>
@@ -91,7 +124,12 @@ const SupportPage = () => {
                 AI suggests. You confirm. No action is taken on your booking without your approval.
               </p>
             </div>
-            <Button variant="hero" size="sm" className="mt-4 w-full">
+            <Button
+              variant="hero"
+              size="sm"
+              className="mt-4 w-full"
+              onClick={() => toast.info("AI assistant coming soon.")}
+            >
               <Sparkles className="h-4 w-4" /> Ask the assistant
             </Button>
           </div>
