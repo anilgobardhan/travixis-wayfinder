@@ -1,6 +1,9 @@
 import { FileText, Ticket, Receipt, Stamp, ShieldCheck, Upload, Download, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { toast } from "sonner";
+
+const uploadDisabledMsg = "Document upload will be available after account setup.";
 
 type Doc = { name: string; type: string; size: string; icon: React.ComponentType<{ className?: string }>; variant: "primary" | "success" | "accent" | "warning"; };
 
@@ -29,16 +32,21 @@ const DocumentsPage = () => {
           <h1 className="mt-3 text-3xl font-bold">Your trip documents</h1>
           <p className="mt-1 text-muted-foreground">All papers for your trip — tickets, bookings, insurance — in one secure place.</p>
         </div>
-        <Button variant="hero"><Upload className="h-4 w-4" /> Upload document</Button>
+        <Button variant="hero" onClick={() => toast.info(uploadDisabledMsg)}>
+          <Upload className="h-4 w-4" /> Upload document
+        </Button>
       </div>
 
-      {/* Upload card */}
-      <label className="block rounded-2xl border-2 border-dashed bg-card p-8 text-center cursor-pointer hover:border-primary/40 hover:bg-[hsl(var(--accent-soft))] transition-base">
+      {/* Upload card (frontend-only, disabled) */}
+      <button
+        type="button"
+        onClick={() => toast.info(uploadDisabledMsg)}
+        className="block w-full rounded-2xl border-2 border-dashed bg-card p-8 text-center cursor-not-allowed opacity-80 hover:border-primary/40 transition-base"
+      >
         <Upload className="h-6 w-6 mx-auto text-primary" />
         <p className="mt-2 font-medium">Drop a file here or click to upload</p>
-        <p className="text-xs text-muted-foreground">PDF, JPG, PNG · max 10 MB · stored securely</p>
-        <input type="file" className="hidden" />
-      </label>
+        <p className="text-xs text-muted-foreground">{uploadDisabledMsg}</p>
+      </button>
 
       {sections.map((s) => {
         const items = docs.filter((d) => d.type === s.filter);
@@ -76,8 +84,8 @@ const DocCard = ({ doc }: { doc: Doc }) => {
         <p className="font-medium truncate">{doc.name}</p>
         <p className="text-xs text-muted-foreground">{doc.size}</p>
       </div>
-      <Button variant="ghost" size="icon" aria-label="View"><Eye className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" aria-label="Download"><Download className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" aria-label="View" onClick={() => toast.info("Document preview coming soon.")}><Eye className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" aria-label="Download" onClick={() => toast.info("Document download coming soon.")}><Download className="h-4 w-4" /></Button>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "sonner";
 import {
   Plane,
   Clock,
@@ -200,7 +201,7 @@ const ResultsPage = () => {
       {compare.length > 0 && (
         <div className="sticky bottom-4 z-30 mx-auto w-full max-w-md rounded-full border bg-card px-5 py-3 shadow-elevated flex items-center justify-between">
           <span className="text-sm font-medium">{compare.length} selected to compare</span>
-          <Button size="sm" variant="hero">Compare</Button>
+          <Button size="sm" variant="hero" onClick={() => toast.info("Side-by-side compare coming soon.")}>Compare</Button>
         </div>
       )}
     </div>
