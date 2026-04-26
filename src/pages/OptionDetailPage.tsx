@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Plane,
   Clock,
@@ -135,8 +136,16 @@ const OptionDetailPage = () => {
               ))}
             </ul>
 
-            <Button variant="hero" size="lg" className="mt-5 w-full">
-              Continue <ArrowRight className="h-4 w-4" />
+            <Button asChild variant="hero" size="lg" className="mt-5 w-full">
+              <Link to="/trip-dashboard">Continue <ArrowRight className="h-4 w-4" /></Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 w-full"
+              onClick={() => toast.info("Booking flow coming soon.")}
+            >
+              Book this option
             </Button>
             <p className="mt-3 text-[11px] text-muted-foreground text-center">
               You'll review every detail before any payment is taken.

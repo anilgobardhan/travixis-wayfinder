@@ -1,9 +1,12 @@
 import { LifeBuoy, MessageCircle, AlertTriangle, RotateCcw, Sparkles, ShieldCheck, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { toast } from "sonner";
 
 const SupportPage = () => {
+  const [message, setMessage] = useState("");
   const cases = [
     { id: "TX-2241", title: "Seat assignment for TP671", status: "open" as const, updated: "2h ago" },
     { id: "TX-2189", title: "Hotel breakfast confirmation", status: "resolved" as const, updated: "Yesterday" },

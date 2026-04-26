@@ -27,7 +27,9 @@ const App = () => (
             <Route path="/search" element={<SearchPage />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/option/:id" element={<OptionDetailPage />} />
+            <Route path="/option-detail" element={<OptionDetailPage />} />
             <Route path="/trip" element={<TripDashboardPage />} />
+            <Route path="/trip-dashboard" element={<TripDashboardPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="*" element={<NotFound />} />
