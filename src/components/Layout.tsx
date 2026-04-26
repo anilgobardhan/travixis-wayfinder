@@ -1,0 +1,140 @@
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Compass, Search, LayoutDashboard, FileText, LifeBuoy, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { SystemStatus } from "./SystemStatus";
+import { Button } from "./ui/button";
+
+const nav = [
+  { to: "/search", label: "Search", icon: Search },
+  { to: "/trip", label: "My Trip", icon: LayoutDashboard },
+  { to: "/documents", label: "Documents", icon: FileText },
+  { to: "/support", label: "Support", icon: LifeBuoy },
+];
+
+export const Layout = () => {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const onLanding = location.pathname === "/";
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-hero text-primary-foreground">
+              <Compass className="h-4 w-4" />
+            </span>
+            <span className="text-lg tracking-tight">Travixis</span>
+            <span className="ml-1 hidden rounded-full bg-[hsl(var(--accent-soft))] px-2 py-0.5 text-[10px] font-medium text-primary sm:inline">
+              TOS
+            </span>
+          </Link>
+
+          <nav className="hidden items-center gap-1 md:flex">
+            {nav.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  cn(
+                    "rounded-md px-3 py-2 text-sm font-medium transition-base",
+                    isActive
+                      ? "bg-[hsl(var(--primary-soft))] text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  )
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="hidden items-center gap-3 md:flex">
+            <SystemStatus compact />
+            <Button asChild variant="hero" size="sm">
+              <Link to="/search">Start searching</Link>
+            </Button>
+          </div>
+
+          <button
+            className="md:hidden rounded-md p-2 hover:bg-muted"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {open && (
+          <div className="border-t md:hidden">
+            <div className="container flex flex-col gap-1 py-3">
+              {nav.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+                      isActive ? "bg-[hsl(var(--primary-soft))] text-primary" : "text-muted-foreground"
+                    )
+                  }
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </NavLink>
+              ))}
+              <div className="px-3 pt-2">
+                <SystemStatus compact />
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className={cn("flex-1", !onLanding && "py-8")}>
+        <Outlet />
+      </main>
+
+      <footer className="mt-12 border-t bg-card">
+        <div className="container py-10 grid gap-8 md:grid-cols-4">
+          <div>
+            <div className="flex items-center gap-2 font-semibold text-primary">
+              <span className="grid h-7 w-7 place-items-center rounded-md bg-hero text-primary-foreground">
+                <Compass className="h-4 w-4" />
+              </span>
+              Travixis
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              The Travel Operating System. Search, compare, book, and manage your full trip in one place.
+            </p>
+          </div>
+          <FooterCol title="Product" items={["Search", "Compare", "Trip dashboard", "Documents"]} />
+          <FooterCol title="Trust" items={["True Price Engine", "Risk Engine", "Explainability", "Human-in-the-loop"]} />
+          <div>
+            <p className="mb-3 text-sm font-semibold">System</p>
+            <SystemStatus />
+          </div>
+        </div>
+        <div className="border-t">
+          <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+            <p>© {new Date().getFullYear()} Travixis. Travel Operating System.</p>
+            <p>Built for clarity, trust, and calm travel.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+const FooterCol = ({ title, items }: { title: string; items: string[] }) => (
+  <div>
+    <p className="mb-3 text-sm font-semibold">{title}</p>
+    <ul className="space-y-2 text-sm text-muted-foreground">
+      {items.map((i) => (
+        <li key={i} className="hover:text-foreground transition-base cursor-default">{i}</li>
+      ))}
+    </ul>
+  </div>
+);
