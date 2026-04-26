@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Plane,
   Hotel,
@@ -92,7 +93,7 @@ const TripDashboardPage = () => {
             content={
               <>
                 <p className="text-sm text-muted-foreground">Auto check-in is enabled for both flights.</p>
-                <Button variant="soft" size="sm" className="mt-3 w-full">Manage check-in</Button>
+                <Button variant="soft" size="sm" className="mt-3 w-full" onClick={() => toast.info("Booking flow coming soon.")}>Manage check-in</Button>
               </>
             }
           />
