@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   ShieldCheck,
   Sparkles,
@@ -14,11 +16,104 @@ import {
   Wallet,
   Gauge,
   MessageCircle,
+  Wand2,
+  Mic,
+  MicOff,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { toIataIfKnown } from "@/lib/iata";
+import { ENABLE_REAL_SEARCH } from "@/lib/flags";
+import { api } from "@/lib/api";
+import { extractTripFields } from "@/lib/extractTripFields";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
 
 const Landing = () => {
+  const navigate = useNavigate();
+  const [from, setFrom] = useState("Amsterdam");
+  const [to, setTo] = useState("Lisbon");
+  const [depart, setDepart] = useState("2026-08-15");
+  const [ret, setRet] = useState("2026-08-22");
+  const [travelers, setTravelers] = useState("2 adults");
+  const [submitting, setSubmitting] = useState(false);
+
+  const [voiceText, setVoiceText] = useState("");
+  const voice = useVoiceInput();
+
+  const onQuickSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+    const fromCode = toIataIfKnown(from);
+    const toCode = toIataIfKnown(to);
+    const params = new URLSearchParams({
+      from: fromCode,
+      to: toCode,
+      depart,
+      ret,
+      travelers,
+      mode: "quick",
+    });
+
+    if (!ENABLE_REAL_SEARCH) {
+      navigate(`/search?${params.toString()}`);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await api.search({
+        mode: "quick",
+        from: fromCode,
+        to: toCode,
+        departDate: depart,
+        returnDate: ret,
+        travelers,
+      });
+      const id = res?.id;
+      if (id) {
+        try {
+          sessionStorage.setItem("travixis:lastSearchId", id);
+        } catch { /* noop */ }
+        navigate(`/autopilot?id=${encodeURIComponent(id)}`);
+      } else {
+        toast.warning("Search did not return an id — showing preview mode.");
+        navigate(`/search?${params.toString()}&offline=1`);
+      }
+    } catch {
+      toast.warning("Backend unreachable — showing preview mode.");
+      navigate(`/search?${params.toString()}&offline=1`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const goAutopilot = (text?: string) => {
+    const q = (text ?? voiceText).trim();
+    if (q) {
+      // Pre-extract just to validate; SearchPage will own the real submit.
+      extractTripFields(q);
+      navigate(`/search?q=${encodeURIComponent(q)}&mode=autopilot`);
+    } else {
+      navigate(`/search?mode=autopilot`);
+    }
+  };
+
+  const onVoiceClick = () => {
+    if (!voice.supported) {
+      toast.info("Voice search is not supported in this browser yet.");
+      return;
+    }
+    if (voice.listening) {
+      voice.stop();
+      return;
+    }
+    setVoiceText("");
+    voice.start((finalText) => setVoiceText(finalText));
+  };
+
   return (
     <div>
       {/* Hero */}
