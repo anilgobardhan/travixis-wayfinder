@@ -33,11 +33,11 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const [from, setFrom] = useState("Amsterdam");
-  const [to, setTo] = useState("Lisbon");
-  const [depart, setDepart] = useState("2026-08-15");
-  const [ret, setRet] = useState("2026-08-22");
-  const [travelers, setTravelers] = useState("2 adults");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [depart, setDepart] = useState("");
+  const [ret, setRet] = useState("");
+  const [travelers, setTravelers] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const [voiceText, setVoiceText] = useState("");
@@ -122,13 +122,13 @@ const Landing = () => {
         <div className="container relative py-20 md:py-28">
           <div className="max-w-3xl">
             <BadgeSoft variant="accent" className="mb-5 bg-white/10 text-white">
-              <Sparkles className="h-3 w-3" /> Travel Operating System · Autopilot Search
+              <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">
               Search your way.
             </h1>
             <p className="mt-5 text-lg md:text-xl text-white/80 max-w-2xl">
-              Search your way — type, use AI, or speak your trip. Travixis compares routes, true total
+              Search your way — type, describe, or speak your trip. Travixis compares routes, true total
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
 
@@ -152,19 +152,19 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Search entry: Quick / Autopilot / Voice */}
+      {/* Search entry: Quick / Smart / Voice */}
       <section className="container -mt-10 relative z-10">
         <div className="rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <div className="inline-flex flex-wrap rounded-xl border bg-muted/40 p-1">
               <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-1.5 text-sm font-medium shadow-sm">
-                <Search className="h-4 w-4 text-primary" /> Quick Search
+                <Search className="h-4 w-4 text-primary" /> 🔍 Quick Search
               </span>
               <Link
                 to="/search?mode=autopilot"
                 className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
               >
-                <Wand2 className="h-4 w-4" /> AI Autopilot
+                <Wand2 className="h-4 w-4" /> ✨ Smart Search
               </Link>
               <button
                 type="button"
@@ -172,11 +172,11 @@ const Landing = () => {
                 className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
               >
                 {voice.listening ? <MicOff className="h-4 w-4 text-[hsl(var(--accent))]" /> : <Mic className="h-4 w-4" />}
-                Voice Search
+                🎤 Voice Search
               </button>
             </div>
             <p className="text-xs text-muted-foreground hidden md:block">
-              Search your way — type, use AI, or speak your trip.
+              Search your way — type, describe, or speak your trip.
             </p>
           </div>
 
@@ -212,7 +212,7 @@ const Landing = () => {
                   />
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Button type="button" variant="cta" size="sm" onClick={() => goAutopilot()} disabled={!voiceText.trim()}>
-                      <Sparkles className="h-4 w-4" /> Send to Autopilot
+                      <Sparkles className="h-4 w-4" /> Send to Smart Search
                     </Button>
                     {voice.listening ? (
                       <Button type="button" variant="outline" size="sm" onClick={voice.stop}>
@@ -231,10 +231,10 @@ const Landing = () => {
 
           <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
-              <Wand2 className="h-3.5 w-3.5" /> Want AI to plan it?
+              <Wand2 className="h-3.5 w-3.5" /> Prefer to describe it?
             </span>
             <Link to="/search?mode=autopilot" className="text-primary font-medium hover:underline">
-              Try AI Autopilot →
+              Try Smart Search →
             </Link>
             <span className="mx-1 opacity-40">·</span>
             <button type="button" onClick={onVoiceClick} className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">

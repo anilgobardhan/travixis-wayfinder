@@ -131,7 +131,7 @@ const AutopilotRunPage = () => {
   return (
     <div className="container max-w-5xl space-y-8">
       <div>
-        <BadgeSoft variant="accent"><Wand2 className="h-3 w-3" /> Autopilot Search</BadgeSoft>
+        <BadgeSoft variant="accent"><Wand2 className="h-3 w-3" /> Smart Search</BadgeSoft>
         <h1 className="mt-3 text-3xl md:text-4xl font-bold">
           {done ? "Recommendation ready" : "Travixis is searching for you…"}
         </h1>
