@@ -106,7 +106,7 @@ const SearchPage = () => {
         navigate(`/autopilot?q=${encodeURIComponent(q)}&offline=1`);
       }
     } catch (err) {
-      toast.warning("Backend unreachable — showing Autopilot in preview mode.");
+      toast.warning("Backend unreachable — showing Smart Search in preview mode.");
       navigate(`/autopilot?q=${encodeURIComponent(q)}&offline=1`);
     } finally {
       setSubmitting(false);
@@ -116,7 +116,7 @@ const SearchPage = () => {
   return (
     <div className="container max-w-5xl">
       <div className="mb-8">
-        <BadgeSoft variant="accent"><Sparkles className="h-3 w-3" /> Travixis Autopilot</BadgeSoft>
+        <BadgeSoft variant="accent"><Sparkles className="h-3 w-3" /> Travixis Smart Search</BadgeSoft>
         <h1 className="mt-3 text-3xl md:text-4xl font-bold">Plan your next trip</h1>
         <p className="mt-2 text-muted-foreground">
           Describe your trip in your own words — or use classic search. Travixis does the comparing, the math and the fine print.
@@ -125,7 +125,7 @@ const SearchPage = () => {
 
       {/* Mode tabs */}
       <div className="inline-flex rounded-xl border bg-card p-1 shadow-card">
-        <ModeTab active={mode === "autopilot"} onClick={() => setMode("autopilot")} icon={<Wand2 className="h-4 w-4" />} label="Autopilot Search" hint="AI-powered" />
+        <ModeTab active={mode === "autopilot"} onClick={() => setMode("autopilot")} icon={<Wand2 className="h-4 w-4" />} label="Smart Search" hint="Describe your trip" />
         <ModeTab active={mode === "classic"} onClick={() => setMode("classic")} icon={<Settings2 className="h-4 w-4" />} label="Classic Search" hint="Manual filters" />
       </div>
 
@@ -136,9 +136,9 @@ const SearchPage = () => {
               <Wand2 className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-semibold">Tell Travixis what you want</h2>
+              <h2 className="font-semibold">Describe your trip in your own words</h2>
               <p className="text-sm text-muted-foreground">
-                Natural language — origin, destination, dates, budget, vibe, anything that matters.
+                For example: "Flight from AMS to Lisbon on Aug 15 returning Aug 22 for 2 adults".
               </p>
             </div>
           </div>
@@ -173,7 +173,7 @@ const SearchPage = () => {
             </p>
             <Button type="submit" variant="hero" size="lg" disabled={submitting}>
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {submitting ? "Starting Autopilot…" : "Start Autopilot Search"}
+              {submitting ? "Starting Smart Search…" : "Start Smart Search"}
             </Button>
           </div>
         </form>

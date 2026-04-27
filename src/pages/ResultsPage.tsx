@@ -209,7 +209,7 @@ const ResultsPage = () => {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           {fromAutopilot && (
-            <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Autopilot result</BadgeSoft>
+            <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Smart Search result</BadgeSoft>
           )}
           <BadgeSoft variant="primary">Amsterdam → Lisbon · 15–22 Aug · 2 adults</BadgeSoft>
           <h1 className="mt-3 text-3xl font-bold">{displayOptions.length} options found</h1>
