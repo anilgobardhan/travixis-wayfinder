@@ -25,66 +25,64 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BadgeSoft } from "@/components/BadgeSoft";
-import { toIataIfKnown } from "@/lib/iata";
 import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 import { api } from "@/lib/api";
 import { extractTripFields } from "@/lib/extractTripFields";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
+import { AirportSelect } from "@/components/AirportSelect";
+import type { Airport } from "@/lib/airports";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [fromAirport, setFromAirport] = useState<Airport | null>(null);
+  const [toAirport, setToAirport] = useState<Airport | null>(null);
   const [depart, setDepart] = useState("");
   const [ret, setRet] = useState("");
-  const [travelers, setTravelers] = useState("");
+  const [travelers, setTravelers] = useState("1");
   const [submitting, setSubmitting] = useState(false);
 
   const [voiceText, setVoiceText] = useState("");
   const voice = useVoiceInput();
 
+  const travelersCount = Math.max(0, parseInt(travelers, 10) || 0);
+  const canSearch =
+    !!fromAirport && !!toAirport && !!depart && travelersCount >= 1 && !submitting;
+
   const onQuickSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
-    const fromCode = toIataIfKnown(from);
-    const toCode = toIataIfKnown(to);
-    const params = new URLSearchParams({
-      from: fromCode,
-      to: toCode,
-      depart,
-      ret,
-      travelers,
-      mode: "quick",
-    });
+    if (!canSearch) return;
+
+    const payload = {
+      mode: "quick" as const,
+      from: fromAirport!.iata,
+      to: toAirport!.iata,
+      departDate: depart, // YYYY-MM-DD
+      returnDate: ret || undefined,
+      travelers: travelersCount,
+    };
 
     if (!ENABLE_REAL_SEARCH) {
-      navigate(`/search?${params.toString()}`);
+      // Feature flag off: still keep Quick Search behavior on Autopilot page (offline preview).
+      navigate(`/autopilot?offline=1&mode=quick`);
       return;
     }
 
     setSubmitting(true);
     try {
-      const res = await api.search({
-        mode: "quick",
-        from: fromCode,
-        to: toCode,
-        departDate: depart,
-        returnDate: ret,
-        travelers,
-      });
+      const res = await api.search(payload);
       const id = res?.id;
       if (id) {
         try {
           sessionStorage.setItem("travixis:lastSearchId", id);
         } catch { /* noop */ }
-        navigate(`/autopilot?id=${encodeURIComponent(id)}`);
+        navigate(`/autopilot?id=${encodeURIComponent(id)}&mode=quick`);
       } else {
         toast.warning("Search did not return an id — showing preview mode.");
-        navigate(`/search?${params.toString()}&offline=1`);
+        navigate(`/autopilot?offline=1&mode=quick`);
       }
     } catch {
       toast.warning("Backend unreachable — showing preview mode.");
-      navigate(`/search?${params.toString()}&offline=1`);
+      navigate(`/autopilot?offline=1&mode=quick`);
     } finally {
       setSubmitting(false);
     }
@@ -182,17 +180,22 @@ const Landing = () => {
 
           <form onSubmit={onQuickSearch} className="flex flex-col md:flex-row gap-4 items-stretch">
             <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-3">
-              <FieldInput label="From" value={from} onChange={setFrom} placeholder="Amsterdam" />
-              <FieldInput label="To" value={to} onChange={setTo} placeholder="Lisbon" />
+              <AirportSelect label="From" value={fromAirport} onChange={setFromAirport} placeholder="Search city or airport" />
+              <AirportSelect label="To" value={toAirport} onChange={setToAirport} placeholder="Search city or airport" />
               <FieldInput label="Departure" type="date" value={depart} onChange={setDepart} />
               <FieldInput label="Return" type="date" value={ret} onChange={setRet} />
-              <FieldInput label="Travelers" value={travelers} onChange={setTravelers} placeholder="2 adults" />
+              <FieldInput label="Travelers" type="number" value={travelers} onChange={setTravelers} placeholder="1" />
             </div>
-            <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full md:self-end" disabled={submitting}>
+            <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full md:self-end" disabled={!canSearch}>
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
               {submitting ? "Searching…" : "Search with Travixis"}
             </Button>
           </form>
+          {!canSearch && !submitting && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Select your airports and travel date to search.
+            </p>
+          )}
 
           {(voice.listening || voiceText) && (
             <div className="mt-5 rounded-xl border bg-[hsl(var(--accent-soft))]/40 p-4">
