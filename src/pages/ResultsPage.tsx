@@ -108,7 +108,41 @@ const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
-  const recommended = options.filter((o) => o.tag);
+  const searchId = params.get("id") || undefined;
+
+  const [liveOptions, setLiveOptions] = useState<Option[] | null>(null);
+  const [previewMode, setPreviewMode] = useState(false);
+
+  useEffect(() => {
+    if (!ENABLE_REAL_SEARCH || !searchId) {
+      setPreviewMode(!ENABLE_REAL_SEARCH && fromAutopilot);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = (await api.getSearch(searchId)) as { options?: BackendOption[] };
+        if (cancelled) return;
+        const mapped = (data?.options ?? []).map(mapBackendOption);
+        if (mapped.length > 0) {
+          setLiveOptions(mapped);
+          setPreviewMode(false);
+        } else {
+          setPreviewMode(true);
+        }
+      } catch {
+        if (cancelled) return;
+        setPreviewMode(true);
+        toast.warning("Backend unreachable — showing preview results.");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchId, fromAutopilot]);
+
+  const displayOptions = liveOptions ?? options;
+  const recommended = displayOptions.filter((o) => o.tag);
 
   return (
     <div className="container max-w-6xl space-y-10">
