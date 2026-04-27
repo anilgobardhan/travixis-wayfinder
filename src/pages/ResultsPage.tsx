@@ -103,17 +103,27 @@ const tagMeta: Record<NonNullable<Option["tag"]>, { label: string; icon: React.R
 
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
+  const [params] = useSearchParams();
+  const fromAutopilot = params.get("from") === "autopilot";
   const recommended = options.filter((o) => o.tag);
 
   return (
     <div className="container max-w-6xl space-y-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
+          {fromAutopilot && (
+            <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Autopilot result</BadgeSoft>
+          )}
           <BadgeSoft variant="primary">Amsterdam → Lisbon · 15–22 Aug · 2 adults</BadgeSoft>
           <h1 className="mt-3 text-3xl font-bold">{options.length} options found</h1>
           <p className="mt-1 text-muted-foreground">Sorted by Travixis recommendation. All prices include taxes & surcharges.</p>
         </div>
-        <Button asChild variant="outline"><Link to="/search">Edit search</Link></Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline"><Link to="/search">Edit search</Link></Button>
+          <Button variant="ghost" onClick={() => toast.info("Keep searching — Travixis will refine alternatives.")}>
+            Keep searching
+          </Button>
+        </div>
       </div>
 
       {/* A/B/C recommendation block */}
