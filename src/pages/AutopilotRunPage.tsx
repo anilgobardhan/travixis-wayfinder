@@ -302,7 +302,7 @@ const AutopilotRunPage = () => {
         <Button asChild variant="outline">
           <Link to="/search">Edit my goal</Link>
         </Button>
-        {!done && (
+        {!done && !useRealBackend && (
           <Button variant="ghost" onClick={() => { setStepIdx(STEPS.length); setDone(true); }}>
             Skip animation
           </Button>
