@@ -61,8 +61,18 @@ const Landing = () => {
       travelers: travelersCount,
     };
 
+    // Debug: surface env + flag state so we can see why a request may be skipped.
+    console.log("ENV CHECK", {
+      ENABLE_REAL_SEARCH,
+      VITE_ENABLE_REAL_SEARCH: import.meta.env.VITE_ENABLE_REAL_SEARCH,
+      VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+    });
+    console.log("SEARCH PAYLOAD", payload);
+
     if (!ENABLE_REAL_SEARCH) {
-      // Feature flag off: still keep Quick Search behavior on Autopilot page (offline preview).
+      console.warn(
+        "SEARCH SKIPPED — ENABLE_REAL_SEARCH is false. Set VITE_ENABLE_REAL_SEARCH=true and VITE_API_BASE_URL in Vercel."
+      );
       navigate(`/autopilot?offline=1&mode=quick`);
       return;
     }
@@ -70,6 +80,7 @@ const Landing = () => {
     setSubmitting(true);
     try {
       const res = await api.search(payload);
+      console.log("SEARCH RESPONSE", res);
       const id = res?.id;
       if (id) {
         try {
@@ -80,7 +91,8 @@ const Landing = () => {
         toast.warning("Search did not return an id — showing preview mode.");
         navigate(`/autopilot?offline=1&mode=quick`);
       }
-    } catch {
+    } catch (error) {
+      console.error("SEARCH FAILED", error);
       toast.warning("Backend unreachable — showing preview mode.");
       navigate(`/autopilot?offline=1&mode=quick`);
     } finally {
