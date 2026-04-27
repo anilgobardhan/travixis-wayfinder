@@ -1,33 +1,85 @@
+import airportsData from "@/data/airports.json";
+
 export type Airport = {
   city: string;
   airport: string;
   iata: string;
   country: string;
+  countryCode?: string;
 };
 
-export const AIRPORTS: Airport[] = [
-  { city: "Amsterdam", airport: "Amsterdam Schiphol", iata: "AMS", country: "Netherlands" },
-  { city: "Lisbon", airport: "Humberto Delgado Airport", iata: "LIS", country: "Portugal" },
-  { city: "New York", airport: "John F. Kennedy International", iata: "JFK", country: "United States" },
-  { city: "London", airport: "Heathrow", iata: "LHR", country: "United Kingdom" },
-  { city: "Paris", airport: "Charles de Gaulle", iata: "CDG", country: "France" },
-  { city: "Istanbul", airport: "Istanbul Airport", iata: "IST", country: "Turkey" },
-  { city: "Dubai", airport: "Dubai International", iata: "DXB", country: "United Arab Emirates" },
-  { city: "Delhi", airport: "Indira Gandhi International", iata: "DEL", country: "India" },
-  { city: "Mumbai", airport: "Chhatrapati Shivaji Maharaj International", iata: "BOM", country: "India" },
-  { city: "Bangkok", airport: "Suvarnabhumi", iata: "BKK", country: "Thailand" },
-];
+export const AIRPORTS: Airport[] = airportsData as Airport[];
 
-export function searchAirports(query: string): Airport[] {
+const BY_IATA: Map<string, Airport> = new Map(
+  AIRPORTS.map((a) => [a.iata.toUpperCase(), a])
+);
+
+export function getAirportByIata(code: string): Airport | undefined {
+  return BY_IATA.get(code.toUpperCase());
+}
+
+/**
+ * Search airports by city, airport name, IATA code, or country.
+ * Performance:
+ *  - Returns at most `limit` results (default 20).
+ *  - Prioritizes exact IATA match, then IATA prefix, then city startsWith,
+ *    then any substring match.
+ */
+export function searchAirports(query: string, limit = 20): Airport[] {
   const q = query.trim().toLowerCase();
-  if (!q) return AIRPORTS;
-  return AIRPORTS.filter((a) =>
-    [a.city, a.airport, a.iata, a.country].some((f) => f.toLowerCase().includes(q))
-  );
+  if (!q) {
+    // No query: just return the first N (alphabetical by country/city).
+    return AIRPORTS.slice(0, limit);
+  }
+
+  const exactIata: Airport[] = [];
+  const iataPrefix: Airport[] = [];
+  const cityStarts: Airport[] = [];
+  const other: Airport[] = [];
+
+  const total = AIRPORTS.length;
+  const cap = limit * 4; // early-exit ceiling for very common substrings
+
+  for (let i = 0; i < total; i++) {
+    const a = AIRPORTS[i];
+    const iata = a.iata.toLowerCase();
+    const city = a.city.toLowerCase();
+    const name = a.airport.toLowerCase();
+    const country = a.country.toLowerCase();
+
+    if (iata === q) {
+      exactIata.push(a);
+    } else if (iata.startsWith(q)) {
+      iataPrefix.push(a);
+    } else if (city.startsWith(q)) {
+      cityStarts.push(a);
+    } else if (
+      city.includes(q) ||
+      name.includes(q) ||
+      country.includes(q) ||
+      iata.includes(q)
+    ) {
+      other.push(a);
+    }
+
+    if (
+      exactIata.length + iataPrefix.length + cityStarts.length + other.length >=
+      cap
+    ) {
+      break;
+    }
+  }
+
+  return [...exactIata, ...iataPrefix, ...cityStarts, ...other].slice(0, limit);
 }
 
 export function formatAirport(a: Airport): string {
-  // Short airport label, e.g. "Schiphol" from "Amsterdam Schiphol"
-  const short = a.airport.replace(new RegExp(`^${a.city}\\s*`, "i"), "").trim() || a.airport;
+  const short =
+    a.airport.replace(new RegExp(`^${escapeRegex(a.city)}\\s*`, "i"), "").trim() ||
+    a.airport;
   return `${a.city} — ${short} (${a.iata})`;
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
