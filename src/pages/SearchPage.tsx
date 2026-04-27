@@ -44,6 +44,7 @@ const SearchPage = () => {
   const [type, setType] = useState<TripType>("flight");
   const [prefs, setPrefs] = useState<Record<string, number>>({ budget: 1, comfort: 1, flexibility: 1 });
   const [prompt, setPrompt] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const onClassicSubmit = (e: React.FormEvent) => {
@@ -51,10 +52,49 @@ const SearchPage = () => {
     navigate("/results");
   };
 
-  const onAutopilotSubmit = (e: React.FormEvent) => {
+  const onAutopilotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     const q = prompt.trim() || examplePrompts[0];
-    navigate(`/autopilot?q=${encodeURIComponent(q)}`);
+    const fields = extractTripFields(q);
+
+    const payload = {
+      mode: "autopilot" as const,
+      prompt: q,
+      from: fields.from,
+      to: fields.to,
+      departDate: fields.departDate,
+      returnDate: fields.returnDate,
+      travelers: fields.travelers,
+      preferences: {
+        budget: ["cheapest", "balanced", "premium"][prefs.budget] ?? "balanced",
+        comfort: ["basic", "comfortable", "luxury"][prefs.comfort] ?? "comfortable",
+        flexibility: ["strict", "flexible", "fully_flexible"][prefs.flexibility] ?? "flexible",
+      },
+    };
+
+    setSubmitting(true);
+    try {
+      const res = await api.search(payload);
+      const searchId = res?.id;
+      if (searchId) {
+        try {
+          sessionStorage.setItem("travixis:lastSearchId", searchId);
+          sessionStorage.setItem(`travixis:search:${searchId}`, JSON.stringify({ payload, createdAt: Date.now() }));
+        } catch {
+          /* storage not available — continue */
+        }
+        navigate(`/autopilot?id=${encodeURIComponent(searchId)}&q=${encodeURIComponent(q)}`);
+      } else {
+        toast.error("Search did not return an id. Continuing in preview mode.");
+        navigate(`/autopilot?q=${encodeURIComponent(q)}`);
+      }
+    } catch (err) {
+      toast.warning("Backend unreachable — showing Autopilot in preview mode.");
+      navigate(`/autopilot?q=${encodeURIComponent(q)}&offline=1`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
