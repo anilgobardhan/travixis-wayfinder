@@ -104,6 +104,66 @@ const tagMeta: Record<NonNullable<Option["tag"]>, { label: string; icon: React.R
   cheapest: { label: "Cheapest", icon: <TrendingDown className="h-3 w-3" />, variant: "accent" },
 };
 
+// Backend response shape (loose — backend is still evolving).
+type BackendOption = {
+  id?: string | number;
+  airline?: string;
+  carrier?: string;
+  route?: string;
+  origin?: string;
+  destination?: string;
+  durationMinutes?: number;
+  duration?: string;
+  stops?: number | string;
+  price?: number;
+  taxes?: number;
+  baggage?: number;
+  fees?: number;
+  riskScore?: number;
+  baggageInfo?: string;
+  refund?: string;
+  tag?: Option["tag"];
+  explanation?: {
+    summary?: string;
+    priceBreakdown?: { taxes?: number; baggage?: number; fees?: number };
+  };
+};
+
+const formatDuration = (mins?: number, fallback?: string) => {
+  if (typeof mins !== "number" || !Number.isFinite(mins)) return fallback ?? "—";
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${h}h ${m.toString().padStart(2, "0")}m`;
+};
+
+const mapBackendOption = (b: BackendOption, i: number): Option => {
+  const stops =
+    typeof b.stops === "number"
+      ? b.stops === 0
+        ? "Direct"
+        : `${b.stops} stop${b.stops > 1 ? "s" : ""}`
+      : b.stops || "Direct";
+  const route =
+    b.route || (b.origin && b.destination ? `${b.origin} → ${b.destination}` : "—");
+  const breakdown = b.explanation?.priceBreakdown ?? {};
+  return {
+    id: String(b.id ?? i + 1),
+    airline: b.airline || b.carrier || "Travel option",
+    route,
+    duration: formatDuration(b.durationMinutes, b.duration),
+    stops,
+    price: typeof b.price === "number" ? b.price : 0,
+    taxes: typeof b.taxes === "number" ? b.taxes : breakdown.taxes ?? 0,
+    baggage: typeof b.baggage === "number" ? b.baggage : breakdown.baggage ?? 0,
+    fees: typeof b.fees === "number" ? b.fees : breakdown.fees ?? 0,
+    riskScore: typeof b.riskScore === "number" ? b.riskScore : 25,
+    baggageInfo: b.baggageInfo || "Baggage details on confirmation",
+    refund: b.refund || "Refund policy on confirmation",
+    why: b.explanation?.summary || "Recommended by Travixis based on your goal.",
+    tag: b.tag,
+  };
+};
+
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
   const [params] = useSearchParams();
