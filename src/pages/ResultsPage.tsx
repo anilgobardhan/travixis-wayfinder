@@ -116,6 +116,7 @@ type BackendOption = {
   duration?: string;
   stops?: number | string;
   price?: number;
+  currency?: string;
   taxes?: number;
   baggage?: number;
   fees?: number;
@@ -123,10 +124,21 @@ type BackendOption = {
   baggageInfo?: string;
   refund?: string;
   tag?: Option["tag"];
+  type?: string;
   explanation?: {
     summary?: string;
-    priceBreakdown?: { taxes?: number; baggage?: number; fees?: number };
+    priceBreakdown?: { baseFare?: number; taxes?: number; baggage?: number; fees?: number };
+    riskFactors?: string[];
   };
+};
+
+// Backend types are snake_cased (e.g. "best_value"); our internal Option["tag"]
+// uses dashes. Map across so the recommended A/B/C section actually renders.
+const tagFromType = (t?: string): Option["tag"] => {
+  if (t === "best_value") return "best-value";
+  if (t === "lowest_stress") return "lowest-stress";
+  if (t === "cheapest") return "cheapest";
+  return undefined;
 };
 
 const formatDuration = (mins?: number, fallback?: string) => {
@@ -146,21 +158,32 @@ const mapBackendOption = (b: BackendOption, i: number): Option => {
   const route =
     b.route || (b.origin && b.destination ? `${b.origin} → ${b.destination}` : "—");
   const breakdown = b.explanation?.priceBreakdown ?? {};
+  // Backend's `price` is the TOTAL; the UI re-totals price+taxes+baggage+fees,
+  // so use the breakdown's baseFare when present to avoid double-counting.
+  const basePrice =
+    typeof breakdown.baseFare === "number"
+      ? breakdown.baseFare
+      : typeof b.price === "number"
+      ? b.price
+      : 0;
+  // Backend ships riskScore in 0–1; the UI thresholds at 0–100. Scale up.
+  const rawRisk = typeof b.riskScore === "number" ? b.riskScore : 0.25;
+  const riskScore = rawRisk <= 1 ? Math.round(rawRisk * 100) : Math.round(rawRisk);
   return {
     id: String(b.id ?? i + 1),
     airline: b.airline || b.carrier || "Travel option",
     route,
     duration: formatDuration(b.durationMinutes, b.duration),
     stops,
-    price: typeof b.price === "number" ? b.price : 0,
-    taxes: typeof b.taxes === "number" ? b.taxes : breakdown.taxes ?? 0,
-    baggage: typeof b.baggage === "number" ? b.baggage : breakdown.baggage ?? 0,
+    price: basePrice,
+    taxes: typeof breakdown.taxes === "number" ? breakdown.taxes : typeof b.taxes === "number" ? b.taxes : 0,
+    baggage: typeof breakdown.baggage === "number" ? breakdown.baggage : typeof b.baggage === "number" ? b.baggage : 0,
     fees: typeof b.fees === "number" ? b.fees : breakdown.fees ?? 0,
-    riskScore: typeof b.riskScore === "number" ? b.riskScore : 25,
+    riskScore,
     baggageInfo: b.baggageInfo || "Baggage details on confirmation",
     refund: b.refund || "Refund policy on confirmation",
     why: b.explanation?.summary || "Recommended by Travixis based on your goal.",
-    tag: b.tag,
+    tag: b.tag ?? tagFromType(b.type),
   };
 };
 
@@ -174,23 +197,41 @@ const ResultsPage = () => {
   const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
-    if (!ENABLE_REAL_SEARCH || !searchId) {
-      setPreviewMode(!ENABLE_REAL_SEARCH && fromAutopilot);
+    console.log("RESULTS SEARCH ID", searchId);
+    if (!searchId) {
+      setPreviewMode(true);
+      return;
+    }
+    if (!ENABLE_REAL_SEARCH) {
+      setPreviewMode(true);
       return;
     }
     let cancelled = false;
     (async () => {
       try {
-        const data = (await api.getSearch(searchId)) as { options?: BackendOption[] };
+        const data = (await api.getSearch(searchId)) as {
+          options?: BackendOption[];
+          results?: { options?: BackendOption[] };
+          recommendations?: BackendOption[];
+          search?: { options?: BackendOption[] };
+        };
+        console.log("RESULTS API DATA", data);
         if (cancelled) return;
-        const mapped = (data?.options ?? []).map(mapBackendOption);
+        const raw =
+          data?.results?.options ??
+          data?.options ??
+          data?.recommendations ??
+          data?.search?.options ??
+          [];
+        const mapped = raw.map(mapBackendOption);
         if (mapped.length > 0) {
           setLiveOptions(mapped);
           setPreviewMode(false);
         } else {
           setPreviewMode(true);
         }
-      } catch {
+      } catch (error) {
+        console.error("RESULTS FETCH FAILED", error);
         if (cancelled) return;
         setPreviewMode(true);
         toast.warning("Backend unreachable — showing preview results.");
