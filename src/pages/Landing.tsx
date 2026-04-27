@@ -388,10 +388,30 @@ const Landing = () => {
   );
 };
 
-const Field = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-lg bg-muted/50 px-4 py-3">
-    <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{label}</p>
-    <p className="mt-0.5 text-sm font-medium">{value}</p>
+const FieldInput = ({
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  placeholder?: string;
+}) => (
+  <div className="rounded-lg bg-muted/40 px-3 py-2">
+    <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+      {label}
+    </Label>
+    <Input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="h-9 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm font-medium"
+    />
   </div>
 );
 
