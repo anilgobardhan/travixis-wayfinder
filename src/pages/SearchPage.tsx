@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { api } from "@/lib/api";
 import { extractTripFields } from "@/lib/extractTripFields";
+import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 
 type TripType = "flight" | "hotel" | "package" | "car" | "transfer" | "activities";
 type Mode = "autopilot" | "classic";
@@ -73,6 +74,12 @@ const SearchPage = () => {
       },
     };
 
+    // Feature-flagged: only call POST /search when explicitly enabled.
+    if (!ENABLE_REAL_SEARCH) {
+      navigate(`/autopilot?q=${encodeURIComponent(q)}&offline=1`);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await api.search(payload);
@@ -86,8 +93,8 @@ const SearchPage = () => {
         }
         navigate(`/autopilot?id=${encodeURIComponent(searchId)}&q=${encodeURIComponent(q)}`);
       } else {
-        toast.error("Search did not return an id. Continuing in preview mode.");
-        navigate(`/autopilot?q=${encodeURIComponent(q)}`);
+        toast.warning("Search did not return an id — showing preview mode.");
+        navigate(`/autopilot?q=${encodeURIComponent(q)}&offline=1`);
       }
     } catch (err) {
       toast.warning("Backend unreachable — showing Autopilot in preview mode.");

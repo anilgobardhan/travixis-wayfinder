@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Plane,
@@ -18,11 +18,14 @@ import {
   CalendarRange,
   Compass,
   Timer,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 
 type Option = {
   id: string;
@@ -101,11 +104,105 @@ const tagMeta: Record<NonNullable<Option["tag"]>, { label: string; icon: React.R
   cheapest: { label: "Cheapest", icon: <TrendingDown className="h-3 w-3" />, variant: "accent" },
 };
 
+// Backend response shape (loose — backend is still evolving).
+type BackendOption = {
+  id?: string | number;
+  airline?: string;
+  carrier?: string;
+  route?: string;
+  origin?: string;
+  destination?: string;
+  durationMinutes?: number;
+  duration?: string;
+  stops?: number | string;
+  price?: number;
+  taxes?: number;
+  baggage?: number;
+  fees?: number;
+  riskScore?: number;
+  baggageInfo?: string;
+  refund?: string;
+  tag?: Option["tag"];
+  explanation?: {
+    summary?: string;
+    priceBreakdown?: { taxes?: number; baggage?: number; fees?: number };
+  };
+};
+
+const formatDuration = (mins?: number, fallback?: string) => {
+  if (typeof mins !== "number" || !Number.isFinite(mins)) return fallback ?? "—";
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${h}h ${m.toString().padStart(2, "0")}m`;
+};
+
+const mapBackendOption = (b: BackendOption, i: number): Option => {
+  const stops =
+    typeof b.stops === "number"
+      ? b.stops === 0
+        ? "Direct"
+        : `${b.stops} stop${b.stops > 1 ? "s" : ""}`
+      : b.stops || "Direct";
+  const route =
+    b.route || (b.origin && b.destination ? `${b.origin} → ${b.destination}` : "—");
+  const breakdown = b.explanation?.priceBreakdown ?? {};
+  return {
+    id: String(b.id ?? i + 1),
+    airline: b.airline || b.carrier || "Travel option",
+    route,
+    duration: formatDuration(b.durationMinutes, b.duration),
+    stops,
+    price: typeof b.price === "number" ? b.price : 0,
+    taxes: typeof b.taxes === "number" ? b.taxes : breakdown.taxes ?? 0,
+    baggage: typeof b.baggage === "number" ? b.baggage : breakdown.baggage ?? 0,
+    fees: typeof b.fees === "number" ? b.fees : breakdown.fees ?? 0,
+    riskScore: typeof b.riskScore === "number" ? b.riskScore : 25,
+    baggageInfo: b.baggageInfo || "Baggage details on confirmation",
+    refund: b.refund || "Refund policy on confirmation",
+    why: b.explanation?.summary || "Recommended by Travixis based on your goal.",
+    tag: b.tag,
+  };
+};
+
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
-  const recommended = options.filter((o) => o.tag);
+  const searchId = params.get("id") || undefined;
+
+  const [liveOptions, setLiveOptions] = useState<Option[] | null>(null);
+  const [previewMode, setPreviewMode] = useState(false);
+
+  useEffect(() => {
+    if (!ENABLE_REAL_SEARCH || !searchId) {
+      setPreviewMode(!ENABLE_REAL_SEARCH && fromAutopilot);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = (await api.getSearch(searchId)) as { options?: BackendOption[] };
+        if (cancelled) return;
+        const mapped = (data?.options ?? []).map(mapBackendOption);
+        if (mapped.length > 0) {
+          setLiveOptions(mapped);
+          setPreviewMode(false);
+        } else {
+          setPreviewMode(true);
+        }
+      } catch {
+        if (cancelled) return;
+        setPreviewMode(true);
+        toast.warning("Backend unreachable — showing preview results.");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchId, fromAutopilot]);
+
+  const displayOptions = liveOptions ?? options;
+  const recommended = displayOptions.filter((o) => o.tag);
 
   return (
     <div className="container max-w-6xl space-y-10">
@@ -115,7 +212,7 @@ const ResultsPage = () => {
             <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Autopilot result</BadgeSoft>
           )}
           <BadgeSoft variant="primary">Amsterdam → Lisbon · 15–22 Aug · 2 adults</BadgeSoft>
-          <h1 className="mt-3 text-3xl font-bold">{options.length} options found</h1>
+          <h1 className="mt-3 text-3xl font-bold">{displayOptions.length} options found</h1>
           <p className="mt-1 text-muted-foreground">Sorted by Travixis recommendation. All prices include taxes & surcharges.</p>
         </div>
         <div className="flex gap-2">
@@ -125,6 +222,15 @@ const ResultsPage = () => {
           </Button>
         </div>
       </div>
+
+      {previewMode && (
+        <div className="flex items-start gap-2 rounded-xl border border-[hsl(var(--warning))]/30 bg-[hsl(var(--accent-soft))] px-4 py-3 text-sm text-foreground">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-[hsl(var(--warning))]" />
+          <span>
+            Running in <strong>preview mode</strong> — showing illustrative results until the live search is available.
+          </span>
+        </div>
+      )}
 
       {/* A/B/C recommendation block */}
       <section>
@@ -232,7 +338,7 @@ const ResultsPage = () => {
       {/* Full list */}
       <section className="space-y-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
-        {options.map((o) => {
+        {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
           return (
