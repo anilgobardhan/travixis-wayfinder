@@ -31,6 +31,7 @@ import { extractTripFields } from "@/lib/extractTripFields";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { AirportSelect } from "@/components/AirportSelect";
 import type { Airport } from "@/lib/airports";
+import { EnvDebugPanel } from "@/components/EnvDebugPanel";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -399,6 +400,7 @@ const Landing = () => {
           </Button>
         </div>
       </section>
+      <EnvDebugPanel />
     </div>
   );
 };
