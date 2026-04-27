@@ -155,8 +155,9 @@ const SearchPage = () => {
               <ShieldCheck className="h-3.5 w-3.5" />
               Travixis does not book automatically. You stay in control.
             </p>
-            <Button type="submit" variant="hero" size="lg">
-              <Sparkles className="h-4 w-4" /> Start Autopilot Search
+            <Button type="submit" variant="hero" size="lg" disabled={submitting}>
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {submitting ? "Starting Autopilot…" : "Start Autopilot Search"}
             </Button>
           </div>
         </form>
