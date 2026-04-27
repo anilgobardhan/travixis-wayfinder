@@ -152,7 +152,7 @@ const ResultsPage = () => {
             <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Autopilot result</BadgeSoft>
           )}
           <BadgeSoft variant="primary">Amsterdam → Lisbon · 15–22 Aug · 2 adults</BadgeSoft>
-          <h1 className="mt-3 text-3xl font-bold">{options.length} options found</h1>
+          <h1 className="mt-3 text-3xl font-bold">{displayOptions.length} options found</h1>
           <p className="mt-1 text-muted-foreground">Sorted by Travixis recommendation. All prices include taxes & surcharges.</p>
         </div>
         <div className="flex gap-2">
@@ -269,7 +269,7 @@ const ResultsPage = () => {
       {/* Full list */}
       <section className="space-y-4">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
-        {options.map((o) => {
+        {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
           return (
