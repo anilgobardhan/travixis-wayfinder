@@ -27,23 +27,23 @@ const Landing = () => {
         <div className="container relative py-20 md:py-28">
           <div className="max-w-3xl">
             <BadgeSoft variant="accent" className="mb-5 bg-white/10 text-white">
-              <Sparkles className="h-3 w-3" /> Travel Operating System
+              <Sparkles className="h-3 w-3" /> Travel Operating System · Autopilot Search
             </BadgeSoft>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">
-              Travel smarter with Travixis
+              We search travel better than anyone else.
             </h1>
             <p className="mt-5 text-lg md:text-xl text-white/80 max-w-2xl">
-              Search, compare, understand, book and manage your trip in one place.
-              No surprises. No fine print. Just clarity.
+              Describe your trip in your own words. Travixis Autopilot compares routes, true total prices and stress —
+              then explains the trade-offs so you can decide with confidence.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="cta" size="xl">
                 <Link to="/search">
-                  Start searching <ArrowRight className="h-4 w-4" />
+                  <Sparkles className="h-4 w-4" /> Try Autopilot Search
                 </Link>
               </Button>
               <Button asChild variant="ghost" size="xl" className="text-white hover:bg-white/10">
-                <Link to="/trip">See trip dashboard</Link>
+                <Link to="/search">Start searching <ArrowRight className="h-4 w-4" /></Link>
               </Button>
             </div>
 

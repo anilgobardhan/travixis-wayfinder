@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -10,6 +10,14 @@ import {
   Sparkles,
   ArrowRight,
   Info,
+  Lightbulb,
+  Wallet,
+  Gauge,
+  Wand2,
+  MapPin,
+  CalendarRange,
+  Compass,
+  Timer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -95,17 +103,27 @@ const tagMeta: Record<NonNullable<Option["tag"]>, { label: string; icon: React.R
 
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
+  const [params] = useSearchParams();
+  const fromAutopilot = params.get("from") === "autopilot";
   const recommended = options.filter((o) => o.tag);
 
   return (
     <div className="container max-w-6xl space-y-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
+          {fromAutopilot && (
+            <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Autopilot result</BadgeSoft>
+          )}
           <BadgeSoft variant="primary">Amsterdam → Lisbon · 15–22 Aug · 2 adults</BadgeSoft>
           <h1 className="mt-3 text-3xl font-bold">{options.length} options found</h1>
           <p className="mt-1 text-muted-foreground">Sorted by Travixis recommendation. All prices include taxes & surcharges.</p>
         </div>
-        <Button asChild variant="outline"><Link to="/search">Edit search</Link></Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline"><Link to="/search">Edit search</Link></Button>
+          <Button variant="ghost" onClick={() => toast.info("Keep searching — Travixis will refine alternatives.")}>
+            Keep searching
+          </Button>
+        </div>
       </div>
 
       {/* A/B/C recommendation block */}
@@ -114,19 +132,100 @@ const ResultsPage = () => {
         <div className="mt-3 grid md:grid-cols-3 gap-4">
           {recommended.map((o) => {
             const meta = tagMeta[o.tag!];
+            const total = o.price + o.taxes + o.baggage + o.fees;
             return (
-              <div key={o.id} className="rounded-2xl border bg-card p-5 shadow-card">
+              <div key={o.id} className="rounded-2xl border bg-card p-5 shadow-card flex flex-col">
                 <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
                 <p className="mt-3 font-semibold">{o.airline}</p>
                 <p className="text-xs text-muted-foreground">{o.route} · {o.stops} · {o.duration}</p>
-                <p className="mt-3 text-2xl font-bold">€{o.price + o.taxes + o.baggage + o.fees}</p>
+                <p className="mt-3 text-2xl font-bold">€{total}</p>
                 <p className="text-xs text-muted-foreground">true total price</p>
-                <Button asChild variant="soft" size="sm" className="mt-4 w-full">
-                  <Link to={`/option/${o.id}`}>View details</Link>
-                </Button>
+                <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+                  <li className="flex items-start gap-1.5"><Luggage className="h-3 w-3 mt-0.5 shrink-0" /> {o.baggageInfo}</li>
+                  <li className="flex items-start gap-1.5"><ShieldCheck className="h-3 w-3 mt-0.5 shrink-0" /> {o.refund}</li>
+                  <li className="flex items-start gap-1.5"><Gauge className="h-3 w-3 mt-0.5 shrink-0" /> Stress score {o.riskScore}/100</li>
+                </ul>
+                <p className="mt-3 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2 text-xs text-primary">
+                  <span className="font-semibold">Why: </span>{o.why}
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <Button variant="hero" size="sm" onClick={() => toast.info("Booking flow coming soon.")}>
+                    Book now
+                  </Button>
+                  <Button asChild variant="soft" size="sm">
+                    <Link to={`/option/${o.id}`}>View details</Link>
+                  </Button>
+                </div>
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="ghost" size="sm" onClick={() => toast.info("Keep searching — Travixis will refine alternatives.")}>
+            Keep searching
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById("alternatives")?.scrollIntoView({ behavior: "smooth" })}>
+            Show alternatives
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById("explanation")?.scrollIntoView({ behavior: "smooth" })}>
+            <Lightbulb className="h-4 w-4" /> Explain this recommendation
+          </Button>
+        </div>
+      </section>
+
+      {/* Explanation panel */}
+      <section id="explanation" className="rounded-2xl border bg-card p-6 md:p-8 shadow-card">
+        <div className="flex items-start gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary shrink-0">
+            <Lightbulb className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">Why Travixis recommends this</h2>
+            <p className="text-sm text-muted-foreground">A transparent breakdown of the factors behind our top pick.</p>
+          </div>
+        </div>
+        <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <ExplainCard icon={<Wallet className="h-4 w-4" />} title="True total price"
+            body="Base fare €218 + taxes €42 + baggage €25 = €285 — no hidden surcharges added at checkout." />
+          <ExplainCard icon={<Info className="h-4 w-4" />} title="Hidden cost factors"
+            body="No seat-selection fees, no payment surcharge. Baggage is included rather than upsold later." />
+          <ExplainCard icon={<Compass className="h-4 w-4" />} title="Route quality"
+            body="Direct AMS → LIS, 3h 25m. Avoids tight connections and overnight transfers." />
+          <ExplainCard icon={<Gauge className="h-4 w-4" />} title="Risk & stress"
+            body="Carrier on-time rate >85%, low historical disruption on this route. Stress score: 12/100." />
+          <ExplainCard icon={<Luggage className="h-4 w-4" />} title="Baggage & refund"
+            body="Carry-on + 23kg checked included. Refundable up to 24h before departure." />
+          <ExplainCard icon={<Sparkles className="h-4 w-4" />} title="Your preferences"
+            body="You asked for balanced budget + low stress. This option matches both better than alternatives." />
+        </div>
+        <p className="mt-6 inline-flex items-start gap-2 rounded-lg bg-[hsl(var(--accent-soft))] px-4 py-3 text-xs text-primary">
+          <ShieldCheck className="h-4 w-4 mt-0.5 shrink-0" />
+          <span>
+            <span className="font-semibold">AI helps. You decide.</span>{" "}
+            Travixis does not book automatically — every choice stays in your hands.
+          </span>
+        </p>
+      </section>
+
+      {/* Alternatives */}
+      <section id="alternatives" className="rounded-2xl border bg-card p-6 md:p-8 shadow-card">
+        <BadgeSoft variant="accent"><Compass className="h-3 w-3" /> Alternatives worth considering</BadgeSoft>
+        <h2 className="mt-3 text-xl font-semibold">Want to save more or stress less?</h2>
+        <p className="text-sm text-muted-foreground">Travixis explored these adjacent options based on your goal.</p>
+        <div className="mt-5 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <AltCard icon={<MapPin className="h-4 w-4" />} title="Nearby airports"
+            body="Departing from Eindhoven (EIN) saves up to €40 — adds ~1h ground transfer." />
+          <AltCard icon={<CalendarRange className="h-4 w-4" />} title="Flexible dates"
+            body="Leaving Thursday instead of Friday cuts price by ~18% with similar comfort." />
+          <AltCard icon={<Compass className="h-4 w-4" />} title="Cheaper destinations"
+            body="Porto (OPO) is €60 cheaper and 1h from Lisbon by train — same region, lower cost." />
+          <AltCard icon={<ShieldCheck className="h-4 w-4" />} title="Lower-risk options"
+            body="A direct flight with KLM raises price by €46 but lowers stress score to 8/100." />
+          <AltCard icon={<Timer className="h-4 w-4" />} title="Shorter travel time"
+            body="Direct options under 3h 30m exist — adds €30 vs the cheapest one-stop route." />
+          <AltCard icon={<Wallet className="h-4 w-4" />} title="Bundle & save"
+            body="Adding a 7-night hotel as a package reduces total trip cost by ~€120." />
         </div>
       </section>
 
@@ -222,6 +321,30 @@ const Info_ = ({ icon, label, value }: { icon: React.ReactNode; label: string; v
       <p className={cn("text-xs")}>{value}</p>
     </div>
   </div>
+);
+
+const ExplainCard = ({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) => (
+  <div className="rounded-xl border bg-background p-4">
+    <div className="flex items-center gap-2 text-primary">
+      <span className="grid h-7 w-7 place-items-center rounded-md bg-[hsl(var(--primary-soft))]">{icon}</span>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+    </div>
+    <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{body}</p>
+  </div>
+);
+
+const AltCard = ({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) => (
+  <button
+    type="button"
+    onClick={() => toast.info("Alternative selected — refining search.")}
+    className="text-left rounded-xl border bg-background p-4 transition-base hover:border-primary/40 hover:shadow-card"
+  >
+    <div className="flex items-center gap-2 text-[hsl(var(--accent))]">
+      <span className="grid h-7 w-7 place-items-center rounded-md bg-[hsl(var(--accent-soft))]">{icon}</span>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+    </div>
+    <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{body}</p>
+  </button>
 );
 
 export default ResultsPage;
