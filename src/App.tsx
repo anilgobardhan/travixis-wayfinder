@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Layout } from "@/components/Layout";
 import Landing from "./pages/Landing";
 import SearchPage from "./pages/SearchPage";
+import AutopilotRunPage from "./pages/AutopilotRunPage";
 import ResultsPage from "./pages/ResultsPage";
 import OptionDetailPage from "./pages/OptionDetailPage";
 import TripDashboardPage from "./pages/TripDashboardPage";
@@ -25,6 +26,7 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Landing />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/autopilot" element={<AutopilotRunPage />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/option/:id" element={<OptionDetailPage />} />
             <Route path="/option-detail" element={<OptionDetailPage />} />
