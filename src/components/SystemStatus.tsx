@@ -32,14 +32,19 @@ export const SystemStatus = ({ compact = false }: { compact?: boolean }) => {
     };
   }, []);
 
+  // Overall is driven by the API. The DB is shown as an additional detail.
+  // We only mark "down" when the API itself is unreachable — never when the
+  // API is up and only the DB check is failing.
   const overall: Status =
-    api_ === "ok" && db === "ok"
-      ? "ok"
-      : api_ === "checking" || db === "checking"
+    api_ === "checking"
       ? "checking"
-      : api_ === "down" && db === "down"
-      ? "down"
-      : "degraded";
+      : api_ === "ok"
+      ? db === "ok"
+        ? "ok"
+        : db === "checking"
+        ? "ok"
+        : "degraded"
+      : "down";
 
   const dotColor = {
     checking: "bg-muted-foreground",
@@ -51,8 +56,8 @@ export const SystemStatus = ({ compact = false }: { compact?: boolean }) => {
   const label = {
     checking: "Checking systems…",
     ok: "All systems operational",
-    degraded: "Partial outage",
-    down: "Service unavailable",
+    degraded: "API up · database degraded",
+    down: "API unavailable",
   }[overall];
 
   if (compact) {
