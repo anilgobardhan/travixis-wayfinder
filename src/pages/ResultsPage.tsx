@@ -323,4 +323,28 @@ const Info_ = ({ icon, label, value }: { icon: React.ReactNode; label: string; v
   </div>
 );
 
+const ExplainCard = ({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) => (
+  <div className="rounded-xl border bg-background p-4">
+    <div className="flex items-center gap-2 text-primary">
+      <span className="grid h-7 w-7 place-items-center rounded-md bg-[hsl(var(--primary-soft))]">{icon}</span>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+    </div>
+    <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{body}</p>
+  </div>
+);
+
+const AltCard = ({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) => (
+  <button
+    type="button"
+    onClick={() => toast.info("Alternative selected — refining search.")}
+    className="text-left rounded-xl border bg-background p-4 transition-base hover:border-primary/40 hover:shadow-card"
+  >
+    <div className="flex items-center gap-2 text-[hsl(var(--accent))]">
+      <span className="grid h-7 w-7 place-items-center rounded-md bg-[hsl(var(--accent-soft))]">{icon}</span>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+    </div>
+    <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{body}</p>
+  </button>
+);
+
 export default ResultsPage;
