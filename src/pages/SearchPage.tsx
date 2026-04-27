@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
   Plane, Hotel, Package, Car, Bus, Ticket,
@@ -41,12 +41,21 @@ const examplePrompts = [
 ];
 
 const SearchPage = () => {
-  const [mode, setMode] = useState<Mode>("autopilot");
+  const [searchParams] = useSearchParams();
+  const initialMode: Mode = searchParams.get("mode") === "classic" ? "classic" : "autopilot";
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [type, setType] = useState<TripType>("flight");
   const [prefs, setPrefs] = useState<Record<string, number>>({ budget: 1, comfort: 1, flexibility: 1 });
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(searchParams.get("q") ?? "");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) setPrompt(q);
+    const m = searchParams.get("mode");
+    if (m === "classic" || m === "autopilot") setMode(m);
+  }, [searchParams]);
 
   const onClassicSubmit = (e: React.FormEvent) => {
     e.preventDefault();
