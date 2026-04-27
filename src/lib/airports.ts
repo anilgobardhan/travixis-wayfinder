@@ -18,68 +18,39 @@ export function getAirportByIata(code: string): Airport | undefined {
   return BY_IATA.get(code.toUpperCase());
 }
 
+function scoreAirport(a: Airport, q: string): number {
+  const query = q.trim().toLowerCase();
+  const iata = (a.iata || "").toLowerCase();
+  const city = (a.city || "").toLowerCase();
+  const name = (a.airport || "").toLowerCase();
+  const country = (a.country || "").toLowerCase();
+
+  if (iata === query) return 1000;
+  if (iata.startsWith(query)) return 900;
+  if (city === query) return 800;
+  if (city.startsWith(query)) return 700;
+  if (name.startsWith(query)) return 600;
+  if (country.startsWith(query)) return 500;
+  if (iata.includes(query)) return 400;
+  if (city.includes(query)) return 300;
+  if (name.includes(query)) return 200;
+  if (country.includes(query)) return 100;
+  return 0;
+}
+
 /**
  * Search airports by city, airport name, IATA code, or country.
- * Performance:
- *  - Returns at most `limit` results (default 20).
- *  - Prioritizes exact IATA match, then IATA prefix, then city startsWith,
- *    then any substring match.
+ * Scores every airport first, then sorts by score and returns at most `limit` results.
  */
 export function searchAirports(query: string, limit = 20): Airport[] {
   const q = query.trim().toLowerCase();
-  if (!q) {
-    // No query: just return the first N (alphabetical by country/city).
-    return AIRPORTS.slice(0, limit);
-  }
+  if (!q || q.length < 1) return [];
 
-  const exactIata: Airport[] = [];
-  const iataPrefix: Airport[] = [];
-  const cityExact: Airport[] = [];
-  const cityStarts: Airport[] = [];
-  const nameStarts: Airport[] = [];
-  const countryStarts: Airport[] = [];
-  const substring: Airport[] = [];
-
-  const total = AIRPORTS.length;
-
-  for (let i = 0; i < total; i++) {
-    const a = AIRPORTS[i];
-    const iata = a.iata.toLowerCase();
-    const city = a.city.toLowerCase();
-    const name = a.airport.toLowerCase();
-    const country = a.country.toLowerCase();
-
-    if (iata === q) {
-      exactIata.push(a);
-    } else if (iata.startsWith(q)) {
-      iataPrefix.push(a);
-    } else if (city === q) {
-      cityExact.push(a);
-    } else if (city.startsWith(q)) {
-      cityStarts.push(a);
-    } else if (name.startsWith(q)) {
-      nameStarts.push(a);
-    } else if (country.startsWith(q)) {
-      countryStarts.push(a);
-    } else if (
-      city.includes(q) ||
-      name.includes(q) ||
-      country.includes(q) ||
-      iata.includes(q)
-    ) {
-      substring.push(a);
-    }
-  }
-
-  return [
-    ...exactIata,
-    ...iataPrefix,
-    ...cityExact,
-    ...cityStarts,
-    ...nameStarts,
-    ...countryStarts,
-    ...substring,
-  ].slice(0, limit);
+  return AIRPORTS.map((a, index) => ({ ...a, _score: scoreAirport(a, q), _index: index }))
+    .filter((a) => a._score > 0)
+    .sort((a, b) => b._score - a._score || a._index - b._index)
+    .slice(0, limit)
+    .map(({ _score, _index, ...airport }) => airport);
 }
 
 export function formatAirport(a: Airport): string {
