@@ -54,11 +54,10 @@ const Landing = () => {
     if (!canSearch) return;
 
     const payload = {
-      mode: "quick" as const,
       from: fromAirport!.iata,
       to: toAirport!.iata,
-      departDate: depart, // YYYY-MM-DD
-      returnDate: ret || undefined,
+      departDate: depart,
+      returnDate: ret || depart,
       travelers: travelersCount,
     };
 
@@ -82,7 +81,7 @@ const Landing = () => {
     try {
       const res = await api.search(payload);
       console.log("SEARCH RESPONSE", res);
-      const id = res?.id;
+      const id = res?.searchId ?? res?.id;
       if (id) {
         try {
           sessionStorage.setItem("travixis:lastSearchId", id);
