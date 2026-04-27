@@ -138,6 +138,23 @@ const AutopilotRunPage = () => {
         </p>
       </div>
 
+      {/* Connection / mode banner */}
+      {!useRealBackend && (
+        <div className="flex items-start gap-2 rounded-xl border border-[hsl(var(--warning))]/30 bg-[hsl(var(--warning-soft,var(--accent-soft)))] px-4 py-3 text-sm text-foreground">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-[hsl(var(--warning))]" />
+          <span>
+            Running in <strong>preview mode</strong> — backend search not connected.
+            Results below are illustrative until <code>POST /search</code> is available.
+          </span>
+        </div>
+      )}
+      {useRealBackend && error && (
+        <div className="flex items-start gap-2 rounded-xl border border-[hsl(var(--warning))]/30 bg-[hsl(var(--accent-soft))] px-4 py-3 text-sm text-foreground">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-[hsl(var(--warning))]" />
+          <span>{error}</span>
+        </div>
+      )}
+
       {/* Goal echo */}
       <div className="rounded-2xl border bg-card p-5 shadow-card">
         <div className="flex items-start gap-3">
