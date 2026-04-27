@@ -2,11 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Sparkles, Loader2, CheckCircle2, ShieldCheck, Wand2, ArrowRight,
-  Plane, Wallet, Gauge, Lightbulb, Quote,
+  Plane, Wallet, Gauge, Lightbulb, Quote, AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
 
 const STEPS = [
   "Understanding your trip goal",
@@ -17,7 +18,7 @@ const STEPS = [
   "Preparing recommendation",
 ] as const;
 
-const LIVE_UPDATES = [
+const SIM_UPDATES = [
   "Found a cheaper route via Lisbon",
   "Checking baggage and hidden fees",
   "Comparing direct vs one-stop options",
@@ -26,48 +27,103 @@ const LIVE_UPDATES = [
   "Best value option updated",
 ];
 
-const STEP_DURATION = 1100; // ms per step
+const POLL_INTERVAL_MS = 1500;
+const SIM_STEP_MS = 1100;
+
+type SearchStatus = {
+  status?: string; // "queued" | "running" | "completed" | "failed" | ...
+  step?: number;
+  progress?: number; // 0-100
+  updates?: string[];
+  message?: string;
+};
 
 const AutopilotRunPage = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const query = params.get("q") || "Find the best weekend trip from Amsterdam, anywhere in Europe.";
+  const searchId = params.get("id") || undefined;
+  const offline = params.get("offline") === "1";
 
   const [stepIdx, setStepIdx] = useState(0);
+  const [progressOverride, setProgressOverride] = useState<number | null>(null);
   const [updates, setUpdates] = useState<string[]>([]);
   const [done, setDone] = useState(false);
-  const updateTimer = useRef<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const cancelled = useRef(false);
 
-  // step progression
+  const useRealBackend = Boolean(searchId) && !offline;
+
+  // Real backend: poll GET /search/:id for status updates
   useEffect(() => {
+    if (!useRealBackend || !searchId) return;
+    cancelled.current = false;
+
+    let timer: number | null = null;
+    const poll = async () => {
+      try {
+        const data = (await api.getSearch(searchId)) as SearchStatus;
+        if (cancelled.current) return;
+
+        if (typeof data.step === "number") setStepIdx(Math.min(data.step, STEPS.length));
+        if (typeof data.progress === "number") setProgressOverride(Math.max(0, Math.min(100, data.progress)));
+        if (Array.isArray(data.updates)) setUpdates(data.updates);
+
+        const status = (data.status || "").toLowerCase();
+        if (status === "completed" || status === "done" || status === "ready") {
+          setStepIdx(STEPS.length);
+          setProgressOverride(100);
+          setDone(true);
+          return;
+        }
+        if (status === "failed" || status === "error") {
+          setError(data.message || "Search failed. Please try again.");
+          return;
+        }
+        timer = window.setTimeout(poll, POLL_INTERVAL_MS);
+      } catch (e) {
+        if (cancelled.current) return;
+        setError("Lost connection to search service. Retrying…");
+        timer = window.setTimeout(poll, POLL_INTERVAL_MS * 2);
+      }
+    };
+
+    poll();
+    return () => {
+      cancelled.current = true;
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [useRealBackend, searchId]);
+
+  // Simulated fallback: only when there is no searchId (preview mode)
+  useEffect(() => {
+    if (useRealBackend) return;
     if (stepIdx >= STEPS.length) {
       setDone(true);
       return;
     }
-    const t = window.setTimeout(() => setStepIdx((i) => i + 1), STEP_DURATION);
+    const t = window.setTimeout(() => setStepIdx((i) => i + 1), SIM_STEP_MS);
     return () => window.clearTimeout(t);
-  }, [stepIdx]);
+  }, [stepIdx, useRealBackend]);
 
-  // streaming live updates
   useEffect(() => {
+    if (useRealBackend) return;
     let i = 0;
-    updateTimer.current = window.setInterval(() => {
-      if (i >= LIVE_UPDATES.length) {
-        if (updateTimer.current) window.clearInterval(updateTimer.current);
+    const id = window.setInterval(() => {
+      if (i >= SIM_UPDATES.length) {
+        window.clearInterval(id);
         return;
       }
-      setUpdates((u) => [...u, LIVE_UPDATES[i]]);
+      setUpdates((u) => [...u, SIM_UPDATES[i]]);
       i += 1;
     }, 900);
-    return () => {
-      if (updateTimer.current) window.clearInterval(updateTimer.current);
-    };
-  }, []);
+    return () => window.clearInterval(id);
+  }, [useRealBackend]);
 
-  const progress = useMemo(
-    () => Math.min(100, Math.round((Math.min(stepIdx, STEPS.length) / STEPS.length) * 100)),
-    [stepIdx]
-  );
+  const progress = useMemo(() => {
+    if (progressOverride !== null) return progressOverride;
+    return Math.min(100, Math.round((Math.min(stepIdx, STEPS.length) / STEPS.length) * 100));
+  }, [stepIdx, progressOverride]);
 
   return (
     <div className="container max-w-5xl space-y-8">
@@ -81,6 +137,23 @@ const AutopilotRunPage = () => {
           Travixis does not book automatically. You stay in control.
         </p>
       </div>
+
+      {/* Connection / mode banner */}
+      {!useRealBackend && (
+        <div className="flex items-start gap-2 rounded-xl border border-[hsl(var(--warning))]/30 bg-[hsl(var(--warning-soft,var(--accent-soft)))] px-4 py-3 text-sm text-foreground">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-[hsl(var(--warning))]" />
+          <span>
+            Running in <strong>preview mode</strong> — backend search not connected.
+            Results below are illustrative until <code>POST /search</code> is available.
+          </span>
+        </div>
+      )}
+      {useRealBackend && error && (
+        <div className="flex items-start gap-2 rounded-xl border border-[hsl(var(--warning))]/30 bg-[hsl(var(--accent-soft))] px-4 py-3 text-sm text-foreground">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-[hsl(var(--warning))]" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Goal echo */}
       <div className="rounded-2xl border bg-card p-5 shadow-card">
@@ -178,7 +251,15 @@ const AutopilotRunPage = () => {
               <h2 className="mt-2 text-2xl font-bold">3 best options found for you</h2>
               <p className="text-sm text-muted-foreground">Best Value · Cheapest · Lowest Stress — all with true total price.</p>
             </div>
-            <Button variant="hero" size="lg" onClick={() => navigate("/results?from=autopilot")}>
+            <Button
+              variant="hero"
+              size="lg"
+              onClick={() =>
+                navigate(
+                  `/results?from=autopilot${searchId ? `&id=${encodeURIComponent(searchId)}` : ""}`
+                )
+              }
+            >
               View recommendations <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
@@ -221,7 +302,7 @@ const AutopilotRunPage = () => {
         <Button asChild variant="outline">
           <Link to="/search">Edit my goal</Link>
         </Button>
-        {!done && (
+        {!done && !useRealBackend && (
           <Button variant="ghost" onClick={() => { setStepIdx(STEPS.length); setDone(true); }}>
             Skip animation
           </Button>
