@@ -34,11 +34,13 @@ export function searchAirports(query: string, limit = 20): Airport[] {
 
   const exactIata: Airport[] = [];
   const iataPrefix: Airport[] = [];
+  const cityExact: Airport[] = [];
   const cityStarts: Airport[] = [];
-  const other: Airport[] = [];
+  const nameStarts: Airport[] = [];
+  const countryStarts: Airport[] = [];
+  const substring: Airport[] = [];
 
   const total = AIRPORTS.length;
-  const cap = limit * 4; // early-exit ceiling for very common substrings
 
   for (let i = 0; i < total; i++) {
     const a = AIRPORTS[i];
@@ -51,26 +53,33 @@ export function searchAirports(query: string, limit = 20): Airport[] {
       exactIata.push(a);
     } else if (iata.startsWith(q)) {
       iataPrefix.push(a);
+    } else if (city === q) {
+      cityExact.push(a);
     } else if (city.startsWith(q)) {
       cityStarts.push(a);
+    } else if (name.startsWith(q)) {
+      nameStarts.push(a);
+    } else if (country.startsWith(q)) {
+      countryStarts.push(a);
     } else if (
       city.includes(q) ||
       name.includes(q) ||
       country.includes(q) ||
       iata.includes(q)
     ) {
-      other.push(a);
-    }
-
-    if (
-      exactIata.length + iataPrefix.length + cityStarts.length + other.length >=
-      cap
-    ) {
-      break;
+      substring.push(a);
     }
   }
 
-  return [...exactIata, ...iataPrefix, ...cityStarts, ...other].slice(0, limit);
+  return [
+    ...exactIata,
+    ...iataPrefix,
+    ...cityExact,
+    ...cityStarts,
+    ...nameStarts,
+    ...countryStarts,
+    ...substring,
+  ].slice(0, limit);
 }
 
 export function formatAirport(a: Airport): string {
