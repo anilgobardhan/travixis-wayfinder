@@ -9,7 +9,8 @@ export const EnvDebugPanel = () => {
 
   return (
     <div
-      className="fixed bottom-2 right-2 z-50 max-w-[320px] rounded-md border border-border bg-background/90 p-2 font-mono text-[10px] leading-tight text-foreground shadow-md backdrop-blur"
+      style={{ position: "fixed", bottom: 10, right: 10, zIndex: 9999 }}
+      className="max-w-[320px] rounded-md border border-border bg-background/95 p-2 font-mono text-[10px] leading-tight text-foreground shadow-md backdrop-blur"
       data-testid="env-debug-panel"
     >
       <div className="mb-1 font-semibold">ENV DEBUG:</div>
