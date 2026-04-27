@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   ShieldCheck,
   Sparkles,
@@ -14,11 +16,104 @@ import {
   Wallet,
   Gauge,
   MessageCircle,
+  Wand2,
+  Mic,
+  MicOff,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { toIataIfKnown } from "@/lib/iata";
+import { ENABLE_REAL_SEARCH } from "@/lib/flags";
+import { api } from "@/lib/api";
+import { extractTripFields } from "@/lib/extractTripFields";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
 
 const Landing = () => {
+  const navigate = useNavigate();
+  const [from, setFrom] = useState("Amsterdam");
+  const [to, setTo] = useState("Lisbon");
+  const [depart, setDepart] = useState("2026-08-15");
+  const [ret, setRet] = useState("2026-08-22");
+  const [travelers, setTravelers] = useState("2 adults");
+  const [submitting, setSubmitting] = useState(false);
+
+  const [voiceText, setVoiceText] = useState("");
+  const voice = useVoiceInput();
+
+  const onQuickSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+    const fromCode = toIataIfKnown(from);
+    const toCode = toIataIfKnown(to);
+    const params = new URLSearchParams({
+      from: fromCode,
+      to: toCode,
+      depart,
+      ret,
+      travelers,
+      mode: "quick",
+    });
+
+    if (!ENABLE_REAL_SEARCH) {
+      navigate(`/search?${params.toString()}`);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await api.search({
+        mode: "quick",
+        from: fromCode,
+        to: toCode,
+        departDate: depart,
+        returnDate: ret,
+        travelers,
+      });
+      const id = res?.id;
+      if (id) {
+        try {
+          sessionStorage.setItem("travixis:lastSearchId", id);
+        } catch { /* noop */ }
+        navigate(`/autopilot?id=${encodeURIComponent(id)}`);
+      } else {
+        toast.warning("Search did not return an id — showing preview mode.");
+        navigate(`/search?${params.toString()}&offline=1`);
+      }
+    } catch {
+      toast.warning("Backend unreachable — showing preview mode.");
+      navigate(`/search?${params.toString()}&offline=1`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const goAutopilot = (text?: string) => {
+    const q = (text ?? voiceText).trim();
+    if (q) {
+      // Pre-extract just to validate; SearchPage will own the real submit.
+      extractTripFields(q);
+      navigate(`/search?q=${encodeURIComponent(q)}&mode=autopilot`);
+    } else {
+      navigate(`/search?mode=autopilot`);
+    }
+  };
+
+  const onVoiceClick = () => {
+    if (!voice.supported) {
+      toast.info("Voice search is not supported in this browser yet.");
+      return;
+    }
+    if (voice.listening) {
+      voice.stop();
+      return;
+    }
+    setVoiceText("");
+    voice.start((finalText) => setVoiceText(finalText));
+  };
+
   return (
     <div>
       {/* Hero */}
@@ -30,25 +125,15 @@ const Landing = () => {
               <Sparkles className="h-3 w-3" /> Travel Operating System · Autopilot Search
             </BadgeSoft>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">
-              We search travel better than anyone else.
+              Search your way.
             </h1>
             <p className="mt-5 text-lg md:text-xl text-white/80 max-w-2xl">
-              Describe your trip in your own words. Travixis Autopilot compares routes, true total prices and stress —
-              then explains the trade-offs so you can decide with confidence.
+              Search your way — type, use AI, or speak your trip. Travixis compares routes, true total
+              prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild variant="cta" size="xl">
-                <Link to="/search">
-                  <Sparkles className="h-4 w-4" /> Try Autopilot Search
-                </Link>
-              </Button>
-              <Button asChild variant="ghost" size="xl" className="text-white hover:bg-white/10">
-                <Link to="/search">Start searching <ArrowRight className="h-4 w-4" /></Link>
-              </Button>
-            </div>
 
             {/* Trip type chips */}
-            <div className="mt-10 flex flex-wrap gap-2">
+            <div className="mt-8 flex flex-wrap gap-2">
               {[
                 { icon: Plane, label: "Flights" },
                 { icon: Hotel, label: "Hotels" },
@@ -67,21 +152,97 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Quick search teaser */}
+      {/* Search entry: Quick / Autopilot / Voice */}
       <section className="container -mt-10 relative z-10">
         <div className="rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
-          <div className="flex flex-col md:flex-row gap-4 items-stretch">
-            <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Field label="From" value="Amsterdam" />
-              <Field label="To" value="Lisbon" />
-              <Field label="Departure" value="Fri, 15 Aug" />
-              <Field label="Travelers" value="2 adults" />
-            </div>
-            <Button asChild variant="hero" size="lg" className="md:w-auto w-full">
-              <Link to="/search">
-                Search with Travixis <ArrowRight className="h-4 w-4" />
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <div className="inline-flex flex-wrap rounded-xl border bg-muted/40 p-1">
+              <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-1.5 text-sm font-medium shadow-sm">
+                <Search className="h-4 w-4 text-primary" /> Quick Search
+              </span>
+              <Link
+                to="/search?mode=autopilot"
+                className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
+              >
+                <Wand2 className="h-4 w-4" /> AI Autopilot
               </Link>
+              <button
+                type="button"
+                onClick={onVoiceClick}
+                className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
+              >
+                {voice.listening ? <MicOff className="h-4 w-4 text-[hsl(var(--accent))]" /> : <Mic className="h-4 w-4" />}
+                Voice Search
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground hidden md:block">
+              Search your way — type, use AI, or speak your trip.
+            </p>
+          </div>
+
+          <form onSubmit={onQuickSearch} className="flex flex-col md:flex-row gap-4 items-stretch">
+            <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-3">
+              <FieldInput label="From" value={from} onChange={setFrom} placeholder="Amsterdam" />
+              <FieldInput label="To" value={to} onChange={setTo} placeholder="Lisbon" />
+              <FieldInput label="Departure" type="date" value={depart} onChange={setDepart} />
+              <FieldInput label="Return" type="date" value={ret} onChange={setRet} />
+              <FieldInput label="Travelers" value={travelers} onChange={setTravelers} placeholder="2 adults" />
+            </div>
+            <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full md:self-end" disabled={submitting}>
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+              {submitting ? "Searching…" : "Search with Travixis"}
             </Button>
+          </form>
+
+          {(voice.listening || voiceText) && (
+            <div className="mt-5 rounded-xl border bg-[hsl(var(--accent-soft))]/40 p-4">
+              <div className="flex items-start gap-3">
+                <div className="grid h-9 w-9 place-items-center rounded-lg bg-card text-primary shrink-0">
+                  <Mic className={voice.listening ? "h-4 w-4 animate-pulse text-[hsl(var(--accent))]" : "h-4 w-4"} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+                    {voice.listening ? "Listening…" : "Voice transcript"}
+                  </p>
+                  <Input
+                    value={voiceText}
+                    onChange={(e) => setVoiceText(e.target.value)}
+                    placeholder="Speak your trip — e.g. From Amsterdam to Lisbon next Friday for 2 adults."
+                    className="mt-2 h-10"
+                  />
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button type="button" variant="cta" size="sm" onClick={() => goAutopilot()} disabled={!voiceText.trim()}>
+                      <Sparkles className="h-4 w-4" /> Send to Autopilot
+                    </Button>
+                    {voice.listening ? (
+                      <Button type="button" variant="outline" size="sm" onClick={voice.stop}>
+                        <MicOff className="h-4 w-4" /> Stop
+                      </Button>
+                    ) : (
+                      <Button type="button" variant="ghost" size="sm" onClick={onVoiceClick}>
+                        <Mic className="h-4 w-4" /> Record again
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <Wand2 className="h-3.5 w-3.5" /> Want AI to plan it?
+            </span>
+            <Link to="/search?mode=autopilot" className="text-primary font-medium hover:underline">
+              Try AI Autopilot →
+            </Link>
+            <span className="mx-1 opacity-40">·</span>
+            <button type="button" onClick={onVoiceClick} className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">
+              <Mic className="h-3.5 w-3.5" /> Speak your trip
+            </button>
+            {!voice.supported && (
+              <span className="text-[11px] text-muted-foreground/80">(voice not supported in this browser yet)</span>
+            )}
           </div>
         </div>
       </section>
@@ -227,10 +388,30 @@ const Landing = () => {
   );
 };
 
-const Field = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-lg bg-muted/50 px-4 py-3">
-    <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{label}</p>
-    <p className="mt-0.5 text-sm font-medium">{value}</p>
+const FieldInput = ({
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  placeholder?: string;
+}) => (
+  <div className="rounded-lg bg-muted/40 px-3 py-2">
+    <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+      {label}
+    </Label>
+    <Input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="h-9 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-sm font-medium"
+    />
   </div>
 );
 
