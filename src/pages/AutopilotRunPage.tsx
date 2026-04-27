@@ -251,7 +251,15 @@ const AutopilotRunPage = () => {
               <h2 className="mt-2 text-2xl font-bold">3 best options found for you</h2>
               <p className="text-sm text-muted-foreground">Best Value · Cheapest · Lowest Stress — all with true total price.</p>
             </div>
-            <Button variant="hero" size="lg" onClick={() => navigate("/results?from=autopilot")}>
+            <Button
+              variant="hero"
+              size="lg"
+              onClick={() =>
+                navigate(
+                  `/results?from=autopilot${searchId ? `&id=${encodeURIComponent(searchId)}` : ""}`
+                )
+              }
+            >
               View recommendations <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
