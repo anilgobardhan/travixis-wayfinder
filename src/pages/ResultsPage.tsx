@@ -223,6 +223,15 @@ const ResultsPage = () => {
         </div>
       </div>
 
+      {previewMode && (
+        <div className="flex items-start gap-2 rounded-xl border border-[hsl(var(--warning))]/30 bg-[hsl(var(--accent-soft))] px-4 py-3 text-sm text-foreground">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-[hsl(var(--warning))]" />
+          <span>
+            Running in <strong>preview mode</strong> — showing illustrative results until the live search is available.
+          </span>
+        </div>
+      )}
+
       {/* A/B/C recommendation block */}
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Travixis recommends</h2>
