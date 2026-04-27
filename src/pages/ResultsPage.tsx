@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -10,6 +10,14 @@ import {
   Sparkles,
   ArrowRight,
   Info,
+  Lightbulb,
+  Wallet,
+  Gauge,
+  Wand2,
+  MapPin,
+  CalendarRange,
+  Compass,
+  Timer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
