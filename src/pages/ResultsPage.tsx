@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Plane,
@@ -18,11 +18,14 @@ import {
   CalendarRange,
   Compass,
   Timer,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 
 type Option = {
   id: string;
