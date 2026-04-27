@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
+import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 
 const STEPS = [
   "Understanding your trip goal",
@@ -52,7 +53,7 @@ const AutopilotRunPage = () => {
   const [error, setError] = useState<string | null>(null);
   const cancelled = useRef(false);
 
-  const useRealBackend = Boolean(searchId) && !offline;
+  const useRealBackend = ENABLE_REAL_SEARCH && Boolean(searchId) && !offline;
 
   // Real backend: poll GET /search/:id for status updates
   useEffect(() => {
@@ -74,6 +75,8 @@ const AutopilotRunPage = () => {
           setStepIdx(STEPS.length);
           setProgressOverride(100);
           setDone(true);
+          // Auto-forward to results with the searchId for real-backend runs.
+          navigate(`/results?from=autopilot&id=${encodeURIComponent(searchId)}`);
           return;
         }
         if (status === "failed" || status === "error") {
@@ -93,7 +96,7 @@ const AutopilotRunPage = () => {
       cancelled.current = true;
       if (timer) window.clearTimeout(timer);
     };
-  }, [useRealBackend, searchId]);
+  }, [useRealBackend, searchId, navigate]);
 
   // Simulated fallback: only when there is no searchId (preview mode)
   useEffect(() => {
