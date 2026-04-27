@@ -146,7 +146,7 @@ const SearchPage = () => {
           <Textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder={examplePrompts[0]}
+            placeholder="Describe your trip in your own words"
             className="min-h-[140px] text-base leading-relaxed"
           />
 
