@@ -187,11 +187,29 @@ const mapBackendOption = (b: BackendOption, i: number): Option => {
   };
 };
 
+// Lightweight date formatter — "2026-04-15" -> "15 Apr". Returns "" on
+// invalid/missing input so an empty trip summary collapses cleanly.
+const formatTripDate = (iso?: string | null): string => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+};
+
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
+
+  // Trip summary fields — URL is authoritative; fall back to first option's
+  // route only if from/to are missing. No hardcoded city/date/traveler text.
+  const tripFrom = params.get("from") && params.get("from") !== "autopilot" ? params.get("from") : params.get("origin");
+  const tripTo = params.get("to") || params.get("destination");
+  const tripDepart = params.get("departDate") || params.get("depart");
+  const tripReturn = params.get("returnDate") || params.get("return");
+  const travelersParam = Number(params.get("travelers") ?? "");
+  const travelersCount = Number.isFinite(travelersParam) && travelersParam >= 1 ? travelersParam : undefined;
 
   const [liveOptions, setLiveOptions] = useState<Option[] | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
@@ -225,14 +243,17 @@ const ResultsPage = () => {
           [];
         const mapped = raw.map(mapBackendOption);
         if (mapped.length > 0) {
+          // Live data wins — hide preview banner AND replace mock array.
           setLiveOptions(mapped);
           setPreviewMode(false);
         } else {
+          setLiveOptions(null);
           setPreviewMode(true);
         }
       } catch (error) {
         console.error("RESULTS FETCH FAILED", error);
         if (cancelled) return;
+        setLiveOptions(null);
         setPreviewMode(true);
         toast.warning("Backend unreachable — showing preview results.");
       }
@@ -242,8 +263,32 @@ const ResultsPage = () => {
     };
   }, [searchId, fromAutopilot]);
 
-  const displayOptions = liveOptions ?? options;
+  // Once live options arrive, the mock `options` array MUST not be used.
+  const displayOptions = liveOptions && liveOptions.length > 0 ? liveOptions : options;
   const recommended = displayOptions.filter((o) => o.tag);
+
+  console.log("RESULTS_RENDER_SOURCE", {
+    searchId,
+    liveOptionsCount: liveOptions?.length ?? 0,
+    previewMode,
+  });
+
+  // Trip summary text built from URL only. Any missing piece collapses out.
+  const inferredRoute = displayOptions[0]?.route;
+  const summaryRoute =
+    tripFrom && tripTo ? `${tripFrom.toUpperCase()} → ${tripTo.toUpperCase()}` : inferredRoute;
+  const summaryDates = (() => {
+    const a = formatTripDate(tripDepart);
+    const b = formatTripDate(tripReturn);
+    if (a && b) return `${a}–${b}`;
+    if (a) return a;
+    return "";
+  })();
+  const summaryTravelers =
+    typeof travelersCount === "number"
+      ? `${travelersCount} ${travelersCount === 1 ? "traveler" : "travelers"}`
+      : "";
+  const tripSummary = [summaryRoute, summaryDates, summaryTravelers].filter(Boolean).join(" · ");
 
   return (
     <div className="container max-w-6xl space-y-10">
@@ -252,7 +297,9 @@ const ResultsPage = () => {
           {fromAutopilot && (
             <BadgeSoft variant="accent" className="mb-2"><Wand2 className="h-3 w-3" /> Smart Search result</BadgeSoft>
           )}
-          <BadgeSoft variant="primary">Amsterdam → Lisbon · 15–22 Aug · 2 adults</BadgeSoft>
+          {tripSummary && (
+            <BadgeSoft variant="primary">{tripSummary}</BadgeSoft>
+          )}
           <h1 className="mt-3 text-3xl font-bold">{displayOptions.length} options found</h1>
           <p className="mt-1 text-muted-foreground">Sorted by Travixis recommendation. All prices include taxes & surcharges.</p>
         </div>
@@ -416,7 +463,9 @@ const ResultsPage = () => {
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
                   <div className="lg:text-right">
                     <p className="text-3xl font-bold">€{total}</p>
-                    <p className="text-xs text-muted-foreground">true total · 2 travelers</p>
+                    <p className="text-xs text-muted-foreground">
+                      true total{summaryTravelers ? ` · ${summaryTravelers}` : ""}
+                    </p>
                   </div>
                   <details className="text-xs text-muted-foreground lg:text-right">
                     <summary className="cursor-pointer hover:text-foreground">Price breakdown</summary>
