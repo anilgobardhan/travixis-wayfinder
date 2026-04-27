@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Plane, Hotel, Package, Car, Bus, Ticket,
-  Search as SearchIcon, Sparkles, Wand2, Settings2, ShieldCheck,
+  Search as SearchIcon, Sparkles, Wand2, Settings2, ShieldCheck, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { api } from "@/lib/api";
+import { extractTripFields } from "@/lib/extractTripFields";
 
 type TripType = "flight" | "hotel" | "package" | "car" | "transfer" | "activities";
 type Mode = "autopilot" | "classic";
