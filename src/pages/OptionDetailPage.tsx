@@ -129,40 +129,30 @@ const OptionDetailPage = () => {
     },
   ];
 
-  // Prefer real numbers from the selected option; fall back to placeholders
-  // only when no live option is available.
+  // Single source of truth: priceBreakdown from the selected option.
+  // Total is ALWAYS the sum of these four parts — never a precomputed
+  // backend total — so the "Total" line equals the visible breakdown.
   const breakdownFromBackend = selectedOption?.explanation?.priceBreakdown;
-  const optionTotalPrice =
-    typeof selectedOption?.price === "number" ? selectedOption.price : undefined;
-  const perTravelerBaseFare =
-    typeof breakdownFromBackend?.baseFare === "number"
-      ? breakdownFromBackend.baseFare
-      : 218;
-  const perTravelerBaggage =
-    typeof breakdownFromBackend?.baggage === "number"
-      ? breakdownFromBackend.baggage
-      : 25;
-  const taxesTotal =
-    typeof breakdownFromBackend?.taxes === "number"
-      ? breakdownFromBackend.taxes
-      : 84;
-  const baseFareTotal = travelers * perTravelerBaseFare;
-  const baggageTotal = travelers * perTravelerBaggage;
+  const baseFare =
+    typeof breakdownFromBackend?.baseFare === "number" ? breakdownFromBackend.baseFare : 0;
+  const taxes =
+    typeof breakdownFromBackend?.taxes === "number" ? breakdownFromBackend.taxes : 0;
+  const baggage =
+    typeof breakdownFromBackend?.baggage === "number" ? breakdownFromBackend.baggage : 0;
+  const fees =
+    typeof breakdownFromBackend?.fees === "number" ? breakdownFromBackend.fees : 0;
   const optionCurrency =
     typeof selectedOption?.currency === "string" && selectedOption.currency.length > 0
       ? selectedOption.currency
       : "EUR";
 
   const breakdown = [
-    { label: `Base fare (${travelers} × €${perTravelerBaseFare})`, value: baseFareTotal },
-    { label: "Taxes & airport fees", value: taxesTotal },
-    { label: `Checked baggage (${travelers} × 23kg)`, value: baggageTotal },
-    { label: "Seat selection", value: 0 },
-    { label: "Travixis service fee", value: 0 },
+    { label: "Base fare", value: baseFare },
+    { label: "Taxes & airport fees", value: taxes },
+    { label: "Checked baggage", value: baggage },
+    { label: "Fees", value: fees },
   ];
-  const computedTotal = breakdown.reduce((s, b) => s + b.value, 0);
-  const total =
-    typeof optionTotalPrice === "number" ? Math.round(optionTotalPrice * travelers) : computedTotal;
+  const total = (baseFare ?? 0) + (taxes ?? 0) + (baggage ?? 0) + (fees ?? 0);
   const travelersLabel = `${travelers} ${travelers === 1 ? "traveler" : "travelers"}`;
 
   return (
