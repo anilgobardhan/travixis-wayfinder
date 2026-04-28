@@ -86,7 +86,16 @@ const Landing = () => {
         try {
           sessionStorage.setItem("travixis:lastSearchId", id);
         } catch { /* noop */ }
-        navigate(`/autopilot?id=${encodeURIComponent(id)}&mode=quick`);
+        const qs = new URLSearchParams({
+          from: "quick",
+          id,
+          origin: fromAirport!.iata,
+          destination: toAirport!.iata,
+          departDate: depart,
+          returnDate: ret || depart,
+          travelers: String(travelersCount),
+        }).toString();
+        navigate(`/results?${qs}`);
       } else {
         toast.warning("Search did not return an id — showing preview mode.");
         navigate(`/autopilot?offline=1&mode=quick`);
