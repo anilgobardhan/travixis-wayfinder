@@ -37,11 +37,38 @@ type Option = {
   taxes: number;
   baggage: number;
   fees: number;
+  currency: string; // e.g. "EUR"
   riskScore: number; // 0-100, lower is better
   baggageInfo: string;
   refund: string;
   why: string;
   tag?: "best-value" | "lowest-stress" | "cheapest";
+};
+
+// Backend's `explanation.riskFactors[]` carries strings like
+// "direct flight", "1 layover", "2 layovers", "round trip".
+// Pick the first stops-related factor and capitalize it for the UI.
+const stopsFromRiskFactors = (factors?: string[]): string | undefined => {
+  if (!Array.isArray(factors)) return undefined;
+  for (const f of factors) {
+    const lower = f.toLowerCase();
+    if (lower.includes("direct")) return "Direct";
+    const layover = /^(\d+)\s+layovers?$/.exec(lower);
+    if (layover) {
+      const n = Number(layover[1]);
+      return n === 1 ? "1 stop" : `${n} stops`;
+    }
+  }
+  return undefined;
+};
+
+// Currency code → symbol when we know it; otherwise return the code itself
+// so the UI never silently lies about currency.
+const currencySymbol = (code: string): string => {
+  if (code === "EUR") return "€";
+  if (code === "USD") return "$";
+  if (code === "GBP") return "£";
+  return code;
 };
 
 const options: Option[] = [
@@ -51,7 +78,7 @@ const options: Option[] = [
     route: "AMS → LIS",
     duration: "3h 25m",
     stops: "Direct",
-    price: 218, taxes: 42, baggage: 25, fees: 0,
+    price: 218, taxes: 42, baggage: 25, fees: 0, currency: "EUR",
     riskScore: 12,
     baggageInfo: "Carry-on + 23kg checked included",
     refund: "Refundable until 24h before departure",
@@ -64,7 +91,7 @@ const options: Option[] = [
     route: "AMS → LIS",
     duration: "3h 35m",
     stops: "Direct",
-    price: 264, taxes: 48, baggage: 0, fees: 0,
+    price: 264, taxes: 48, baggage: 0, fees: 0, currency: "EUR",
     riskScore: 8,
     baggageInfo: "Carry-on only — checked bag €35",
     refund: "Fully flexible, free changes",
@@ -77,7 +104,7 @@ const options: Option[] = [
     route: "AMS → LIS",
     duration: "5h 10m",
     stops: "1 stop · Madrid",
-    price: 119, taxes: 28, baggage: 32, fees: 8,
+    price: 119, taxes: 28, baggage: 32, fees: 8, currency: "EUR",
     riskScore: 48,
     baggageInfo: "Small carry-on only — extras paid",
     refund: "Non-refundable",
@@ -90,7 +117,7 @@ const options: Option[] = [
     route: "AMS → LIS",
     duration: "4h 50m",
     stops: "1 stop · Frankfurt",
-    price: 289, taxes: 52, baggage: 0, fees: 0,
+    price: 289, taxes: 52, baggage: 0, fees: 0, currency: "EUR",
     riskScore: 22,
     baggageInfo: "Carry-on + 23kg checked included",
     refund: "Partial refund (€80 fee)",
@@ -149,12 +176,17 @@ const formatDuration = (mins?: number, fallback?: string) => {
 };
 
 const mapBackendOption = (b: BackendOption, i: number): Option => {
-  const stops =
+  // Prefer the live riskFactors-derived stops indicator over the placeholder.
+  const stopsFromBackend =
     typeof b.stops === "number"
       ? b.stops === 0
         ? "Direct"
         : `${b.stops} stop${b.stops > 1 ? "s" : ""}`
-      : b.stops || "Direct";
+      : typeof b.stops === "string"
+      ? b.stops
+      : undefined;
+  const stops =
+    stopsFromBackend || stopsFromRiskFactors(b.explanation?.riskFactors) || "—";
   const route =
     b.route || (b.origin && b.destination ? `${b.origin} → ${b.destination}` : "—");
   const breakdown = b.explanation?.priceBreakdown ?? {};
@@ -169,6 +201,19 @@ const mapBackendOption = (b: BackendOption, i: number): Option => {
   // Backend ships riskScore in 0–1; the UI thresholds at 0–100. Scale up.
   const rawRisk = typeof b.riskScore === "number" ? b.riskScore : 0.25;
   const riskScore = rawRisk <= 1 ? Math.round(rawRisk * 100) : Math.round(rawRisk);
+  const baggageAmount =
+    typeof breakdown.baggage === "number"
+      ? breakdown.baggage
+      : typeof b.baggage === "number"
+      ? b.baggage
+      : 0;
+  // Derive baggageInfo from the numeric amount when no explicit string came back.
+  const currency = typeof b.currency === "string" && b.currency.length > 0 ? b.currency : "EUR";
+  const sym = currencySymbol(currency);
+  const derivedBaggageInfo =
+    baggageAmount > 0
+      ? `Baggage included (${sym}${baggageAmount})`
+      : "Baggage not included";
   return {
     id: String(b.id ?? i + 1),
     airline: b.airline || b.carrier || "Travel option",
@@ -177,10 +222,11 @@ const mapBackendOption = (b: BackendOption, i: number): Option => {
     stops,
     price: basePrice,
     taxes: typeof breakdown.taxes === "number" ? breakdown.taxes : typeof b.taxes === "number" ? b.taxes : 0,
-    baggage: typeof breakdown.baggage === "number" ? breakdown.baggage : typeof b.baggage === "number" ? b.baggage : 0,
+    baggage: baggageAmount,
     fees: typeof b.fees === "number" ? b.fees : breakdown.fees ?? 0,
+    currency,
     riskScore,
-    baggageInfo: b.baggageInfo || "Baggage details on confirmation",
+    baggageInfo: b.baggageInfo || derivedBaggageInfo,
     refund: b.refund || "Refund policy on confirmation",
     why: b.explanation?.summary || "Recommended by Travixis based on your goal.",
     tag: b.tag ?? tagFromType(b.type),
@@ -335,7 +381,7 @@ const ResultsPage = () => {
                 <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
                 <p className="mt-3 font-semibold">{o.airline}</p>
                 <p className="text-xs text-muted-foreground">{o.route} · {o.stops} · {o.duration}</p>
-                <p className="mt-3 text-2xl font-bold">€{total}</p>
+                <p className="mt-3 text-2xl font-bold">{currencySymbol(o.currency)}{total}</p>
                 <p className="text-xs text-muted-foreground">true total price</p>
                 <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
                   <li className="flex items-start gap-1.5"><Luggage className="h-3 w-3 mt-0.5 shrink-0" /> {o.baggageInfo}</li>
@@ -465,7 +511,7 @@ const ResultsPage = () => {
 
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
                   <div className="lg:text-right">
-                    <p className="text-3xl font-bold">€{total}</p>
+                    <p className="text-3xl font-bold">{currencySymbol(o.currency)}{total}</p>
                     <p className="text-xs text-muted-foreground">
                       true total{summaryTravelers ? ` · ${summaryTravelers}` : ""}
                     </p>
@@ -473,10 +519,10 @@ const ResultsPage = () => {
                   <details className="text-xs text-muted-foreground lg:text-right">
                     <summary className="cursor-pointer hover:text-foreground">Price breakdown</summary>
                     <ul className="mt-2 space-y-1">
-                      <li className="flex justify-between gap-4"><span>Base fare</span><span>€{o.price}</span></li>
-                      <li className="flex justify-between gap-4"><span>Taxes</span><span>€{o.taxes}</span></li>
-                      <li className="flex justify-between gap-4"><span>Baggage</span><span>€{o.baggage}</span></li>
-                      <li className="flex justify-between gap-4"><span>Fees</span><span>€{o.fees}</span></li>
+                      <li className="flex justify-between gap-4"><span>Base fare</span><span>{currencySymbol(o.currency)}{o.price}</span></li>
+                      <li className="flex justify-between gap-4"><span>Taxes</span><span>{currencySymbol(o.currency)}{o.taxes}</span></li>
+                      <li className="flex justify-between gap-4"><span>Baggage</span><span>{currencySymbol(o.currency)}{o.baggage}</span></li>
+                      <li className="flex justify-between gap-4"><span>Fees</span><span>{currencySymbol(o.currency)}{o.fees}</span></li>
                     </ul>
                   </details>
                   <Button asChild variant="hero" size="sm">
