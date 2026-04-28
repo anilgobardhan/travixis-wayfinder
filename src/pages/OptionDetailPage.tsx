@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -13,6 +14,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import {
+  api,
+  type SearchRequestSnapshot,
+  type SearchOptionFromBackend,
+} from "@/lib/api";
 
 // "2026-04-15" -> "Wed, 15 Apr". Returns the raw input on parse failure
 // so the UI never silently swallows a bad-but-present date.
@@ -30,15 +36,52 @@ const formatTripDate = (iso?: string | null): string => {
 const OptionDetailPage = () => {
   const { id } = useParams();
   const [params] = useSearchParams();
+  const searchId = params.get("id") || undefined;
 
-  // Trip params from URL — same contract as ResultsPage's redirect.
-  const origin = (params.get("origin") || "").toUpperCase();
-  const destination = (params.get("destination") || "").toUpperCase();
-  const departDate = params.get("departDate") || params.get("depart") || "";
-  const returnDate = params.get("returnDate") || params.get("return") || "";
-  const travelersRaw = Number(params.get("travelers") ?? "");
+  // Single source of truth: the backend's request snapshot, fetched by searchId.
+  const [tripRequest, setTripRequest] = useState<SearchRequestSnapshot | null>(null);
+  const [selectedOption, setSelectedOption] = useState<SearchOptionFromBackend | null>(null);
+
+  useEffect(() => {
+    if (!searchId) {
+      setTripRequest(null);
+      setSelectedOption(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await api.getSearch(searchId);
+        if (cancelled) return;
+        setTripRequest(data?.request ?? null);
+        const options =
+          data?.results?.options ??
+          data?.options ??
+          data?.recommendations ??
+          data?.search?.options ??
+          [];
+        const found =
+          options.find((o) => String(o.id) === String(id)) ?? options[0] ?? null;
+        setSelectedOption(found);
+      } catch {
+        if (cancelled) return;
+        setTripRequest(null);
+        setSelectedOption(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchId, id]);
+
+  const origin = (tripRequest?.from ?? "").toUpperCase();
+  const destination = (tripRequest?.to ?? "").toUpperCase();
+  const departDate = tripRequest?.departDate ?? "";
+  const returnDate = tripRequest?.returnDate ?? "";
   const travelers =
-    Number.isFinite(travelersRaw) && travelersRaw >= 1 ? travelersRaw : 1;
+    typeof tripRequest?.travelers === "number" && tripRequest.travelers >= 1
+      ? tripRequest.travelers
+      : 1;
 
   const originLabel = origin || "Origin";
   const destinationLabel = destination || "Destination";
@@ -49,7 +92,7 @@ const OptionDetailPage = () => {
   const returnDateText = formatTripDate(returnDate);
 
   // Per-segment timing remains placeholder (backend does not yet expose it
-  // per option). Dates and city codes are now driven by the URL.
+  // per option). Dates, route, and travelers come from the canonical snapshot.
   const segments = [
     {
       from: `${originLabel} (${origin || "—"})`,
@@ -71,28 +114,43 @@ const OptionDetailPage = () => {
     },
   ];
 
-  // Per-traveler placeholder fare; real per-pax pricing requires a backend
-  // change and is out of scope for this fix.
-  const perTravelerBaseFare = 218;
-  const perTravelerBaggage = 25;
+  // Prefer real numbers from the selected option; fall back to placeholders
+  // only when no live option is available.
+  const breakdownFromBackend = selectedOption?.explanation?.priceBreakdown;
+  const optionTotalPrice =
+    typeof selectedOption?.price === "number" ? selectedOption.price : undefined;
+  const perTravelerBaseFare =
+    typeof breakdownFromBackend?.baseFare === "number"
+      ? breakdownFromBackend.baseFare
+      : 218;
+  const perTravelerBaggage =
+    typeof breakdownFromBackend?.baggage === "number"
+      ? breakdownFromBackend.baggage
+      : 25;
+  const taxesTotal =
+    typeof breakdownFromBackend?.taxes === "number"
+      ? breakdownFromBackend.taxes
+      : 84;
   const baseFareTotal = travelers * perTravelerBaseFare;
   const baggageTotal = travelers * perTravelerBaggage;
 
   const breakdown = [
     { label: `Base fare (${travelers} × €${perTravelerBaseFare})`, value: baseFareTotal },
-    { label: "Taxes & airport fees", value: 84 },
+    { label: "Taxes & airport fees", value: taxesTotal },
     { label: `Checked baggage (${travelers} × 23kg)`, value: baggageTotal },
     { label: "Seat selection", value: 0 },
     { label: "Travixis service fee", value: 0 },
   ];
-  const total = breakdown.reduce((s, b) => s + b.value, 0);
+  const computedTotal = breakdown.reduce((s, b) => s + b.value, 0);
+  const total =
+    typeof optionTotalPrice === "number" ? Math.round(optionTotalPrice * travelers) : computedTotal;
   const travelersLabel = `${travelers} ${travelers === 1 ? "traveler" : "travelers"}`;
 
   return (
     <div className="container max-w-5xl space-y-8">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <Link to="/results" className="text-sm text-muted-foreground hover:text-foreground">← Back to results</Link>
+          <Link to={searchId ? `/results?id=${encodeURIComponent(searchId)}` : "/results"} className="text-sm text-muted-foreground hover:text-foreground">← Back to results</Link>
           <h1 className="mt-2 text-3xl font-bold">TAP Air Portugal · Direct</h1>
           <p className="text-muted-foreground">Option #{id} · {routeLabel}</p>
         </div>

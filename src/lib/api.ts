@@ -11,6 +11,65 @@ export const API_BASE_URL = BASE_URL;
 export type HealthResponse = { status: string; [k: string]: unknown };
 export type DbHealthResponse = { status: string; [k: string]: unknown };
 
+// Canonical trip request snapshot echoed by GET /search/:id.
+// Source of truth for every page that renders trip context.
+export type SearchRequestSnapshot = {
+  from: string;
+  to: string;
+  departDate: string;
+  returnDate: string;
+  travelers: number;
+  createdAt: string;
+};
+
+export type SearchOptionFromBackend = {
+  id?: string | number;
+  type?: string;
+  price?: number;
+  currency?: string;
+  riskScore?: number;
+  durationMinutes?: number;
+  airline?: string;
+  carrier?: string;
+  carrierIataCode?: string;
+  explanation?: {
+    summary?: string;
+    priceBreakdown?: {
+      baseFare?: number;
+      taxes?: number;
+      baggage?: number;
+      fees?: number;
+    };
+    riskFactors?: string[];
+  };
+  // Tolerated legacy fields.
+  airline_name?: string;
+  route?: string;
+  origin?: string;
+  destination?: string;
+  durationText?: string;
+  duration?: string;
+  stops?: number | string;
+  baggage?: number;
+  fees?: number;
+  taxes?: number;
+};
+
+export type SearchResponse = {
+  searchId: string;
+  request: SearchRequestSnapshot | null;
+  status?: string;
+  progress?: number;
+  step?: string | number;
+  updates?: string[];
+  source?: "duffel" | "fallback";
+  results?: { options?: SearchOptionFromBackend[] };
+  // Tolerated legacy/alternate shapes.
+  options?: SearchOptionFromBackend[];
+  recommendations?: SearchOptionFromBackend[];
+  search?: { options?: SearchOptionFromBackend[] };
+};
+
 class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -58,11 +117,11 @@ export const api = {
 
   // Future endpoint placeholders — wired but not yet called from UI.
   search: (payload: unknown) =>
-    request<{ id: string }>("/search", {
+    request<{ searchId?: string; id?: string }>("/search", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
-  getSearch: (id: string) => request<unknown>(`/search/${id}`),
+  getSearch: (id: string) => request<SearchResponse>(`/search/${id}`),
   getTrip: (id: string) => request<unknown>(`/trips/${id}`),
 };
 

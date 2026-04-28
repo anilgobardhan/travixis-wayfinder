@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
-import { api } from "@/lib/api";
+import { api, type SearchRequestSnapshot } from "@/lib/api";
 import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 
 type Option = {
@@ -248,51 +248,40 @@ const ResultsPage = () => {
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
 
-  // Trip summary fields — URL is authoritative; fall back to first option's
-  // route only if from/to are missing. No hardcoded city/date/traveler text.
-  // origin/destination always win — `from` is a source/mode flag (autopilot, quick, voice).
-  const FROM_MODE_VALUES = new Set(["autopilot", "quick", "voice"]);
-  const fromParam = params.get("from");
-  const tripFrom = params.get("origin") || (fromParam && !FROM_MODE_VALUES.has(fromParam) ? fromParam : null);
-  const tripTo = params.get("destination") || params.get("to");
-  const tripDepart = params.get("departDate") || params.get("depart");
-  const tripReturn = params.get("returnDate") || params.get("return");
-  const travelersParam = Number(params.get("travelers") ?? "");
-  const travelersCount = Number.isFinite(travelersParam) && travelersParam >= 1 ? travelersParam : undefined;
-
+  // Trip context comes ONLY from the backend's request snapshot now —
+  // no URL-param fallbacks, no mocks. If the snapshot is missing the
+  // page renders an empty trip badge rather than fake data.
+  const [tripRequest, setTripRequest] = useState<SearchRequestSnapshot | null>(null);
   const [liveOptions, setLiveOptions] = useState<Option[] | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
     console.log("RESULTS SEARCH ID", searchId);
     if (!searchId) {
+      setTripRequest(null);
       setPreviewMode(true);
       return;
     }
     if (!ENABLE_REAL_SEARCH) {
+      setTripRequest(null);
       setPreviewMode(true);
       return;
     }
     let cancelled = false;
     (async () => {
       try {
-        const data = (await api.getSearch(searchId)) as {
-          options?: BackendOption[];
-          results?: { options?: BackendOption[] };
-          recommendations?: BackendOption[];
-          search?: { options?: BackendOption[] };
-        };
+        const data = await api.getSearch(searchId);
         console.log("RESULTS API DATA", data);
         if (cancelled) return;
+        setTripRequest(data?.request ?? null);
         const raw =
           data?.results?.options ??
           data?.options ??
           data?.recommendations ??
           data?.search?.options ??
           [];
-        const mapped = raw.map(mapBackendOption);
+        const mapped = (raw as BackendOption[]).map(mapBackendOption);
         if (mapped.length > 0) {
-          // Live data wins — hide preview banner AND replace mock array.
           setLiveOptions(mapped);
           setPreviewMode(false);
         } else {
@@ -302,6 +291,7 @@ const ResultsPage = () => {
       } catch (error) {
         console.error("RESULTS FETCH FAILED", error);
         if (cancelled) return;
+        setTripRequest(null);
         setLiveOptions(null);
         setPreviewMode(true);
         toast.warning("Backend unreachable — showing preview results.");
@@ -322,20 +312,21 @@ const ResultsPage = () => {
     previewMode,
   });
 
-  // Trip summary text built from URL only. Any missing piece collapses out.
-  const inferredRoute = displayOptions[0]?.route;
+  // Trip summary text comes from the backend snapshot only.
   const summaryRoute =
-    tripFrom && tripTo ? `${tripFrom.toUpperCase()} → ${tripTo.toUpperCase()}` : inferredRoute;
+    tripRequest && tripRequest.from && tripRequest.to
+      ? `${tripRequest.from.toUpperCase()} → ${tripRequest.to.toUpperCase()}`
+      : "";
   const summaryDates = (() => {
-    const a = formatTripDate(tripDepart);
-    const b = formatTripDate(tripReturn);
+    const a = tripRequest ? formatTripDate(tripRequest.departDate) : "";
+    const b = tripRequest ? formatTripDate(tripRequest.returnDate) : "";
     if (a && b) return `${a}–${b}`;
     if (a) return a;
     return "";
   })();
   const summaryTravelers =
-    typeof travelersCount === "number"
-      ? `${travelersCount} ${travelersCount === 1 ? "traveler" : "travelers"}`
+    tripRequest && typeof tripRequest.travelers === "number" && tripRequest.travelers >= 1
+      ? `${tripRequest.travelers} ${tripRequest.travelers === 1 ? "traveler" : "travelers"}`
       : "";
   const tripSummary = [summaryRoute, summaryDates, summaryTravelers].filter(Boolean).join(" · ");
 
@@ -396,7 +387,7 @@ const ResultsPage = () => {
                     Book now
                   </Button>
                   <Button asChild variant="soft" size="sm">
-                    <Link to={`/option/${o.id}`}>View details</Link>
+                    <Link to={searchId ? `/option/${o.id}?id=${encodeURIComponent(searchId)}` : `/option/${o.id}`}>View details</Link>
                   </Button>
                 </div>
               </div>
@@ -526,7 +517,7 @@ const ResultsPage = () => {
                     </ul>
                   </details>
                   <Button asChild variant="hero" size="sm">
-                    <Link to={`/option/${o.id}`}>View details <ArrowRight className="h-4 w-4" /></Link>
+                    <Link to={searchId ? `/option/${o.id}?id=${encodeURIComponent(searchId)}` : `/option/${o.id}`}>View details <ArrowRight className="h-4 w-4" /></Link>
                   </Button>
                   <label className="flex items-center justify-end gap-2 text-xs text-muted-foreground cursor-pointer">
                     <Checkbox
