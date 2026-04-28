@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
   Plane,
@@ -14,22 +14,79 @@ import {
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
 
+// "2026-04-15" -> "Wed, 15 Apr". Returns the raw input on parse failure
+// so the UI never silently swallows a bad-but-present date.
+const formatTripDate = (iso?: string | null): string => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+};
+
 const OptionDetailPage = () => {
   const { id } = useParams();
+  const [params] = useSearchParams();
 
+  // Trip params from URL — same contract as ResultsPage's redirect.
+  const origin = (params.get("origin") || "").toUpperCase();
+  const destination = (params.get("destination") || "").toUpperCase();
+  const departDate = params.get("departDate") || params.get("depart") || "";
+  const returnDate = params.get("returnDate") || params.get("return") || "";
+  const travelersRaw = Number(params.get("travelers") ?? "");
+  const travelers =
+    Number.isFinite(travelersRaw) && travelersRaw >= 1 ? travelersRaw : 1;
+
+  const originLabel = origin || "Origin";
+  const destinationLabel = destination || "Destination";
+  const routeLabel =
+    origin && destination ? `${origin} ↔ ${destination}` : "Your trip";
+
+  const outboundDate = formatTripDate(departDate);
+  const returnDateText = formatTripDate(returnDate);
+
+  // Per-segment timing remains placeholder (backend does not yet expose it
+  // per option). Dates and city codes are now driven by the URL.
   const segments = [
-    { from: "Amsterdam (AMS)", to: "Lisbon (LIS)", date: "Fri, 15 Aug", depart: "06:15", arrive: "08:40", flight: "TP671", duration: "3h 25m" },
-    { from: "Lisbon (LIS)", to: "Amsterdam (AMS)", date: "Fri, 22 Aug", depart: "19:10", arrive: "23:30", flight: "TP664", duration: "3h 20m" },
+    {
+      from: `${originLabel} (${origin || "—"})`,
+      to: `${destinationLabel} (${destination || "—"})`,
+      date: outboundDate,
+      depart: "06:15",
+      arrive: "08:40",
+      flight: "TP671",
+      duration: "3h 25m",
+    },
+    {
+      from: `${destinationLabel} (${destination || "—"})`,
+      to: `${originLabel} (${origin || "—"})`,
+      date: returnDateText,
+      depart: "19:10",
+      arrive: "23:30",
+      flight: "TP664",
+      duration: "3h 20m",
+    },
   ];
 
+  // Per-traveler placeholder fare; real per-pax pricing requires a backend
+  // change and is out of scope for this fix.
+  const perTravelerBaseFare = 218;
+  const perTravelerBaggage = 25;
+  const baseFareTotal = travelers * perTravelerBaseFare;
+  const baggageTotal = travelers * perTravelerBaggage;
+
   const breakdown = [
-    { label: "Base fare (2 × €218)", value: 436 },
+    { label: `Base fare (${travelers} × €${perTravelerBaseFare})`, value: baseFareTotal },
     { label: "Taxes & airport fees", value: 84 },
-    { label: "Checked baggage (2 × 23kg)", value: 50 },
+    { label: `Checked baggage (${travelers} × 23kg)`, value: baggageTotal },
     { label: "Seat selection", value: 0 },
     { label: "Travixis service fee", value: 0 },
   ];
   const total = breakdown.reduce((s, b) => s + b.value, 0);
+  const travelersLabel = `${travelers} ${travelers === 1 ? "traveler" : "travelers"}`;
 
   return (
     <div className="container max-w-5xl space-y-8">
@@ -37,7 +94,7 @@ const OptionDetailPage = () => {
         <div>
           <Link to="/results" className="text-sm text-muted-foreground hover:text-foreground">← Back to results</Link>
           <h1 className="mt-2 text-3xl font-bold">TAP Air Portugal · Direct</h1>
-          <p className="text-muted-foreground">Option #{id} · Amsterdam ↔ Lisbon</p>
+          <p className="text-muted-foreground">Option #{id} · {routeLabel}</p>
         </div>
         <BadgeSoft variant="primary"><Sparkles className="h-3 w-3" /> Best value</BadgeSoft>
       </div>
@@ -125,7 +182,7 @@ const OptionDetailPage = () => {
           <div className="rounded-2xl border bg-card p-5 shadow-elevated">
             <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">True total price</p>
             <p className="mt-1 text-4xl font-bold">€{total}</p>
-            <p className="text-xs text-muted-foreground">2 travelers · all fees included</p>
+            <p className="text-xs text-muted-foreground">{travelersLabel} · all fees included</p>
 
             <ul className="mt-5 space-y-2 text-sm border-t pt-4">
               {breakdown.map((b) => (
