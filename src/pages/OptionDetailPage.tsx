@@ -261,7 +261,7 @@ const OptionDetailPage = () => {
             </ul>
 
             <Button asChild variant="hero" size="lg" className="mt-5 w-full">
-              <Link to="/trip-dashboard">Continue <ArrowRight className="h-4 w-4" /></Link>
+              <Link to={searchId ? `/trip-dashboard?id=${encodeURIComponent(searchId)}` : "/trip-dashboard"}>Continue <ArrowRight className="h-4 w-4" /></Link>
             </Button>
             <Button
               variant="outline"

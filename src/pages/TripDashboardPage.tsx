@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
   Plane,
@@ -12,22 +13,141 @@ import {
   AlertTriangle,
   MapPin,
   ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { api, type SearchRequestSnapshot } from "@/lib/api";
+
+// "2026-04-29" -> "Wed, 29 Apr"
+const formatDate = (iso?: string | null): string => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+};
+
+// "2026-04-29" + "2026-05-03" -> "29 Apr — 3 May 2026"
+const formatDateRange = (a?: string | null, b?: string | null): string => {
+  if (!a && !b) return "";
+  const da = a ? new Date(a) : null;
+  const db = b ? new Date(b) : null;
+  const fmtPart = (d: Date | null) =>
+    d && !Number.isNaN(d.getTime())
+      ? d.toLocaleDateString(undefined, { day: "numeric", month: "short" })
+      : "";
+  const year =
+    db && !Number.isNaN(db.getTime())
+      ? db.getFullYear()
+      : da && !Number.isNaN(da.getTime())
+      ? da.getFullYear()
+      : "";
+  const left = fmtPart(da);
+  const right = fmtPart(db);
+  if (left && right) return `${left} — ${right}${year ? ` ${year}` : ""}`;
+  return left || right;
+};
+
+const daysUntil = (iso?: string | null): number | null => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const now = new Date();
+  const ms = d.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+};
 
 const TripDashboardPage = () => {
+  const [params] = useSearchParams();
+  const searchId = params.get("id") || undefined;
+
+  const [tripRequest, setTripRequest] = useState<SearchRequestSnapshot | null>(null);
+
+  useEffect(() => {
+    if (!searchId) {
+      setTripRequest(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await api.getSearch(searchId);
+        if (cancelled) return;
+        setTripRequest(data?.request ?? null);
+      } catch {
+        if (cancelled) return;
+        setTripRequest(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchId]);
+
+  const hasLiveTrip = Boolean(searchId && tripRequest);
+  const fromCode = (tripRequest?.from ?? "").toUpperCase();
+  const toCode = (tripRequest?.to ?? "").toUpperCase();
+  const headerTitle =
+    fromCode && toCode ? `${fromCode} → ${toCode}` : "Demo trip";
+  const dateRange = formatDateRange(tripRequest?.departDate, tripRequest?.returnDate);
+  const travelers =
+    typeof tripRequest?.travelers === "number" && tripRequest.travelers >= 1
+      ? tripRequest.travelers
+      : null;
+  const headerSubtitle = (() => {
+    if (!hasLiveTrip) return "No live search attached — illustrative content";
+    const parts: string[] = [];
+    if (dateRange) parts.push(dateRange);
+    if (travelers !== null)
+      parts.push(`${travelers} ${travelers === 1 ? "traveler" : "travelers"}`);
+    return parts.join(" · ");
+  })();
+  const tripStatusLabel = hasLiveTrip ? "Search ready" : "Demo";
+  const daysToGo = daysUntil(tripRequest?.departDate);
+  const daysToGoLabel =
+    hasLiveTrip && daysToGo !== null ? String(daysToGo) : "—";
+
+  const outboundSubtitle = hasLiveTrip
+    ? `${fromCode} → ${toCode} · ${formatDate(tripRequest?.departDate)}`
+    : "TAP TP671 · Fri 15 Aug · 06:35 → 08:40";
+  const returnSubtitle = hasLiveTrip
+    ? `${toCode} → ${fromCode} · ${formatDate(tripRequest?.returnDate)}`
+    : "TAP TP664 · Fri 22 Aug · 19:10 → 23:30";
+  const hotelSubtitle = hasLiveTrip
+    ? `${dateRange} · Not booked yet`
+    : "15 — 22 Aug · Deluxe room · Breakfast included";
+  const itemStatusVariant: "primary" | "success" | "warning" = hasLiveTrip
+    ? "primary"
+    : "success";
+  const itemStatusLabel = hasLiveTrip ? "Not booked yet" : "Confirmed";
+
   return (
     <div className="container max-w-6xl space-y-8">
+      {/* Back to results */}
+      <div>
+        <Link
+          to={searchId ? `/results?id=${encodeURIComponent(searchId)}` : "/results"}
+          className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to results
+        </Link>
+      </div>
+
       {/* Trip overview */}
       <div className="rounded-3xl bg-hero p-8 text-primary-foreground shadow-elevated">
-        <BadgeSoft variant="accent" className="bg-white/10 text-white">Upcoming trip</BadgeSoft>
-        <h1 className="mt-3 text-3xl md:text-4xl font-bold">Lisbon, Portugal</h1>
-        <p className="mt-1 text-white/80">15 — 22 August 2025 · 2 travelers</p>
+        <BadgeSoft variant="accent" className="bg-white/10 text-white">
+          {hasLiveTrip ? "Upcoming trip" : "Demo trip — no live search attached"}
+        </BadgeSoft>
+        <h1 className="mt-3 text-3xl md:text-4xl font-bold">{headerTitle}</h1>
+        <p className="mt-1 text-white/80">{headerSubtitle}</p>
         <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          <Stat label="Days to go" value="42" />
-          <Stat label="Trip status" value="Confirmed" />
-          <Stat label="Items booked" value="4 / 5" />
+          <Stat label="Days to go" value={daysToGoLabel} />
+          <Stat label="Trip status" value={tripStatusLabel} />
+          <Stat label="Items booked" value={hasLiveTrip ? "0 / 5" : "4 / 5"} />
         </div>
       </div>
 
@@ -49,27 +169,39 @@ const TripDashboardPage = () => {
 
           <TripItem
             icon={<Plane className="h-5 w-5" />}
-            title="Outbound flight · AMS → LIS"
-            subtitle="TAP TP671 · Fri 15 Aug · 06:35 → 08:40"
-            status={{ label: "Check-in opens in 41d", variant: "primary" }}
+            title={
+              hasLiveTrip
+                ? `Outbound flight · ${fromCode} → ${toCode}`
+                : "Outbound flight · AMS → LIS"
+            }
+            subtitle={outboundSubtitle}
+            status={{ label: itemStatusLabel, variant: itemStatusVariant }}
           />
           <TripItem
             icon={<Hotel className="h-5 w-5" />}
-            title="Memmo Alfama Hotel"
-            subtitle="15 — 22 Aug · Deluxe room · Breakfast included"
-            status={{ label: "Confirmed", variant: "success" }}
+            title={hasLiveTrip ? "Hotel (not booked yet)" : "Memmo Alfama Hotel"}
+            subtitle={hotelSubtitle}
+            status={{ label: itemStatusLabel, variant: itemStatusVariant }}
           />
           <TripItem
             icon={<MapPin className="h-5 w-5" />}
-            title="Lisbon walking tour"
-            subtitle="Sat 16 Aug · 10:00 · Group of 8"
-            status={{ label: "Confirmed", variant: "success" }}
+            title={hasLiveTrip ? "Activity (not booked yet)" : "Lisbon walking tour"}
+            subtitle={
+              hasLiveTrip
+                ? "Add experiences once your flight is booked"
+                : "Sat 16 Aug · 10:00 · Group of 8"
+            }
+            status={{ label: itemStatusLabel, variant: itemStatusVariant }}
           />
           <TripItem
             icon={<Plane className="h-5 w-5" />}
-            title="Return flight · LIS → AMS"
-            subtitle="TAP TP664 · Fri 22 Aug · 19:10 → 23:30"
-            status={{ label: "Confirmed", variant: "success" }}
+            title={
+              hasLiveTrip
+                ? `Return flight · ${toCode} → ${fromCode}`
+                : "Return flight · LIS → AMS"
+            }
+            subtitle={returnSubtitle}
+            status={{ label: itemStatusLabel, variant: itemStatusVariant }}
           />
 
           {/* Reminders */}
