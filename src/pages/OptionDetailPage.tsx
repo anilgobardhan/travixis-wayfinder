@@ -20,6 +20,21 @@ import {
   type SearchOptionFromBackend,
 } from "@/lib/api";
 
+// Locale-aware money formatter. Always 2 decimals so live prices like
+// 157.39999999999998 render as "€157.40" instead of leaking float artifacts.
+const formatMoney = (amount: number, currency: string = "EUR"): string => {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    return `${currency} ${amount.toFixed(2)}`;
+  }
+};
+
 // "2026-04-15" -> "Wed, 15 Apr". Returns the raw input on parse failure
 // so the UI never silently swallows a bad-but-present date.
 const formatTripDate = (iso?: string | null): string => {
@@ -133,6 +148,10 @@ const OptionDetailPage = () => {
       : 84;
   const baseFareTotal = travelers * perTravelerBaseFare;
   const baggageTotal = travelers * perTravelerBaggage;
+  const optionCurrency =
+    typeof selectedOption?.currency === "string" && selectedOption.currency.length > 0
+      ? selectedOption.currency
+      : "EUR";
 
   const breakdown = [
     { label: `Base fare (${travelers} × €${perTravelerBaseFare})`, value: baseFareTotal },
@@ -239,14 +258,14 @@ const OptionDetailPage = () => {
         <aside className="space-y-4 lg:sticky lg:top-24 self-start">
           <div className="rounded-2xl border bg-card p-5 shadow-elevated">
             <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">True total price</p>
-            <p className="mt-1 text-4xl font-bold">€{total}</p>
+            <p className="mt-1 text-4xl font-bold">{formatMoney(total, optionCurrency)}</p>
             <p className="text-xs text-muted-foreground">{travelersLabel} · all fees included</p>
 
             <ul className="mt-5 space-y-2 text-sm border-t pt-4">
               {breakdown.map((b) => (
                 <li key={b.label} className="flex justify-between text-muted-foreground">
                   <span>{b.label}</span>
-                  <span className="font-medium text-foreground">€{b.value}</span>
+                  <span className="font-medium text-foreground">{formatMoney(b.value, optionCurrency)}</span>
                 </li>
               ))}
             </ul>

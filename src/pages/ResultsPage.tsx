@@ -71,6 +71,22 @@ const currencySymbol = (code: string): string => {
   return code;
 };
 
+// Locale-aware money formatter. Always 2 decimals so live prices like
+// 157.39999999999998 render as "€157.40" instead of leaking float artifacts.
+const formatMoney = (amount: number, currency: string = "EUR"): string => {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    // Fallback if `currency` is not a valid ISO code.
+    return `${currencySymbol(currency)}${amount.toFixed(2)}`;
+  }
+};
+
 const options: Option[] = [
   {
     id: "1",
@@ -372,7 +388,7 @@ const ResultsPage = () => {
                 <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
                 <p className="mt-3 font-semibold">{o.airline}</p>
                 <p className="text-xs text-muted-foreground">{o.route} · {o.stops} · {o.duration}</p>
-                <p className="mt-3 text-2xl font-bold">{currencySymbol(o.currency)}{total}</p>
+                <p className="mt-3 text-2xl font-bold">{formatMoney(total, o.currency)}</p>
                 <p className="text-xs text-muted-foreground">true total price</p>
                 <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
                   <li className="flex items-start gap-1.5"><Luggage className="h-3 w-3 mt-0.5 shrink-0" /> {o.baggageInfo}</li>
@@ -502,7 +518,7 @@ const ResultsPage = () => {
 
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
                   <div className="lg:text-right">
-                    <p className="text-3xl font-bold">{currencySymbol(o.currency)}{total}</p>
+                    <p className="text-3xl font-bold">{formatMoney(total, o.currency)}</p>
                     <p className="text-xs text-muted-foreground">
                       true total{summaryTravelers ? ` · ${summaryTravelers}` : ""}
                     </p>
@@ -510,10 +526,10 @@ const ResultsPage = () => {
                   <details className="text-xs text-muted-foreground lg:text-right">
                     <summary className="cursor-pointer hover:text-foreground">Price breakdown</summary>
                     <ul className="mt-2 space-y-1">
-                      <li className="flex justify-between gap-4"><span>Base fare</span><span>{currencySymbol(o.currency)}{o.price}</span></li>
-                      <li className="flex justify-between gap-4"><span>Taxes</span><span>{currencySymbol(o.currency)}{o.taxes}</span></li>
-                      <li className="flex justify-between gap-4"><span>Baggage</span><span>{currencySymbol(o.currency)}{o.baggage}</span></li>
-                      <li className="flex justify-between gap-4"><span>Fees</span><span>{currencySymbol(o.currency)}{o.fees}</span></li>
+                      <li className="flex justify-between gap-4"><span>Base fare</span><span>{formatMoney(o.price, o.currency)}</span></li>
+                      <li className="flex justify-between gap-4"><span>Taxes</span><span>{formatMoney(o.taxes, o.currency)}</span></li>
+                      <li className="flex justify-between gap-4"><span>Baggage</span><span>{formatMoney(o.baggage, o.currency)}</span></li>
+                      <li className="flex justify-between gap-4"><span>Fees</span><span>{formatMoney(o.fees, o.currency)}</span></li>
                     </ul>
                   </details>
                   <Button asChild variant="hero" size="sm">
