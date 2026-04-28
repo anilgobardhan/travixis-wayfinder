@@ -204,8 +204,11 @@ const ResultsPage = () => {
 
   // Trip summary fields — URL is authoritative; fall back to first option's
   // route only if from/to are missing. No hardcoded city/date/traveler text.
-  const tripFrom = params.get("from") && params.get("from") !== "autopilot" ? params.get("from") : params.get("origin");
-  const tripTo = params.get("to") || params.get("destination");
+  // origin/destination always win — `from` is a source/mode flag (autopilot, quick, voice).
+  const FROM_MODE_VALUES = new Set(["autopilot", "quick", "voice"]);
+  const fromParam = params.get("from");
+  const tripFrom = params.get("origin") || (fromParam && !FROM_MODE_VALUES.has(fromParam) ? fromParam : null);
+  const tripTo = params.get("destination") || params.get("to");
   const tripDepart = params.get("departDate") || params.get("depart");
   const tripReturn = params.get("returnDate") || params.get("return");
   const travelersParam = Number(params.get("travelers") ?? "");
