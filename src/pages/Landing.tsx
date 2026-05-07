@@ -165,14 +165,15 @@ const Landing = () => {
       <section className="relative overflow-hidden bg-hero text-primary-foreground">
         <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white_1px,transparent_1px)] [background-size:24px_24px]" />
         <div className="container relative pt-6 pb-20 md:pt-8 md:pb-28">
-          <div className="max-w-[44rem]">
+          <div className="grid lg:grid-cols-12 gap-10 items-start">
+            <div className="lg:col-span-8 max-w-[44rem]">
             <BadgeSoft variant="accent" className="mb-5 bg-white/10 text-white">
               <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">
               Search your way.
             </h1>
-            <p className="mt-5 text-lg md:text-xl text-white/80 max-w-2xl">
+            <p className="mt-5 text-[17px] md:text-xl text-white/85 max-w-2xl leading-relaxed">
               Search your way — type, describe, or speak your trip. Travixis compares routes, true total
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
@@ -198,7 +199,7 @@ const Landing = () => {
             </div>
 
             {/* Live intelligence micro-signals */}
-            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-white/75">
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11.5px] text-white/80">
               {[
                 { dot: "bg-[hsl(var(--success))]", label: "23 low-stress routes this week" },
                 { dot: "bg-white/70", label: "Portugal weather confidence high" },
@@ -228,6 +229,41 @@ const Landing = () => {
                 </span>
               ))}
             </div>
+            </div>
+
+            {/* Floating intelligence panel — Apple/Notion AI feel */}
+            <aside className="lg:col-span-4 hidden lg:block">
+              <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md ring-1 ring-white/15 p-5 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.6)]">
+                <div className="flex items-center gap-2 text-white/85">
+                  <span className="grid h-7 w-7 place-items-center rounded-lg bg-white/10">
+                    <Sparkles className="h-3.5 w-3.5" />
+                  </span>
+                  <p className="text-[11px] uppercase tracking-wider font-semibold text-white/70">Travixis intelligence</p>
+                </div>
+                <p className="mt-4 text-[13.5px] leading-relaxed text-white/90">
+                  AI detected a <span className="font-semibold text-white">lower-stress departure window</span> Tue–Wed for AMS&nbsp;→&nbsp;LIS.
+                </p>
+                <div className="mt-4 space-y-2.5">
+                  {[
+                    { dot: "bg-[hsl(var(--success))]", label: "Wallet can cover 82% of this route" },
+                    { dot: "bg-white/70", label: "Best historical week to travel" },
+                    { dot: "bg-[hsl(var(--success))]", label: "Reliability above seasonal average" },
+                  ].map((s) => (
+                    <div key={s.label} className="flex items-center gap-2 text-[12.5px] text-white/85">
+                      <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+                      <span>{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-white/65">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))] animate-pulse" />
+                    Live signals
+                  </span>
+                  <span>Updated just now</span>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </section>
