@@ -134,7 +134,7 @@ export const MobileResultsBar = ({
     { label: "AI", icon: Sparkles, onClick: onExplain },
   ];
   return (
-    <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 pb-[env(safe-area-inset-bottom)]">
+    <div className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto max-w-7xl px-2 py-2 grid grid-cols-5 gap-1">
         {items.map((i) => (
           <button

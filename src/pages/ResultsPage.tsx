@@ -434,7 +434,7 @@ const ResultsPage = () => {
   };
 
   return (
-    <div className="container max-w-7xl pb-24 lg:pb-0">
+    <div className="container max-w-7xl pb-24 md:pb-0">
       <MobileFiltersButton {...filterProps} />
       <div className="flex gap-8 items-start">
         <ResultsFilters {...filterProps} />
