@@ -301,6 +301,10 @@ const Landing = () => {
         </div>
       </section>
 
+      <SmartCalendarSection />
+      <TrendingDestinationsSection />
+      <FlexibleTravelSection />
+
       {/* Trust */}
       <section className="container py-20">
         <div className="max-w-2xl">
