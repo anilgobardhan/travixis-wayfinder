@@ -234,41 +234,9 @@ const Landing = () => {
             </div>
             </div>
 
-            {/* Floating intelligence panel — Apple/Notion AI feel */}
+            {/* Floating intelligence panel — Apple/Notion AI feel, alive */}
             <aside className="lg:col-span-4 hidden lg:block">
-              <div className="rounded-[20px] bg-white/[0.05] backdrop-blur-xl ring-1 ring-white/10 p-7 shadow-[0_30px_80px_-32px_rgba(0,0,0,0.55)]">
-                <div className="flex items-center gap-2.5 text-white/85">
-                  <span className="grid h-7 w-7 place-items-center rounded-lg bg-white/[0.08] ring-1 ring-white/10">
-                    <Sparkles className="h-3.5 w-3.5" />
-                  </span>
-                  <p className="text-[10.5px] uppercase tracking-[0.14em] font-medium text-white/60">Travixis intelligence</p>
-                </div>
-                <p className="mt-6 text-[14.5px] leading-[1.6] text-white/90 font-light">
-                  AI detected a <span className="font-medium text-white">lower-stress departure window</span> Tue–Wed for AMS&nbsp;→&nbsp;LIS.
-                </p>
-                <div className="mt-6 space-y-3.5">
-                  {[
-                    { dot: "bg-[hsl(var(--success))]", label: "Wallet can cover 82% of this route" },
-                    { dot: "bg-white/60", label: "Best historical week to travel" },
-                    { dot: "bg-[hsl(var(--success))]", label: "Reliability above seasonal average" },
-                  ].map((s) => (
-                    <div key={s.label} className="flex items-center gap-2.5 text-[12.5px] text-white/80 leading-relaxed">
-                      <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
-                      <span>{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-7 pt-5 border-t border-white/[0.08] flex items-center justify-between text-[10.5px] text-white/55 tracking-wide">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="relative grid h-2 w-2 place-items-center">
-                      <span className="absolute inset-0 rounded-full bg-[hsl(var(--success))]/40 ambient-pulse" />
-                      <span className="relative h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
-                    </span>
-                    Live signals
-                  </span>
-                  <span>Updated just now</span>
-                </div>
-              </div>
+              <LiveIntelligencePanel />
             </aside>
           </div>
         </div>
