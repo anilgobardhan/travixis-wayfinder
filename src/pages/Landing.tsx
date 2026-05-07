@@ -43,6 +43,7 @@ const Landing = () => {
   const [depart, setDepart] = useState("");
   const [ret, setRet] = useState("");
   const [travelers, setTravelers] = useState("1");
+  const [cabin, setCabin] = useState("Economy");
   const [submitting, setSubmitting] = useState(false);
 
   const [voiceText, setVoiceText] = useState("");
