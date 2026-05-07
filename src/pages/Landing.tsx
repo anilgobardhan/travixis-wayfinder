@@ -173,13 +173,13 @@ const Landing = () => {
             <BadgeSoft variant="accent" className="mb-7 bg-white/10 text-white">
               <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
-            <h1 className="text-[2.75rem] md:text-[4.5rem] font-semibold leading-[1.02] tracking-[-0.028em]">
+            <h1 className="hero-headline text-[2.75rem] md:text-[4.6rem] font-semibold leading-[1.015] tracking-[-0.032em]">
               Search your way.<br />
-              <span className="text-white/55 font-light">Decide with confidence.</span>
+              <span className="text-white/74 font-medium">Decide with confidence.</span>
             </h1>
-            <p className="mt-7 text-[16.5px] md:text-[18px] text-white/78 max-w-[34rem] leading-[1.7] font-normal">
-              Type, describe, or speak your trip. Travixis compares routes, true total prices and stress —
-              then explains the trade-offs so the call stays yours.
+            <p className="mt-7 text-[16.5px] md:text-[18.5px] text-white/80 max-w-[36rem] leading-[1.66] font-normal">
+              Travixis reads the full picture of a trip — routes, true total prices, transfer stress, recovery timing —
+              then explains the trade-offs in plain language. The call stays yours.
             </p>
 
             <div className="mt-10 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
@@ -277,10 +277,10 @@ const Landing = () => {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch">
               {/* Route cluster */}
               <div className="md:col-span-5 relative rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1 field-cluster">
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
+                <div className="field-tactile rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
                   <AirportSelect label="From" value={fromAirport} onChange={setFromAirport} placeholder="City or airport" />
                 </div>
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
+                <div className="field-tactile rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
                   <AirportSelect label="To" value={toAirport} onChange={setToAirport} placeholder="City or airport" />
                 </div>
                 <button
@@ -295,10 +295,10 @@ const Landing = () => {
 
               {/* Dates cluster */}
               <div className="md:col-span-4 rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1 field-cluster">
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
+                <div className="field-tactile rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
                   <FieldInput label="Departure" type="date" value={depart} onChange={setDepart} />
                 </div>
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
+                <div className="field-tactile rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
                   <FieldInput label="Return" type="date" value={ret} onChange={setRet} />
                 </div>
               </div>

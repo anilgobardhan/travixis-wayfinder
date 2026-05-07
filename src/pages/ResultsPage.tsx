@@ -531,8 +531,13 @@ const ResultsPage = () => {
                     <li className="flex items-start gap-1.5"><CloudSun className="h-3 w-3 mt-0.5 text-primary/70 shrink-0" /> Stable arrival window for the next 7 days.</li>
                   </ul>
                 )}
+                {isPrimary && (
+                  <p className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full reassurance-pill px-2.5 py-1 text-[10.5px] font-medium tracking-tight">
+                    <ShieldCheck className="h-3 w-3" /> Recommended for calmer travel
+                  </p>
+                )}
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  <Button variant={isPrimary ? "hero" : "soft"} size="sm" onClick={() => toast.info("Booking flow coming soon.")}>
+                  <Button variant={isPrimary ? "hero" : "soft"} size="sm" className={isPrimary ? "cta-bloom" : ""} onClick={() => toast.info("Booking flow coming soon.")}>
                     Book now
                   </Button>
                   <Button asChild variant={isPrimary ? "soft" : "ghost"} size="sm">
@@ -768,8 +773,9 @@ const ConfidenceSignals = ({ option }: { option: Option }) => {
   else if (option.riskScore < 30) signals.push({ label: "Comfortable connection timing", tone: "muted", icon: <Clock className="h-3 w-3" /> });
   else signals.push({ label: "Tight connection — plan a buffer", tone: "warning", icon: <AlertTriangle className="h-3 w-3" /> });
   if (option.baggage > 0 || /included/i.test(option.baggageInfo)) signals.push({ label: "Generous baggage included", tone: "success", icon: <Luggage className="h-3 w-3" /> });
-  if (option.riskScore < 25) signals.push({ label: "Arrives at calmer airport hours", tone: "muted", icon: <CloudSun className="h-3 w-3" /> });
+  if (option.riskScore < 25) signals.push({ label: "Quieter arrival window", tone: "muted", icon: <CloudSun className="h-3 w-3" /> });
   if (option.riskScore < 18) signals.push({ label: "Historically calmer route", tone: "muted", icon: <Leaf className="h-3 w-3" /> });
+  if (option.riskScore < 22) signals.push({ label: "Calmer return day detected", tone: "muted", icon: <Timer className="h-3 w-3" /> });
 
   return (
     <div className="mt-3.5 flex flex-wrap gap-1.5">
