@@ -46,6 +46,9 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { AirportSelect } from "@/components/AirportSelect";
 import type { Airport } from "@/lib/airports";
 import { EnvDebugPanel } from "@/components/EnvDebugPanel";
+import discoverCalm from "@/assets/discover-calm.jpg";
+import discoverSpring from "@/assets/discover-spring.jpg";
+import discoverWorkation from "@/assets/discover-workation.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
