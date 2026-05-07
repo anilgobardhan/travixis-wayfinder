@@ -290,6 +290,8 @@ const formatTripDate = (iso?: string | null): string => {
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
   const [smartFilter, setSmartFilter] = useState<SmartFilterKey>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("recommended");
+  const [compareOpen, setCompareOpen] = useState(false);
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
