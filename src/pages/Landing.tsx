@@ -113,6 +113,7 @@ const Landing = () => {
         const qs = new URLSearchParams({
           from: "quick",
           id,
+          type: "flights",
           origin: fromAirport!.iata,
           destination: toAirport!.iata,
           departDate: depart,
