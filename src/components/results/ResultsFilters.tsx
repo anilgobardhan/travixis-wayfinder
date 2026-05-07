@@ -6,12 +6,16 @@ import {
   Hotel,
   Package as PackageIcon,
   Car,
+  TrainFront,
   Sparkles,
   X,
   ShieldCheck,
   Wallet,
   CloudSun,
   Gauge,
+  Leaf,
+  MapPin,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,7 +29,7 @@ import {
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
 
-export type SearchType = "flights" | "hotels" | "packages" | "cars";
+export type SearchType = "flights" | "hotels" | "packages" | "cars" | "rail";
 
 export type FlightFilters = {
   maxPrice: number;
