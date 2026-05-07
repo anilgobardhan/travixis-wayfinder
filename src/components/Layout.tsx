@@ -123,7 +123,7 @@ export const Layout = () => {
           <FooterCol title="Trips" items={["My trips", "Documents", "Alerts"]} />
           <FooterCol title="Wallet" items={["Travel credits", "Gift travel", "Shared funding", "Coverage"]} />
           <FooterCol title="Trust" items={["Transparency", "Methodology", "AI policy"]} />
-          <FooterCol title="Company" items={["About", "Support", "Contact"]} />
+          <FooterCol title="Help" items={["Support", "Help center", "Contact"]} />
         </div>
         <div className="border-t">
           <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
