@@ -247,9 +247,43 @@
     backdrop-filter: blur(14px) saturate(140%);
   }
 
+  /* Tactile field surface — inner depth, calm focus */
+  .field-tactile {
+    transition: box-shadow 0.3s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.3s ease;
+    box-shadow:
+      inset 0 1px 0 hsl(var(--foreground) / 0.015),
+      inset 0 -1px 0 hsl(var(--foreground) / 0.02);
+  }
+  .field-tactile:hover {
+    background-color: hsl(var(--card));
+    box-shadow:
+      inset 0 1px 0 hsl(var(--foreground) / 0.02),
+      0 0 0 1px hsl(var(--primary) / 0.10);
+  }
+  .field-tactile:focus-within {
+    background-color: hsl(var(--card));
+    box-shadow:
+      inset 0 1px 0 hsl(var(--foreground) / 0.025),
+      0 0 0 1px hsl(var(--primary) / 0.22),
+      0 6px 18px -12px hsl(var(--primary) / 0.22);
+  }
+
+  /* Editorial hero headline rhythm */
+  .hero-headline {
+    font-feature-settings: "ss01", "cv11", "kern";
+    text-wrap: balance;
+  }
+
+  /* Quiet booking reassurance pill */
+  .reassurance-pill {
+    background: linear-gradient(180deg, hsl(var(--success-soft) / 0.55), hsl(var(--success-soft) / 0.25));
+    border: 1px solid hsl(var(--success) / 0.18);
+    color: hsl(var(--success));
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .hero-dots, .ambient-pulse, .signal-fade { animation: none; }
-    .result-card, .field-cluster, .swap-magnetic { transition: none; }
+    .result-card, .field-cluster, .swap-magnetic, .field-tactile { transition: none; }
     .result-card:hover { transform: none; }
   }
 }
