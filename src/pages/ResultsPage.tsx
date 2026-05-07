@@ -329,8 +329,10 @@ const ResultsPage = () => {
   }, [searchId, fromAutopilot]);
 
   // Once live options arrive, the mock `options` array MUST not be used.
-  const displayOptions = liveOptions && liveOptions.length > 0 ? liveOptions : options;
+  const baseOptions = liveOptions && liveOptions.length > 0 ? liveOptions : options;
+  const displayOptions = applySmartFilter(baseOptions, smartFilter);
   const recommended = displayOptions.filter((o) => o.tag);
+  const compareOptions = baseOptions.filter((o) => compare.includes(o.id));
 
   console.log("RESULTS_RENDER_SOURCE", {
     searchId,
