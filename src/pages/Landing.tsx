@@ -782,4 +782,41 @@ const FieldInput = ({
   </div>
 );
 
+const PaxRow = ({
+  label,
+  sub,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string;
+  sub: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (v: number) => void;
+}) => {
+  const dec = () => onChange(Math.max(min, value - 1));
+  const inc = () => onChange(Math.min(max, value + 1));
+  const btn = "grid h-8 w-8 place-items-center rounded-full border bg-card text-foreground/80 hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-base";
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-foreground">{label}</p>
+        <p className="text-xs text-muted-foreground">{sub}</p>
+      </div>
+      <div className="flex items-center gap-3">
+        <button type="button" onClick={dec} disabled={value <= min} className={btn} aria-label={`Decrease ${label}`}>
+          <Minus className="h-3.5 w-3.5" />
+        </button>
+        <span className="w-5 text-center text-sm font-semibold tabular-nums">{value}</span>
+        <button type="button" onClick={inc} disabled={value >= max} className={btn} aria-label={`Increase ${label}`}>
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export default Landing;
