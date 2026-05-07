@@ -10,6 +10,8 @@ import {
   Plane,
   Hotel,
   Package,
+  Car,
+  TrainFront,
   Wallet,
   Gauge,
   Wand2,
