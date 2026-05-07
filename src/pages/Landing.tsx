@@ -5,21 +5,22 @@ import {
   ShieldCheck,
   Sparkles,
   Search,
-  GitCompare,
-  CheckCircle2,
-  LayoutDashboard,
   ArrowRight,
   Plane,
   Hotel,
-  
   Package,
   Wallet,
   Gauge,
-  MessageCircle,
   Wand2,
   Mic,
   MicOff,
   Loader2,
+  Bell,
+  FileText,
+  Users,
+  Sun,
+  Briefcase,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,23 +33,6 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { AirportSelect } from "@/components/AirportSelect";
 import type { Airport } from "@/lib/airports";
 import { EnvDebugPanel } from "@/components/EnvDebugPanel";
-import {
-  SmartCalendarSection,
-  TrendingDestinationsSection,
-  FlexibleTravelSection,
-  IntelligenceCapabilitiesSection,
-  TripsEcosystemSection,
-  PriceAlertsSection,
-  TransparencySection,
-  DiscoverySection,
-} from "@/components/landing/IntelligenceSections";
-import {
-  TravelWalletSection,
-  SmartCoverageSection,
-  SharedFundingSection,
-  FundingInsightsSection,
-  WalletCategoriesStrip,
-} from "@/components/wallet/WalletSections";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -78,7 +62,6 @@ const Landing = () => {
       travelers: travelersCount,
     };
 
-    // Debug: surface env + flag state so we can see why a request may be skipped.
     console.log("ENV CHECK", {
       ENABLE_REAL_SEARCH,
       VITE_ENABLE_REAL_SEARCH: import.meta.env.VITE_ENABLE_REAL_SEARCH,
@@ -87,9 +70,6 @@ const Landing = () => {
     console.log("SEARCH PAYLOAD", payload);
 
     if (!ENABLE_REAL_SEARCH) {
-      console.warn(
-        "SEARCH SKIPPED — ENABLE_REAL_SEARCH is false. Set VITE_ENABLE_REAL_SEARCH=true and VITE_API_BASE_URL in Vercel."
-      );
       navigate(`/autopilot?offline=1&mode=quick`);
       return;
     }
@@ -97,7 +77,6 @@ const Landing = () => {
     setSubmitting(true);
     try {
       const res = await api.search(payload);
-      console.log("SEARCH RESPONSE", res);
       const id = res?.searchId ?? res?.id;
       if (id) {
         try {
@@ -129,7 +108,6 @@ const Landing = () => {
   const goAutopilot = (text?: string) => {
     const q = (text ?? voiceText).trim();
     if (q) {
-      // Pre-extract just to validate; SearchPage will own the real submit.
       extractTripFields(q);
       navigate(`/search?q=${encodeURIComponent(q)}&mode=autopilot`);
     } else {
@@ -152,7 +130,7 @@ const Landing = () => {
 
   return (
     <div>
-      {/* Hero */}
+      {/* ───────── 1. HERO ───────── */}
       <section className="relative overflow-hidden bg-hero text-primary-foreground">
         <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white_1px,transparent_1px)] [background-size:24px_24px]" />
         <div className="container relative py-20 md:py-28">
@@ -168,7 +146,6 @@ const Landing = () => {
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
 
-            {/* Search mode tabs */}
             <div className="mt-8 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
               {[
                 { icon: Plane, label: "Flights", active: true },
@@ -187,7 +164,6 @@ const Landing = () => {
               ))}
             </div>
 
-            {/* Intelligent travel chips */}
             <div className="mt-5 flex flex-wrap gap-2">
               {[
                 "Lowest disruption risk",
@@ -308,12 +284,8 @@ const Landing = () => {
         </div>
       </section>
 
-      <SmartCalendarSection />
-      <TrendingDestinationsSection />
-      <FlexibleTravelSection />
-
-      {/* Trust */}
-      <section className="container py-20">
+      {/* ───────── 2. WHY TRAVIXIS — 3 cards, calmer ───────── */}
+      <section className="container py-24">
         <div className="max-w-2xl">
           <BadgeSoft variant="primary">Why Travixis</BadgeSoft>
           <h2 className="mt-4 text-3xl md:text-4xl font-bold">
@@ -323,7 +295,7 @@ const Landing = () => {
             Every option is scored, explained, and priced honestly — so you can choose with confidence.
           </p>
         </div>
-        <div className="mt-10 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="mt-12 grid md:grid-cols-3 gap-6">
           {[
             {
               icon: Wallet,
@@ -332,133 +304,221 @@ const Landing = () => {
             },
             {
               icon: Gauge,
-              title: "Risk & stress score",
+              title: "Risk & stress clarity",
               desc: "Tight connections, overnight transfers and cancellation risk explained in plain language.",
             },
             {
               icon: Sparkles,
-              title: "Clear explanations",
-              desc: "Why this option? Why this price? You always know the reasoning behind a recommendation.",
-            },
-            {
-              icon: MessageCircle,
-              title: "Post-booking support",
-              desc: "Disruptions, rebookings, documents — your trip stays managed long after you book.",
+              title: "Explainable recommendations",
+              desc: "Why this option? Why this price? You always see the reasoning behind every suggestion.",
             },
           ].map((f) => (
-            <div key={f.title} className="rounded-2xl border bg-card p-6 shadow-card transition-base hover:shadow-elevated hover:-translate-y-0.5">
+            <div key={f.title} className="rounded-2xl border bg-card p-7 shadow-card transition-base hover:shadow-elevated hover:-translate-y-0.5">
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
                 <f.icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 font-semibold">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{f.desc}</p>
+              <h3 className="mt-5 font-semibold text-lg">{f.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ───────── 3. AI HELPS YOU DECIDE — signature section ───────── */}
       <section className="bg-soft border-y">
-        <div className="container py-20">
-          <div className="text-center max-w-2xl mx-auto">
-            <BadgeSoft variant="accent">How it works</BadgeSoft>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold">From idea to managed trip in four steps</h2>
-          </div>
-          <div className="mt-12 grid md:grid-cols-4 gap-6">
-            {[
-              { icon: Search, title: "Search", desc: "Tell us where, when and what matters most." },
-              { icon: GitCompare, title: "Compare", desc: "See real prices, real risks, real trade-offs." },
-              { icon: CheckCircle2, title: "Choose", desc: "Pick best value, lowest stress or cheapest." },
-              { icon: LayoutDashboard, title: "Manage", desc: "Documents, check-ins and disruptions in one place." },
-            ].map((s, i) => (
-              <div key={s.title} className="relative rounded-2xl bg-card p-6 border shadow-card">
-                <span className="absolute -top-3 left-6 inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                  {i + 1}
-                </span>
-                <s.icon className="h-6 w-6 text-[hsl(var(--accent))]" />
-                <h3 className="mt-4 font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        <div className="container py-24 md:py-28">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5">
+              <BadgeSoft variant="primary"><ShieldCheck className="h-3 w-3" /> Our principles</BadgeSoft>
+              <h2 className="mt-4 text-4xl md:text-5xl font-bold leading-tight">AI helps.<br/>You decide.</h2>
+              <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
+                Travixis surfaces the best options for you — but every choice stays in your hands.
+                We never hide trade-offs, and every recommendation comes with a reason.
+              </p>
+              <ul className="mt-7 space-y-3 text-sm">
+                {[
+                  "True Price — what you see is what you pay",
+                  "Risk — stress and reliability scored honestly",
+                  "Explainability — every recommendation has a reason",
+                ].map((p) => (
+                  <li key={p} className="flex items-start gap-2.5">
+                    <CheckCircle2 className="h-4 w-4 text-[hsl(var(--success))] mt-0.5 shrink-0" />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-      <IntelligenceCapabilitiesSection />
-
-      {/* Principles */}
-      <section className="container py-20">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <BadgeSoft variant="primary"><ShieldCheck className="h-3 w-3" /> Our principles</BadgeSoft>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold">AI helps. You decide.</h2>
-            <p className="mt-3 text-muted-foreground">
-              Travixis uses optimization and explainability engines to surface the best options for you —
-              but every choice stays in your hands. We never hide trade-offs.
-            </p>
-            <ul className="mt-6 space-y-3 text-sm">
-              {[
-                "True Price Engine — what you see is what you pay",
-                "Risk Engine — stress and reliability scored honestly",
-                "Optimizer — best value, lowest stress, cheapest",
-                "Explainability — every recommendation has a reason",
-                "Persistent platform — value continues after booking",
-              ].map((p) => (
-                <li key={p} className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[hsl(var(--success))] mt-0.5 shrink-0" />
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-2xl border bg-card p-6 shadow-elevated">
-            <p className="text-xs font-medium text-muted-foreground">EXPLAINABLE RECOMMENDATIONS</p>
-            <h3 className="mt-2 text-lg font-semibold">Why we recommend Option A over B</h3>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-xl border bg-[hsl(var(--success-soft))]/40 p-4">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-primary">Option A</p>
-                  <BadgeSoft variant="success">Recommended</BadgeSoft>
+            <div className="lg:col-span-7">
+              <div className="rounded-3xl border bg-card p-7 md:p-8 shadow-elevated">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Explainable recommendation</p>
+                <h3 className="mt-2 text-xl font-semibold">Why we recommend Option A over B</h3>
+                <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
+                  <div className="rounded-2xl border bg-[hsl(var(--success-soft))]/40 p-5">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-primary">Option A</p>
+                      <BadgeSoft variant="success">Recommended</BadgeSoft>
+                    </div>
+                    <ul className="mt-4 space-y-2.5 text-xs">
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="success">+</BadgeSoft> Best overall value</li>
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="success">+</BadgeSoft> Reliable airline (94%)</li>
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="success">+</BadgeSoft> Carry-on included</li>
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="primary">i</BadgeSoft> Better arrival timing</li>
+                    </ul>
+                  </div>
+                  <div className="rounded-2xl border bg-card p-5">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-muted-foreground">Option B</p>
+                      <BadgeSoft variant="warning">Tradeoffs</BadgeSoft>
+                    </div>
+                    <ul className="mt-4 space-y-2.5 text-xs">
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="success">+</BadgeSoft> €18 cheaper</li>
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="warning">!</BadgeSoft> 55-min layover at CDG</li>
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="warning">!</BadgeSoft> Higher cancellation rate</li>
+                      <li className="flex gap-2 items-start"><BadgeSoft variant="warning">!</BadgeSoft> Baggage not included</li>
+                    </ul>
+                  </div>
                 </div>
-                <ul className="mt-3 space-y-2 text-xs">
-                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Best overall value</li>
-                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Reliable airline (94%)</li>
-                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Carry-on included</li>
-                  <li className="flex gap-2"><BadgeSoft variant="primary">i</BadgeSoft> Better arrival timing</li>
-                </ul>
-              </div>
-              <div className="rounded-xl border bg-card p-4">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-muted-foreground">Option B</p>
-                  <BadgeSoft variant="warning">Tradeoffs</BadgeSoft>
-                </div>
-                <ul className="mt-3 space-y-2 text-xs">
-                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> €18 cheaper</li>
-                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> 55-min layover at CDG</li>
-                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> Higher cancellation rate</li>
-                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> Baggage not included</li>
-                </ul>
+                <Button asChild variant="soft" className="mt-6 w-full">
+                  <Link to="/results">See a real example <ArrowRight className="h-4 w-4" /></Link>
+                </Button>
               </div>
             </div>
-            <Button asChild variant="soft" className="mt-6 w-full">
-              <Link to="/results">See a real example</Link>
-            </Button>
           </div>
         </div>
       </section>
 
-      <TripsEcosystemSection />
-      <TravelWalletSection />
-      <WalletCategoriesStrip />
-      <SmartCoverageSection />
-      <SharedFundingSection />
-      <FundingInsightsSection />
-      <PriceAlertsSection />
-      <TransparencySection />
-      <DiscoverySection />
+      {/* ───────── 4. SMART DISCOVERY — 3 curated cards ───────── */}
+      <section className="container py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div className="max-w-xl">
+            <BadgeSoft variant="accent"><Sparkles className="h-3 w-3" /> Smart discovery</BadgeSoft>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold">A few ideas, intelligently curated.</h2>
+            <p className="mt-3 text-muted-foreground">
+              Hand-picked travel directions based on reliability, value and time of year.
+            </p>
+          </div>
+          <Button asChild variant="ghost" size="sm" className="text-primary">
+            <Link to="/search">Explore more <ArrowRight className="h-4 w-4" /></Link>
+          </Button>
+        </div>
 
-      {/* Final CTA */}
-      <section className="container pb-20">
+        <div className="mt-10 grid md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: ShieldCheck,
+              tag: "Low risk",
+              title: "Calm destinations this season",
+              desc: "Strong reliability scores, stable weather, minimal disruption history.",
+              tone: "from-[hsl(199_100%_56%/0.18)] to-[hsl(211_80%_22%/0.20)]",
+            },
+            {
+              icon: Sun,
+              tag: "Spring 2026",
+              title: "Best spring escapes",
+              desc: "Warm enough, quiet enough, priced right — before peak season hits.",
+              tone: "from-[hsl(38_92%_50%/0.18)] to-[hsl(199_100%_56%/0.18)]",
+            },
+            {
+              icon: Briefcase,
+              tag: "Workation",
+              title: "Remote-work friendly",
+              desc: "Fast Wi-Fi, time-zone fit and visa ease — work from anywhere comfortably.",
+              tone: "from-[hsl(142_71%_36%/0.18)] to-[hsl(199_100%_56%/0.18)]",
+            },
+          ].map((c) => (
+            <article key={c.title} className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-elevated transition-base hover:-translate-y-0.5">
+              <div className={`relative h-36 bg-gradient-to-br ${c.tone}`}>
+                <div className="absolute inset-0 [background-image:radial-gradient(circle_at_30%_30%,white_1px,transparent_1px)] [background-size:18px_18px] opacity-30" />
+                <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-card/90 backdrop-blur px-2.5 py-1 text-[11px] font-medium text-primary">
+                  <c.icon className="h-3 w-3" /> {c.tag}
+                </div>
+              </div>
+              <div className="p-5">
+                <h3 className="font-semibold text-lg">{c.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* ───────── 5. TRIP + WALLET ECOSYSTEM — unified preview ───────── */}
+      <section className="bg-soft border-y">
+        <div className="container py-24">
+          <div className="max-w-2xl">
+            <BadgeSoft variant="primary"><LayoutIcon /> One ecosystem</BadgeSoft>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold">Your trip stays managed.</h2>
+            <p className="mt-3 text-muted-foreground">
+              Wallet, alerts, documents and shared funding — quietly connected, so nothing slips through the cracks.
+            </p>
+          </div>
+
+          <div className="mt-12 grid lg:grid-cols-12 gap-6">
+            {/* Wallet card — featured */}
+            <div className="lg:col-span-7 rounded-3xl border bg-card p-7 shadow-elevated">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
+                    <Wallet className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">Travel Wallet</p>
+                    <p className="text-sm font-medium">Available balance</p>
+                  </div>
+                </div>
+                <BadgeSoft variant="success">Active</BadgeSoft>
+              </div>
+              <div className="mt-6 flex items-baseline gap-3">
+                <p className="text-4xl md:text-5xl font-bold tracking-tight">€1,420</p>
+                <p className="text-sm text-muted-foreground">across 5 categories</p>
+              </div>
+              <div className="mt-5 grid grid-cols-5 gap-2 text-[11px]">
+                {[
+                  { l: "Flights", v: "€640" },
+                  { l: "Hotels", v: "€420" },
+                  { l: "Rail", v: "€140" },
+                  { l: "Cars", v: "€120" },
+                  { l: "Misc", v: "€100" },
+                ].map((c) => (
+                  <div key={c.l} className="rounded-lg bg-muted/50 p-2.5">
+                    <p className="text-muted-foreground">{c.l}</p>
+                    <p className="mt-1 font-semibold text-foreground">{c.v}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 rounded-xl border bg-[hsl(var(--accent-soft))]/30 p-4 text-sm">
+                <p className="font-medium">Smart coverage</p>
+                <p className="mt-1 text-muted-foreground text-xs">
+                  Enough credits for 3 nights in Rome or a return flight to Lisbon.
+                </p>
+              </div>
+            </div>
+
+            {/* Compact ecosystem cards */}
+            <div className="lg:col-span-5 grid gap-4">
+              <EcoCard
+                icon={Bell}
+                title="Smart alerts"
+                desc="Better itinerary detected · €38 lower true price for the same trip."
+              />
+              <EcoCard
+                icon={FileText}
+                title="Documents"
+                desc="Boarding pass, hotel and visa in one calm timeline."
+              />
+              <EcoCard
+                icon={Users}
+                title="Shared funding"
+                desc="Pool credits with travel companions — fair, transparent, automatic."
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── 6. FINAL CTA ───────── */}
+      <section className="container py-20">
         <div className="rounded-3xl bg-hero p-10 md:p-14 text-primary-foreground text-center shadow-elevated">
           <h2 className="text-3xl md:text-4xl font-bold">Ready to plan a calmer trip?</h2>
           <p className="mt-3 text-white/80 max-w-xl mx-auto">
@@ -473,6 +533,37 @@ const Landing = () => {
     </div>
   );
 };
+
+const LayoutIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+  </svg>
+);
+
+const EcoCard = ({
+  icon: Icon,
+  title,
+  desc,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+}) => (
+  <div className="rounded-2xl border bg-card p-5 shadow-card hover:shadow-elevated transition-base">
+    <div className="flex items-start gap-3">
+      <div className="grid h-9 w-9 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary shrink-0">
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="min-w-0">
+        <p className="font-semibold text-sm">{title}</p>
+        <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{desc}</p>
+      </div>
+    </div>
+  </div>
+);
 
 const FieldInput = ({
   label,
