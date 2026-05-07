@@ -599,9 +599,25 @@ const ResultsPage = () => {
 
       {/* Full list */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
-          <span className="text-xs text-muted-foreground">{displayOptions.length} matching · sorted by Travixis confidence</span>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
+            <p className="text-[11.5px] text-muted-foreground/80 mt-0.5">{displayOptions.length} matching · explainable Travixis ranking</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-muted-foreground hidden sm:inline">Sort by</span>
+            <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+              <SelectTrigger className="h-8 w-[180px] text-[12.5px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recommended">Travixis recommendation</SelectItem>
+                <SelectItem value="price">Lowest true total</SelectItem>
+                <SelectItem value="stress">Lowest stress</SelectItem>
+                <SelectItem value="duration">Shortest duration</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
