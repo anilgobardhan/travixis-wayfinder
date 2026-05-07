@@ -46,9 +46,15 @@ const giftIdeas = [
 ];
 
 const pools = [
-  { icon: Heart, title: "Honeymoon fund", progress: 72, raised: "€2,160", goal: "€3,000" },
-  { icon: Users, title: "Family vacation", progress: 45, raised: "€1,800", goal: "€4,000" },
-  { icon: Briefcase, title: "Team offsite pool", progress: 88, raised: "€7,040", goal: "€8,000" },
+  { icon: Heart, title: "Honeymoon in Tuscany", progress: 72, raised: "€2,160", goal: "€3,000", contributors: 8, lead: "Started by Emma" },
+  { icon: Users, title: "Family Summer 2026", progress: 45, raised: "€1,800", goal: "€4,000", contributors: 5, lead: "3 contributors this week" },
+  { icon: Briefcase, title: "Lisbon team offsite", progress: 88, raised: "€7,040", goal: "€8,000", contributors: 14, lead: "Funded by 14 teammates" },
+];
+
+const recentActivity = [
+  { kind: "gift", icon: Gift, title: "€120 gifted by Emma", desc: "For your honeymoon fund · 2h ago", tone: "accent" },
+  { kind: "milestone", icon: Sparkles, title: "Tuscany fund reached 72%", desc: "Just €840 to your goal", tone: "primary" },
+  { kind: "join", icon: Users, title: "Marco joined Family Summer 2026", desc: "Now 5 contributors · transparent split", tone: "primary" },
 ];
 
 const insights = [
