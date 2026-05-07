@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Compass, Search, LayoutDashboard, FileText, LifeBuoy, Menu, X } from "lucide-react";
+import { Compass, Search, LayoutDashboard, FileText, Wallet, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SystemStatus } from "./SystemStatus";
@@ -7,9 +7,9 @@ import { Button } from "./ui/button";
 
 const nav = [
   { to: "/search", label: "Search", icon: Search },
-  { to: "/trip", label: "My Trip", icon: LayoutDashboard },
+  { to: "/trip", label: "My Trips", icon: LayoutDashboard },
+  { to: "/wallet", label: "Wallet", icon: Wallet, balance: "€1,420" },
   { to: "/documents", label: "Documents", icon: FileText },
-  { to: "/support", label: "Support", icon: LifeBuoy },
 ];
 
 export const Layout = () => {
