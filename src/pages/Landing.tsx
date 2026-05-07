@@ -170,18 +170,18 @@ const Landing = () => {
         <div className="container relative pt-6 pb-20 md:pt-8 md:pb-28">
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-8 max-w-[44rem]">
-            <BadgeSoft variant="accent" className="mb-5 bg-white/10 text-white">
+            <BadgeSoft variant="accent" className="mb-7 bg-white/10 text-white">
               <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
-            <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">
+            <h1 className="text-[2.75rem] md:text-[4.25rem] font-semibold leading-[1.02] tracking-[-0.025em]">
               Search your way.
             </h1>
-            <p className="mt-5 text-[17px] md:text-xl text-white/85 max-w-2xl leading-relaxed">
-              Search your way — type, describe, or speak your trip. Travixis compares routes, true total
+            <p className="mt-6 text-[17px] md:text-[19px] text-white/75 max-w-[36rem] leading-[1.65] font-light">
+              Type, describe, or speak your trip. Travixis compares routes, true total
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
 
-            <div className="mt-8 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
+            <div className="mt-10 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
               {[
                 { icon: Plane, label: "Flights", active: true },
                 { icon: Hotel, label: "Hotels" },
@@ -202,7 +202,7 @@ const Landing = () => {
             </div>
 
             {/* Live intelligence micro-signals */}
-            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11.5px] text-white/80">
+            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[11.5px] text-white/70">
               {[
                 { dot: "bg-[hsl(var(--success))]", label: "23 low-stress routes this week" },
                 { dot: "bg-white/70", label: "Portugal weather confidence high" },
@@ -216,7 +216,7 @@ const Landing = () => {
               ))}
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               {[
                 "Lowest disruption risk",
                 "Best overall value",
@@ -226,7 +226,7 @@ const Landing = () => {
               ].map((c) => (
                 <span
                   key={c}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-white/80 backdrop-blur"
                 >
                   <Sparkles className="h-3 w-3 opacity-70" /> {c}
                 </span>
