@@ -453,8 +453,8 @@ const ResultsPage = () => {
           {tripSummary && (
             <BadgeSoft variant="primary">{tripSummary}</BadgeSoft>
           )}
-          <h1 className="mt-3 text-3xl font-bold">{displayOptions.length} options found</h1>
-          <p className="mt-1 text-muted-foreground">Sorted by Travixis recommendation. All prices include taxes & surcharges.</p>
+          <h1 className="mt-3 text-3xl font-semibold editorial-h2">{displayOptions.length} options found</h1>
+          <p className="mt-2 text-[14px] text-muted-foreground leading-relaxed">Sorted by Travixis recommendation. Every price is the true total — taxes and surcharges already included.</p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline"><Link to="/search">Edit search</Link></Button>
@@ -753,7 +753,7 @@ const ResultsPage = () => {
 const ConfidenceSignals = ({ option }: { option: Option }) => {
   const reliability = Math.max(78, Math.min(98, 100 - option.riskScore));
   const signals: { label: string; tone: "success" | "muted" | "warning"; icon: React.ReactNode }[] = [];
-  if (option.riskScore < 20) signals.push({ label: `${reliability}% historically reliable route`, tone: "success", icon: <ShieldCheck className="h-3 w-3" /> });
+  if (option.riskScore < 20) signals.push({ label: `${reliability}% on-time on this route`, tone: "success", icon: <ShieldCheck className="h-3 w-3" /> });
   if (/direct/i.test(option.stops)) signals.push({ label: "Direct — no transfer fatigue", tone: "success", icon: <Plane className="h-3 w-3" /> });
   else if (option.riskScore < 30) signals.push({ label: "Comfortable connection timing", tone: "muted", icon: <Clock className="h-3 w-3" /> });
   else signals.push({ label: "Tight connection — plan a buffer", tone: "warning", icon: <AlertTriangle className="h-3 w-3" /> });

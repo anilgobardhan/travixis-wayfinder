@@ -173,10 +173,10 @@ const Landing = () => {
             <BadgeSoft variant="accent" className="mb-7 bg-white/10 text-white">
               <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
-            <h1 className="text-[2.75rem] md:text-[4.25rem] font-semibold leading-[1.02] tracking-[-0.025em]">
+            <h1 className="text-[2.75rem] md:text-[4.5rem] font-semibold leading-[1.02] tracking-[-0.028em]">
               Search your way.
             </h1>
-            <p className="mt-6 text-[17px] md:text-[19px] text-white/75 max-w-[36rem] leading-[1.65] font-light">
+            <p className="mt-6 text-[17px] md:text-[19px] text-white/75 max-w-[36rem] leading-[1.7] font-light">
               Type, describe, or speak your trip. Travixis compares routes, true total
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
@@ -408,20 +408,20 @@ const Landing = () => {
                         onChange={setInfants}
                       />
 
-                      <div className="pt-3 border-t">
-                        <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+                      <div className="pt-4 border-t border-border/60">
+                        <Label className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-semibold">
                           Cabin class
                         </Label>
-                        <div className="mt-2 grid grid-cols-2 gap-1.5">
+                        <div className="mt-2.5 grid grid-cols-2 gap-1.5">
                           {["Economy", "Premium Economy", "Business", "First"].map((c) => (
                             <button
                               key={c}
                               type="button"
                               onClick={() => setCabin(c)}
-                              className={`text-xs rounded-lg px-2.5 py-2 ring-1 transition-base ${
+                              className={`text-xs rounded-lg px-2.5 py-2 ring-1 transition-premium ${
                                 cabin === c
-                                  ? "bg-[hsl(var(--primary-soft))] text-primary ring-primary/30 font-semibold"
-                                  : "bg-muted/40 text-foreground/80 ring-border/60 hover:bg-muted"
+                                  ? "bg-[hsl(var(--primary-soft))] text-primary ring-primary/30 font-semibold shadow-[0_0_0_3px_hsl(var(--primary)/0.06)]"
+                                  : "bg-muted/30 text-foreground/75 ring-border/50 hover:bg-muted hover:ring-border"
                               }`}
                             >
                               {c}
@@ -521,7 +521,7 @@ const Landing = () => {
       <section className="container py-24">
         <div className="max-w-2xl">
           <BadgeSoft variant="primary">Why Travixis</BadgeSoft>
-          <h2 className="mt-4 text-3xl md:text-4xl font-bold">
+          <h2 className="mt-4 text-3xl md:text-4xl font-semibold editorial-h2">
             Built for travelers who want clarity, not surprises.
           </h2>
           <p className="mt-3 text-muted-foreground">
@@ -563,7 +563,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5">
               <BadgeSoft variant="primary"><ShieldCheck className="h-3 w-3" /> Our principles</BadgeSoft>
-              <h2 className="mt-4 text-4xl md:text-5xl font-bold leading-tight">AI helps.<br/>You decide.</h2>
+              <h2 className="mt-4 text-4xl md:text-[3.25rem] font-semibold editorial-h2">AI helps.<br/>You decide.</h2>
               <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
                 Travixis surfaces the best options for you — but every choice stays in your hands.
                 We never hide trade-offs, and every recommendation comes with a reason.
@@ -626,7 +626,7 @@ const Landing = () => {
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div className="max-w-xl">
             <BadgeSoft variant="accent"><Sparkles className="h-3 w-3" /> Smart discovery</BadgeSoft>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold">A few ideas, intelligently curated.</h2>
+            <h2 className="mt-4 text-3xl md:text-4xl font-semibold editorial-h2">A few ideas, intelligently curated.</h2>
             <p className="mt-3 text-muted-foreground">
               Hand-picked travel directions based on reliability, value and time of year.
             </p>
@@ -689,7 +689,7 @@ const Landing = () => {
         <div className="container py-24">
           <div className="max-w-2xl">
             <BadgeSoft variant="primary"><LayoutIcon /> Travel Operating System</BadgeSoft>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold">Your trip stays managed.</h2>
+            <h2 className="mt-4 text-3xl md:text-4xl font-semibold editorial-h2">Your trip stays managed.</h2>
             <p className="mt-3 text-muted-foreground">
               Travel wallet, gifted travel credits, documents, alerts and shared funding — connected in one calm travel system.
             </p>
@@ -758,7 +758,7 @@ const Landing = () => {
       {/* ───────── 6. FINAL CTA ───────── */}
       <section className="container py-20">
         <div className="rounded-3xl bg-hero p-10 md:p-14 text-primary-foreground text-center shadow-elevated">
-          <h2 className="text-3xl md:text-4xl font-bold">Ready to plan a calmer trip?</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold editorial-h2">Ready to plan a calmer trip?</h2>
           <p className="mt-3 text-white/80 max-w-xl mx-auto">
             Start a search and let Travixis show you the true cost, the real risks, and the best fit for you.
           </p>
@@ -883,7 +883,7 @@ const PaxRow = ({
 }) => {
   const dec = () => onChange(Math.max(min, value - 1));
   const inc = () => onChange(Math.min(max, value + 1));
-  const btn = "grid h-8 w-8 place-items-center rounded-full border bg-card text-foreground/80 hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-base";
+  const btn = "grid h-8 w-8 place-items-center rounded-full border bg-card text-foreground/80 hover:bg-[hsl(var(--primary-soft))] hover:text-primary hover:border-primary/30 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-premium";
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0">

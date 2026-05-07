@@ -111,13 +111,18 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "cv11";
   }
-  h1, h2, h3, h4 { @apply tracking-tight; }
+  /* Editorial typography — Apple × Linear × Aman */
+  h1 { @apply tracking-tight; letter-spacing: -0.025em; font-feature-settings: "ss01", "cv11", "kern"; }
+  h2 { @apply tracking-tight; letter-spacing: -0.018em; }
+  h3, h4 { @apply tracking-tight; letter-spacing: -0.012em; }
   /* Editorial rhythm: lift micro/helper text readability without bulking layout */
-  p { line-height: 1.6; }
-  .text-xs   { font-size: 12.5px; line-height: 1.55; letter-spacing: 0.005em; }
-  .text-\[11px\], .text-\[11\.5px\] { line-height: 1.5; letter-spacing: 0.01em; }
-  .text-\[10px\], .text-\[10\.5px\] { letter-spacing: 0.06em; }
+  p { line-height: 1.62; }
+  .text-xs   { font-size: 12.5px; line-height: 1.55; letter-spacing: 0.003em; }
+  .text-\[11px\], .text-\[11\.5px\] { line-height: 1.5; letter-spacing: 0.008em; }
+  .text-\[10px\], .text-\[10\.5px\] { letter-spacing: 0.07em; }
   .text-muted-foreground { font-weight: 400; }
+  /* Section heading rhythm — confident, never compressed */
+  .editorial-h2 { letter-spacing: -0.022em; line-height: 1.08; }
 }
 
 @layer utilities {
