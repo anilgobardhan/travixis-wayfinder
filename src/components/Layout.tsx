@@ -115,7 +115,7 @@ export const Layout = () => {
           </div>
           <FooterCol title="Explore" items={["Search", "Destinations", "Flexible travel"]} />
           <FooterCol title="Trips" items={["My trips", "Documents", "Alerts"]} />
-          <FooterCol title="Wallet" items={["Travel credits", "Shared funding", "Coverage"]} />
+          <FooterCol title="Wallet" items={["Travel credits", "Gift travel", "Shared funding", "Coverage"]} />
           <FooterCol title="Trust" items={["Transparency", "Methodology", "AI policy"]} />
           <FooterCol title="Company" items={["About", "Support", "Contact"]} />
         </div>

@@ -18,6 +18,7 @@ import {
   Bell,
   FileText,
   Users,
+  Gift,
   Sun,
   Briefcase,
   CheckCircle2,
@@ -450,7 +451,7 @@ const Landing = () => {
             <BadgeSoft variant="primary"><LayoutIcon /> Travel Operating System</BadgeSoft>
             <h2 className="mt-4 text-3xl md:text-4xl font-bold">Your trip stays managed.</h2>
             <p className="mt-3 text-muted-foreground">
-              Wallet, alerts, documents and shared funding — quietly connected in one travel system.
+              Travel wallet, gifted travel credits, documents, alerts and shared funding — connected in one calm travel system.
             </p>
           </div>
 
@@ -463,8 +464,8 @@ const Landing = () => {
                     <Wallet className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">Travel Wallet</p>
-                    <p className="text-sm font-medium">Available travel balance</p>
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">Travel Wallet · Gifted Travel Credits</p>
+                    <p className="text-sm font-medium">Universal travel balance</p>
                   </div>
                 </div>
                 <BadgeSoft variant="success">Active</BadgeSoft>
@@ -489,28 +490,27 @@ const Landing = () => {
                 ))}
               </div>
 
-              <ul className="mt-6 grid sm:grid-cols-2 gap-2 text-xs">
-                {[
-                  "Unified across travel categories",
-                  "Shared trips supported",
-                  "Transparent usage",
-                  "Smart balance intelligence",
-                ].map((b) => (
-                  <li key={b} className="flex items-start gap-2 text-muted-foreground">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[hsl(var(--success))] mt-0.5 shrink-0" />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+              <p className="mt-5 rounded-xl bg-[hsl(var(--primary-soft))]/60 px-4 py-3 text-xs text-primary">
+                Use credits across flights, hotels, trains, packages and experiences.
+              </p>
             </div>
 
             {/* RIGHT — Trip Operating System mini cards */}
             <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4">
-              <EcoCard icon={Bell}     title="Smart alerts"   desc="Price dropped €38 on a similar route." />
-              <EcoCard icon={FileText} title="Documents"      desc="Passport & tickets organized." />
-              <EcoCard icon={Users}    title="Shared funding" desc="Family contributions active." />
-              <EcoCard icon={LayoutIcon} title="Trip timeline" desc="All transfers synced." />
+              <EcoCard icon={Gift}     title="Gifted travel credits" desc="Send travel credit for birthdays, honeymoons or family trips." />
+              <EcoCard icon={Bell}     title="Smart alerts"          desc="Price drops and disruption changes explained clearly." />
+              <EcoCard icon={FileText} title="Documents"             desc="Passports, tickets and confirmations organized." />
+              <EcoCard icon={Users}    title="Shared funding"        desc="Family and group contributions stay transparent." />
             </div>
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Button asChild variant="hero" size="lg">
+              <a href="#"><Gift className="h-4 w-4" /> Gift travel credit</a>
+            </Button>
+            <Button asChild variant="soft" size="lg">
+              <a href="#">Explore wallet <ArrowRight className="h-4 w-4" /></a>
+            </Button>
           </div>
         </div>
       </section>
