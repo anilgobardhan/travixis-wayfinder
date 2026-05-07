@@ -443,20 +443,20 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ───────── 5. TRIP + WALLET ECOSYSTEM — unified preview ───────── */}
+      {/* ───────── 5. TRAVEL WALLET + TRIP OPERATING SYSTEM ───────── */}
       <section className="bg-soft border-y">
         <div className="container py-24">
           <div className="max-w-2xl">
-            <BadgeSoft variant="primary"><LayoutIcon /> One ecosystem</BadgeSoft>
+            <BadgeSoft variant="primary"><LayoutIcon /> Travel Operating System</BadgeSoft>
             <h2 className="mt-4 text-3xl md:text-4xl font-bold">Your trip stays managed.</h2>
             <p className="mt-3 text-muted-foreground">
-              Wallet, alerts, documents and shared funding — quietly connected, so nothing slips through the cracks.
+              Wallet, alerts, documents and shared funding — quietly connected in one travel system.
             </p>
           </div>
 
           <div className="mt-12 grid lg:grid-cols-12 gap-6">
-            {/* Wallet card — featured */}
-            <div className="lg:col-span-7 rounded-3xl border bg-card p-7 shadow-elevated">
+            {/* LEFT — Travel Wallet preview */}
+            <div className="lg:col-span-6 rounded-3xl border bg-card p-7 md:p-8 shadow-elevated">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
@@ -464,54 +464,52 @@ const Landing = () => {
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">Travel Wallet</p>
-                    <p className="text-sm font-medium">Available balance</p>
+                    <p className="text-sm font-medium">Available travel balance</p>
                   </div>
                 </div>
                 <BadgeSoft variant="success">Active</BadgeSoft>
               </div>
+
               <div className="mt-6 flex items-baseline gap-3">
                 <p className="text-4xl md:text-5xl font-bold tracking-tight">€1,420</p>
-                <p className="text-sm text-muted-foreground">across 5 categories</p>
+                <p className="text-sm text-muted-foreground">unified balance</p>
               </div>
-              <div className="mt-5 grid grid-cols-5 gap-2 text-[11px]">
+
+              <div className="mt-5 grid grid-cols-2 gap-2 text-sm">
                 {[
-                  { l: "Flights", v: "€640" },
-                  { l: "Hotels", v: "€420" },
-                  { l: "Rail", v: "€140" },
-                  { l: "Cars", v: "€120" },
-                  { l: "Misc", v: "€100" },
+                  { l: "Flights", v: "€620" },
+                  { l: "Hotels", v: "€410" },
+                  { l: "Rail", v: "€180" },
+                  { l: "Packages", v: "€140" },
                 ].map((c) => (
-                  <div key={c.l} className="rounded-lg bg-muted/50 p-2.5">
-                    <p className="text-muted-foreground">{c.l}</p>
-                    <p className="mt-1 font-semibold text-foreground">{c.v}</p>
+                  <div key={c.l} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2.5">
+                    <span className="text-muted-foreground text-xs">{c.l}</span>
+                    <span className="font-semibold text-foreground">{c.v}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 rounded-xl border bg-[hsl(var(--accent-soft))]/30 p-4 text-sm">
-                <p className="font-medium">Smart coverage</p>
-                <p className="mt-1 text-muted-foreground text-xs">
-                  Enough credits for 3 nights in Rome or a return flight to Lisbon.
-                </p>
-              </div>
+
+              <ul className="mt-6 grid sm:grid-cols-2 gap-2 text-xs">
+                {[
+                  "Unified across travel categories",
+                  "Shared trips supported",
+                  "Transparent usage",
+                  "Smart balance intelligence",
+                ].map((b) => (
+                  <li key={b} className="flex items-start gap-2 text-muted-foreground">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[hsl(var(--success))] mt-0.5 shrink-0" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* Compact ecosystem cards */}
-            <div className="lg:col-span-5 grid gap-4">
-              <EcoCard
-                icon={Bell}
-                title="Smart alerts"
-                desc="Better itinerary detected · €38 lower true price for the same trip."
-              />
-              <EcoCard
-                icon={FileText}
-                title="Documents"
-                desc="Boarding pass, hotel and visa in one calm timeline."
-              />
-              <EcoCard
-                icon={Users}
-                title="Shared funding"
-                desc="Pool credits with travel companions — fair, transparent, automatic."
-              />
+            {/* RIGHT — Trip Operating System mini cards */}
+            <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4">
+              <EcoCard icon={Bell}     title="Smart alerts"   desc="Price dropped €38 on a similar route." />
+              <EcoCard icon={FileText} title="Documents"      desc="Passport & tickets organized." />
+              <EcoCard icon={Users}    title="Shared funding" desc="Family contributions active." />
+              <EcoCard icon={LayoutIcon} title="Trip timeline" desc="All transfers synced." />
             </div>
           </div>
         </div>
