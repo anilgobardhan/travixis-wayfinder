@@ -6,6 +6,7 @@ import {
   Sparkles,
   Search,
   ArrowRight,
+  ArrowLeftRight,
   Plane,
   Hotel,
   Package,
