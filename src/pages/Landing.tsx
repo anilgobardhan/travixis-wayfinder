@@ -521,7 +521,7 @@ const Landing = () => {
       <section className="container py-24">
         <div className="max-w-2xl">
           <BadgeSoft variant="primary">Why Travixis</BadgeSoft>
-          <h2 className="mt-4 text-3xl md:text-4xl font-bold">
+          <h2 className="mt-4 text-3xl md:text-4xl font-semibold editorial-h2">
             Built for travelers who want clarity, not surprises.
           </h2>
           <p className="mt-3 text-muted-foreground">
