@@ -285,22 +285,28 @@ const HotelFilterPanel = () => (
 const CarFilterPanel = () => (
   <>
     <Group title="Car type">
-      {["Compact", "SUV", "Estate", "Premium"].map((t) => (
+      {["Compact", "SUV", "Estate", "Premium", "Family vehicle", "Luxury"].map((t) => (
         <CheckRow key={t} label={t} checked={false} onChange={() => {}} />
       ))}
     </Group>
-    <Group title="Transmission">
-      {["Automatic", "Manual"].map((t) => (
-        <CheckRow key={t} label={t} checked={false} onChange={() => {}} />
+    <Group title="Transmission & fuel">
+      {["Automatic", "Manual", "Electric (EV)", "Hybrid"].map((t) => (
+        <CheckRow
+          key={t}
+          label={t}
+          checked={false}
+          onChange={() => {}}
+          intel={t === "Electric (EV)" ? "Lower emissions · wallet eligible" : undefined}
+        />
       ))}
     </Group>
-    <Group title="Fuel & supplier" defaultOpen={false}>
-      {["Electric", "Hertz", "Sixt", "Europcar"].map((s) => (
-        <CheckRow key={s} label={s} checked={false} onChange={() => {}} />
+    <Group title="Pickup">
+      {["Pickup at airport", "City center pickup", "Same-day return"].map((t) => (
+        <CheckRow key={t} label={t} checked={false} onChange={() => {}} />
       ))}
     </Group>
     <Group title="Conditions" defaultOpen={false}>
-      {["Insurance included", "Unlimited mileage", "No deposit required"].map((c) => (
+      {["Insurance included", "Unlimited mileage", "No deposit required", "Free cancellation"].map((c) => (
         <CheckRow
           key={c}
           label={c}
@@ -310,17 +316,100 @@ const CarFilterPanel = () => (
         />
       ))}
     </Group>
+    <Group title="Supplier quality" defaultOpen={false}>
+      {["Top-rated suppliers (8+)", "Hertz", "Sixt", "Europcar", "Avis"].map((s) => (
+        <CheckRow key={s} label={s} checked={false} onChange={() => {}} />
+      ))}
+    </Group>
+  </>
+);
+
+const RailFilterPanel = () => (
+  <>
+    <Group title="Stops & transfers">
+      {["Direct", "1 transfer", "2+ transfers"].map((s) => (
+        <CheckRow
+          key={s}
+          label={s}
+          checked={false}
+          onChange={() => {}}
+          intel={s === "Direct" ? "Low transfer stress" : undefined}
+        />
+      ))}
+    </Group>
+    <Group title="Class">
+      {["Standard", "First class", "Sleeper"].map((c) => (
+        <CheckRow key={c} label={c} checked={false} onChange={() => {}} />
+      ))}
+    </Group>
+    <Group title="Travixis intelligence" hint="European-premium rail">
+      <CheckRow
+        label="City-center arrival"
+        checked={false}
+        onChange={() => {}}
+        intel="Skip airport transfer time"
+      />
+      <CheckRow
+        label="Lower emissions"
+        checked={false}
+        onChange={() => {}}
+        intel="Greener than equivalent flight"
+      />
+      <CheckRow
+        label="Wallet-eligible routes"
+        checked={false}
+        onChange={() => {}}
+      />
+      <div className="flex flex-wrap gap-1.5 pt-1">
+        {[
+          { icon: MapPin, label: "City-center arrival" },
+          { icon: Leaf, label: "Lower emissions" },
+          { icon: Wallet, label: "Wallet-eligible" },
+          { icon: Zap, label: "Low transfer stress" },
+        ].map((c) => (
+          <span
+            key={c.label}
+            className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/30 px-2 py-0.5 text-[10.5px] text-muted-foreground"
+          >
+            <c.icon className="h-2.5 w-2.5" /> {c.label}
+          </span>
+        ))}
+      </div>
+    </Group>
+    <Group title="Operator" defaultOpen={false}>
+      {["Eurostar", "TGV INOUI", "Trenitalia", "DB", "Renfe", "ÖBB"].map((o) => (
+        <CheckRow key={o} label={o} checked={false} onChange={() => {}} />
+      ))}
+    </Group>
+    <Group title="Departure window" defaultOpen={false}>
+      <div className="grid grid-cols-2 gap-1.5">
+        {["Early morning", "Morning", "Afternoon", "Evening"].map((t) => (
+          <span
+            key={t}
+            className="rounded-md border border-border/60 px-2 py-1.5 text-[11px] text-muted-foreground text-center hover:bg-muted/40 cursor-pointer transition-base"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+    </Group>
   </>
 );
 
 const Inner = (props: Props) => {
   if (props.searchType === "hotels" || props.searchType === "packages") return <HotelFilterPanel />;
   if (props.searchType === "cars") return <CarFilterPanel />;
+  if (props.searchType === "rail") return <RailFilterPanel />;
   return <FlightFilterPanel {...props} />;
 };
 
 const TypeIcon = ({ t }: { t: SearchType }) => {
-  const Icon = t === "hotels" ? Hotel : t === "packages" ? PackageIcon : t === "cars" ? Car : Plane;
+  const Icon =
+    t === "hotels" ? Hotel :
+    t === "packages" ? PackageIcon :
+    t === "cars" ? Car :
+    t === "rail" ? TrainFront :
+    Plane;
   return <Icon className="h-3.5 w-3.5" />;
 };
 
