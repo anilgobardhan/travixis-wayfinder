@@ -268,11 +268,18 @@ const TripDashboardPage = () => {
         </aside>
       </div>
 
+      <WalletOverviewModule />
+
       <TripHealthOverview />
 
       <div className="grid lg:grid-cols-2 gap-6">
         <TripTimeline />
         <SmartAlertsCenter />
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <SharedTripFundingModule />
+        <BudgetAndPaymentModule />
       </div>
     </div>
   );
