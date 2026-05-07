@@ -266,6 +266,13 @@ const TripDashboardPage = () => {
           />
         </aside>
       </div>
+
+      <TripHealthOverview />
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <TripTimeline />
+        <SmartAlertsCenter />
+      </div>
     </div>
   );
 };
