@@ -496,6 +496,9 @@ const ResultsPage = () => {
         </div>
       </section>
 
+      {/* Wallet intelligence */}
+      <WalletInsightsPanel />
+
       {/* Smart filters */}
       <SmartFiltersBar active={smartFilter} onChange={setSmartFilter} />
 
