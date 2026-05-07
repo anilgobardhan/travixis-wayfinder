@@ -282,6 +282,7 @@ const ResultsPage = () => {
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
+  const searchType = ((params.get("type") as SearchType) || "flights") as SearchType;
 
   // Trip context comes ONLY from the backend's request snapshot now —
   // no URL-param fallbacks, no mocks. If the snapshot is missing the
