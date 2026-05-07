@@ -26,6 +26,15 @@ import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
 import { api, type SearchRequestSnapshot } from "@/lib/api";
 import { ENABLE_REAL_SEARCH } from "@/lib/flags";
+import {
+  SmartFiltersBar,
+  ComparisonPanel,
+  ConfidenceChip,
+  RiskChips,
+  WhyChips,
+  applySmartFilter,
+  type SmartFilterKey,
+} from "@/components/results/ResultsIntelligence";
 
 type Option = {
   id: string;
@@ -260,6 +269,7 @@ const formatTripDate = (iso?: string | null): string => {
 
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
+  const [smartFilter, setSmartFilter] = useState<SmartFilterKey>("all");
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
@@ -319,8 +329,10 @@ const ResultsPage = () => {
   }, [searchId, fromAutopilot]);
 
   // Once live options arrive, the mock `options` array MUST not be used.
-  const displayOptions = liveOptions && liveOptions.length > 0 ? liveOptions : options;
+  const baseOptions = liveOptions && liveOptions.length > 0 ? liveOptions : options;
+  const displayOptions = applySmartFilter(baseOptions, smartFilter);
   const recommended = displayOptions.filter((o) => o.tag);
+  const compareOptions = baseOptions.filter((o) => compare.includes(o.id));
 
   console.log("RESULTS_RENDER_SOURCE", {
     searchId,
@@ -385,16 +397,20 @@ const ResultsPage = () => {
             const total = o.price + o.taxes + o.baggage + o.fees;
             return (
               <div key={o.id} className="rounded-2xl border bg-card p-5 shadow-card flex flex-col">
-                <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
+                  <ConfidenceChip option={o} />
+                </div>
                 <p className="mt-3 font-semibold">{o.airline}</p>
                 <p className="text-xs text-muted-foreground">{o.route} · {o.stops} · {o.duration}</p>
                 <p className="mt-3 text-2xl font-bold">{formatMoney(total, o.currency)}</p>
                 <p className="text-xs text-muted-foreground">true total price</p>
+                <div className="mt-3"><RiskChips option={o} /></div>
                 <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
                   <li className="flex items-start gap-1.5"><Luggage className="h-3 w-3 mt-0.5 shrink-0" /> {o.baggageInfo}</li>
                   <li className="flex items-start gap-1.5"><ShieldCheck className="h-3 w-3 mt-0.5 shrink-0" /> {o.refund}</li>
-                  <li className="flex items-start gap-1.5"><Gauge className="h-3 w-3 mt-0.5 shrink-0" /> Stress score {o.riskScore}/100</li>
                 </ul>
+                <div className="mt-3"><WhyChips option={o} /></div>
                 <p className="mt-3 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2 text-xs text-primary">
                   <span className="font-semibold">Why: </span>{o.why}
                 </p>
@@ -479,9 +495,26 @@ const ResultsPage = () => {
         </div>
       </section>
 
+      {/* Smart filters */}
+      <SmartFiltersBar active={smartFilter} onChange={setSmartFilter} />
+
+      {/* Side-by-side comparison */}
+      {compareOptions.length >= 2 && (
+        <div data-compare-panel>
+          <ComparisonPanel
+            options={compareOptions}
+            onClear={() => setCompare([])}
+            onRemove={(id) => setCompare((c) => c.filter((x) => x !== id))}
+          />
+        </div>
+      )}
+
       {/* Full list */}
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
+          <span className="text-xs text-muted-foreground">{displayOptions.length} matching · sorted by Travixis confidence</span>
+        </div>
         {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
@@ -496,6 +529,7 @@ const ResultsPage = () => {
                       </BadgeSoft>
                     )}
                     <RiskBadge score={o.riskScore} />
+                    <ConfidenceChip option={o} />
                   </div>
                   <div className="mt-3 flex items-start gap-4">
                     <div className="grid h-11 w-11 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
@@ -552,7 +586,12 @@ const ResultsPage = () => {
       {compare.length > 0 && (
         <div className="sticky bottom-4 z-30 mx-auto w-full max-w-md rounded-full border bg-card px-5 py-3 shadow-elevated flex items-center justify-between">
           <span className="text-sm font-medium">{compare.length} selected to compare</span>
-          <Button size="sm" variant="hero" onClick={() => toast.info("Side-by-side compare coming soon.")}>Compare</Button>
+          <Button size="sm" variant="hero" onClick={() => {
+            const el = document.querySelector('[data-compare-panel]') ?? document.body;
+            (el as HTMLElement).scrollIntoView({ behavior: "smooth", block: "start" });
+          }}>
+            {compare.length >= 2 ? "View comparison" : "Select 1 more"}
+          </Button>
         </div>
       )}
     </div>
