@@ -73,21 +73,21 @@ const Group = ({
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="border-b border-border/60 py-4 last:border-b-0">
-      <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-left">
+    <Collapsible open={open} onOpenChange={setOpen} className="border-b border-border/40 py-5 last:border-b-0 last:pb-0">
+      <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-left group">
         <div>
-          <p className="text-sm font-semibold text-foreground">{title}</p>
-          {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+          <p className="text-[13px] font-semibold text-foreground tracking-tight">{title}</p>
+          {hint && <p className="mt-0.5 text-[11px] text-muted-foreground/80">{hint}</p>}
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform",
+            "h-4 w-4 text-muted-foreground/60 transition-transform group-hover:text-foreground",
             open && "rotate-180",
           )}
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-        <div className="pt-3 space-y-2.5">{children}</div>
+        <div className="pt-3.5 space-y-2">{children}</div>
       </CollapsibleContent>
     </Collapsible>
   );
@@ -416,19 +416,19 @@ const TypeIcon = ({ t }: { t: SearchType }) => {
 export const ResultsFilters = (props: Props) => {
   const label = props.searchType.charAt(0).toUpperCase() + props.searchType.slice(1);
   return (
-    <aside className="hidden lg:block w-[260px] shrink-0">
-      <div className="sticky top-20 rounded-2xl border bg-card p-4 shadow-card">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-[hsl(var(--primary-soft))] text-primary">
+    <aside className="hidden lg:block w-[272px] shrink-0">
+      <div className="sticky top-24 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-5 shadow-[0_4px_24px_-8px_hsl(var(--primary)/0.08)]">
+        <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/60">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
               <TypeIcon t={props.searchType} />
             </span>
             <div>
-              <p className="text-sm font-semibold">Refine {label.toLowerCase()}</p>
+              <p className="text-[13px] font-semibold tracking-tight">Refine {label.toLowerCase()}</p>
               <p className="text-[11px] text-muted-foreground tabular-nums">{props.resultCount} matching</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="h-7 px-2 text-[11px]" onClick={props.onClear}>
+          <Button variant="ghost" size="sm" className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground" onClick={props.onClear}>
             Clear
           </Button>
         </div>

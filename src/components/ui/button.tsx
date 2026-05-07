@@ -15,7 +15,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent/10 hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-primary text-primary-foreground shadow-elevated hover:bg-primary/90 hover:-translate-y-0.5 transition-base",
+        hero: "bg-primary text-primary-foreground font-semibold tracking-tight shadow-[0_10px_28px_-12px_hsl(var(--primary)/0.55)] hover:shadow-[0_18px_40px_-14px_hsl(var(--primary)/0.65)] hover:bg-[hsl(var(--primary))]/95 hover:-translate-y-[1px] active:translate-y-0 transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
         cta: "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] font-semibold shadow-card hover:brightness-110 transition-base",
         success: "bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] hover:brightness-110",
         soft: "bg-[hsl(var(--primary-soft))] text-primary hover:bg-[hsl(var(--primary-soft))]/70",
