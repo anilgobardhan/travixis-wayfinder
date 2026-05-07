@@ -527,6 +527,7 @@ const ResultsPage = () => {
                       </BadgeSoft>
                     )}
                     <RiskBadge score={o.riskScore} />
+                    <ConfidenceChip option={o} />
                   </div>
                   <div className="mt-3 flex items-start gap-4">
                     <div className="grid h-11 w-11 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
