@@ -73,21 +73,21 @@ const Group = ({
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="border-b border-border/40 py-5 last:border-b-0 last:pb-0">
+    <Collapsible open={open} onOpenChange={setOpen} className="border-b border-border/40 py-4 last:border-b-0 last:pb-0">
       <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-left group">
         <div>
-          <p className="text-[13px] font-semibold text-foreground tracking-tight">{title}</p>
-          {hint && <p className="mt-0.5 text-[11px] text-muted-foreground/80">{hint}</p>}
+          <p className="text-[13.5px] font-semibold text-foreground tracking-tight">{title}</p>
+          {hint && <p className="mt-1 text-[11.5px] text-muted-foreground/80 leading-relaxed">{hint}</p>}
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-muted-foreground/60 transition-transform group-hover:text-foreground",
+            "h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:text-foreground",
             open && "rotate-180",
           )}
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-        <div className="pt-3.5 space-y-2">{children}</div>
+        <div className="pt-3 space-y-1">{children}</div>
       </CollapsibleContent>
     </Collapsible>
   );

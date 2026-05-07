@@ -166,7 +166,7 @@ const Landing = () => {
     <div>
       {/* ───────── 1. HERO ───────── */}
       <section className="relative overflow-hidden bg-hero text-primary-foreground">
-        <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="absolute inset-0 hero-dots pointer-events-none" aria-hidden />
         <div className="container relative pt-6 pb-20 md:pt-8 md:pb-28">
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-8 max-w-[44rem]">
@@ -260,7 +260,10 @@ const Landing = () => {
                 </div>
                 <div className="mt-7 pt-5 border-t border-white/[0.08] flex items-center justify-between text-[10.5px] text-white/55 tracking-wide">
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))] animate-pulse" />
+                    <span className="relative grid h-2 w-2 place-items-center">
+                      <span className="absolute inset-0 rounded-full bg-[hsl(var(--success))]/40 ambient-pulse" />
+                      <span className="relative h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
+                    </span>
                     Live signals
                   </span>
                   <span>Updated just now</span>
@@ -304,35 +307,35 @@ const Landing = () => {
             {/* Cluster row */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch">
               {/* Route cluster */}
-              <div className="md:col-span-5 relative rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1">
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+              <div className="md:col-span-5 relative rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1 field-cluster">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
                   <AirportSelect label="From" value={fromAirport} onChange={setFromAirport} placeholder="City or airport" />
                 </div>
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
                   <AirportSelect label="To" value={toAirport} onChange={setToAirport} placeholder="City or airport" />
                 </div>
                 <button
                   type="button"
                   onClick={() => { const a = fromAirport; setFromAirport(toAirport); setToAirport(a); }}
                   aria-label="Swap origin and destination"
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-full bg-card text-primary border shadow-sm hover:bg-[hsl(var(--primary-soft))] transition-base"
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-full bg-card text-primary border shadow-sm hover:bg-[hsl(var(--primary-soft))] hover:rotate-180 transition-premium"
                 >
                   <ArrowLeftRight className="h-4 w-4" />
                 </button>
               </div>
 
               {/* Dates cluster */}
-              <div className="md:col-span-4 rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1">
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+              <div className="md:col-span-4 rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1 field-cluster">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
                   <FieldInput label="Departure" type="date" value={depart} onChange={setDepart} />
                 </div>
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 transition-premium hover:ring-primary/20">
                   <FieldInput label="Return" type="date" value={ret} onChange={setRet} />
                 </div>
               </div>
 
               {/* Travelers + Class cluster */}
-              <div className="md:col-span-3 rounded-xl border bg-muted/30 p-1">
+              <div className="md:col-span-3 rounded-xl border bg-muted/30 p-1 field-cluster">
                 <Popover open={paxOpen} onOpenChange={setPaxOpen}>
                   <PopoverTrigger asChild>
                     <button

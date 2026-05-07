@@ -55,24 +55,27 @@ export const Layout = () => {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-2 md:flex">
+          <nav className="hidden items-center gap-1 md:flex">
             {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "rounded-md px-3.5 py-2 text-[13.5px] font-medium leading-none transition-base inline-flex items-center gap-2.5",
+                    "rounded-md px-3 py-2 text-[13px] font-medium leading-none transition-premium inline-flex items-center gap-2",
                     isActive
                       ? "bg-[hsl(var(--primary-soft))] text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   )
                 }
               >
                 {item.label}
                 {item.balance && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-[hsl(var(--primary-soft))] px-2 py-0.5 text-[10px] font-semibold text-primary">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--primary-soft))] px-2 py-0.5 text-[10.5px] font-semibold text-primary tabular-nums">
+                    <span className="relative grid h-1.5 w-1.5 place-items-center">
+                      <span className="absolute inset-0 rounded-full bg-[hsl(var(--success))]/40 ambient-pulse" />
+                      <span className="relative h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
+                    </span>
                     {item.balance}
                   </span>
                 )}
