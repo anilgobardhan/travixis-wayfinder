@@ -104,7 +104,7 @@ export const Layout = () => {
       </main>
 
       <footer className="mt-12 border-t bg-card">
-        <div className="container py-10 grid gap-8 md:grid-cols-6">
+        <div className="container py-8 grid gap-6 md:gap-8 md:grid-cols-7">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 font-semibold text-primary">
               <span className="grid h-7 w-7 place-items-center rounded-md bg-hero text-primary-foreground">
@@ -119,7 +119,7 @@ export const Layout = () => {
               <SystemStatus />
             </div>
           </div>
-          <FooterCol title="Explore" items={["Search", "Destinations", "Flexible travel"]} />
+          <FooterCol title="Explore" items={["Search", "Destinations", "Flexible travel", "Rail", "Cars"]} />
           <FooterCol title="Trips" items={["My trips", "Documents", "Alerts"]} />
           <FooterCol title="Wallet" items={["Travel credits", "Gift travel", "Shared funding", "Coverage"]} />
           <FooterCol title="Trust" items={["Transparency", "Methodology", "AI policy"]} />

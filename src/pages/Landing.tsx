@@ -10,6 +10,8 @@ import {
   Plane,
   Hotel,
   Package,
+  Car,
+  TrainFront,
   Wallet,
   Gauge,
   Wand2,
@@ -179,6 +181,8 @@ const Landing = () => {
               {[
                 { icon: Plane, label: "Flights", active: true },
                 { icon: Hotel, label: "Hotels" },
+                { icon: Car, label: "Cars" },
+                { icon: TrainFront, label: "Rail" },
                 { icon: Package, label: "Packages" },
                 { icon: ArrowRight, label: "Multi-city" },
               ].map((t) => (
@@ -189,6 +193,21 @@ const Landing = () => {
                   }`}
                 >
                   <t.icon className="h-3.5 w-3.5" /> {t.label}
+                </span>
+              ))}
+            </div>
+
+            {/* Live intelligence micro-signals */}
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-white/75">
+              {[
+                { dot: "bg-[hsl(var(--success))]", label: "23 low-stress routes this week" },
+                { dot: "bg-white/70", label: "Portugal weather confidence high" },
+                { dot: "bg-[hsl(var(--success))]", label: "Wallet covers 82% of Lisbon trip" },
+                { dot: "bg-white/70", label: "Rail demand lower this Tuesday" },
+              ].map((s) => (
+                <span key={s.label} className="inline-flex items-center gap-1.5">
+                  <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+                  {s.label}
                 </span>
               ))}
             </div>
