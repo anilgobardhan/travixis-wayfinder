@@ -1,9 +1,33 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Compass, Search, LayoutDashboard, FileText, Wallet, Menu, X, UserRound } from "lucide-react";
+import {
+  Compass,
+  Search,
+  LayoutDashboard,
+  FileText,
+  Wallet,
+  Menu,
+  X,
+  UserRound,
+  Bell,
+  Bookmark,
+  Sparkles,
+  Users,
+  Gift,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SystemStatus } from "./SystemStatus";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const nav = [
   { to: "/search", label: "Search", icon: Search },
