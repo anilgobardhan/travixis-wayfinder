@@ -276,12 +276,12 @@ export const WhyChips = ({ option }: { option: IntelOption }) => {
   const reasons: string[] = [];
   const conf = confidenceScore(option);
   if (conf.score >= 85) reasons.push("Best overall value");
-  if (option.riskScore < 20) reasons.push("Lowest disruption risk");
-  if (option.riskScore < 25) reasons.push("Reliable airline");
-  if (/direct/i.test(option.stops)) reasons.push("No transfer needed");
-  else if (option.riskScore < 30) reasons.push("Short layover balance");
-  if (/included/i.test(option.baggageInfo) || option.baggage === 0) reasons.push("Carry-on included");
-  if (option.riskScore < 25) reasons.push("Better arrival timing");
+  if (option.riskScore < 20) reasons.push("Historically smoother route");
+  if (option.riskScore < 25) reasons.push("Reliable carrier");
+  if (/direct/i.test(option.stops)) reasons.push("No transfer fatigue");
+  else if (option.riskScore < 30) reasons.push("Calmer layover timing");
+  if (/included/i.test(option.baggageInfo) || option.baggage === 0) reasons.push("Bag already included");
+  if (option.riskScore < 25) reasons.push("Better recovery on arrival");
   if (reasons.length === 0) reasons.push("Honest tradeoff for the price");
   return (
     <div className="flex flex-wrap gap-1.5">
