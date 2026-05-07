@@ -134,8 +134,8 @@ const Landing = () => {
       {/* ───────── 1. HERO ───────── */}
       <section className="relative overflow-hidden bg-hero text-primary-foreground">
         <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white_1px,transparent_1px)] [background-size:24px_24px]" />
-        <div className="container relative py-20 md:py-28">
-          <div className="max-w-3xl">
+        <div className="container relative pt-6 pb-20 md:pt-8 md:pb-28">
+          <div className="max-w-[44rem]">
             <BadgeSoft variant="accent" className="mb-5 bg-white/10 text-white">
               <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
