@@ -38,7 +38,7 @@ export const Layout = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "rounded-md px-3 py-2 text-sm font-medium transition-base",
+                    "rounded-md px-3 py-2 text-sm font-medium transition-base inline-flex items-center gap-2",
                     isActive
                       ? "bg-[hsl(var(--primary-soft))] text-primary"
                       : "text-muted-foreground hover:text-foreground"
@@ -46,6 +46,12 @@ export const Layout = () => {
                 }
               >
                 {item.label}
+                {item.balance && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-[hsl(var(--primary-soft))] px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
+                    {item.balance}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
