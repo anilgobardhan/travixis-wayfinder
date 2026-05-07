@@ -475,35 +475,60 @@ const ResultsPage = () => {
 
       {/* A/B/C recommendation block */}
       <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Travixis recommends</h2>
-        <div className="mt-3 grid md:grid-cols-3 gap-4">
-          {recommended.map((o) => {
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Travixis recommends</h2>
+            <p className="mt-1.5 text-[13px] text-muted-foreground/90 leading-relaxed">Three options selected from {displayOptions.length} — explained, never hidden.</p>
+          </div>
+          <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <span className="relative grid h-2 w-2 place-items-center">
+              <span className="absolute inset-0 rounded-full bg-[hsl(var(--success))]/40 ambient-pulse" />
+              <span className="relative h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
+            </span>
+            AI rationale ready
+          </span>
+        </div>
+        <div className="mt-5 grid md:grid-cols-3 gap-4">
+          {recommended.map((o, idx) => {
             const meta = tagMeta[o.tag!];
             const total = o.price + o.taxes + o.baggage + o.fees;
+            const isPrimary = idx === 0;
             return (
-              <div key={o.id} className="rounded-2xl border bg-card p-5 shadow-card flex flex-col">
+              <div
+                key={o.id}
+                className={cn(
+                  "rounded-2xl p-5 flex flex-col transition-premium",
+                  isPrimary
+                    ? "border-2 border-primary/25 bg-gradient-to-b from-[hsl(var(--primary-soft))]/60 to-card shadow-elevated relative"
+                    : "border bg-card shadow-card hover:shadow-elevated"
+                )}
+              >
+                {isPrimary && (
+                  <span className="absolute -top-2.5 left-5 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2.5 py-0.5 text-[10px] font-semibold tracking-wide shadow-sm">
+                    <Sparkles className="h-2.5 w-2.5" /> AI top pick
+                  </span>
+                )}
                 <div className="flex items-center gap-2 flex-wrap">
                   <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
                   <ConfidenceChip option={o} />
                 </div>
-                <p className="mt-3 font-semibold">{o.airline}</p>
-                <p className="text-xs text-muted-foreground">{o.route} · {o.stops} · {o.duration}</p>
-                <p className="mt-3 text-2xl font-bold">{formatMoney(total, o.currency)}</p>
-                <p className="text-xs text-muted-foreground">true total price</p>
-                <div className="mt-3"><RiskChips option={o} /></div>
-                <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+                <p className="mt-3.5 font-semibold text-[15px]">{o.airline}</p>
+                <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed">{o.route} · {o.stops} · {o.duration}</p>
+                <p className="mt-4 text-[28px] font-bold tracking-tight tabular-nums">{formatMoney(total, o.currency)}</p>
+                <p className="text-[11.5px] text-muted-foreground">true total · all-in price</p>
+                <div className="mt-3.5"><RiskChips option={o} /></div>
+                <ul className="mt-3.5 space-y-2 text-[12.5px] text-muted-foreground leading-relaxed">
                   <li className="flex items-start gap-1.5"><Luggage className="h-3 w-3 mt-0.5 shrink-0" /> {o.baggageInfo}</li>
                   <li className="flex items-start gap-1.5"><ShieldCheck className="h-3 w-3 mt-0.5 shrink-0" /> {o.refund}</li>
                 </ul>
-                <div className="mt-3"><WhyChips option={o} /></div>
-                <p className="mt-3 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2 text-xs text-primary">
+                <p className="mt-4 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2.5 text-[12.5px] text-primary leading-relaxed">
                   <span className="font-semibold">Why: </span>{o.why}
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  <Button variant="hero" size="sm" onClick={() => toast.info("Booking flow coming soon.")}>
+                  <Button variant={isPrimary ? "hero" : "soft"} size="sm" onClick={() => toast.info("Booking flow coming soon.")}>
                     Book now
                   </Button>
-                  <Button asChild variant="soft" size="sm">
+                  <Button asChild variant={isPrimary ? "soft" : "ghost"} size="sm">
                     <Link to={searchId ? `/option/${o.id}?id=${encodeURIComponent(searchId)}` : `/option/${o.id}`}>View details</Link>
                   </Button>
                 </div>
