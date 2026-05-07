@@ -147,7 +147,7 @@ const FlightFilterPanel = ({
 
   return (
     <>
-      <Group title="Budget" hint="True total per traveler">
+      <Group title="Budget" hint="True total per traveler" activeCount={filters.maxPrice !== priceMax ? 1 : 0}>
         <div className="px-1">
           <Slider
             min={priceMin}
@@ -164,7 +164,7 @@ const FlightFilterPanel = ({
         </div>
       </Group>
 
-      <Group title="Stops">
+      <Group title="Stops" activeCount={filters.stops.length}>
         {stops.map((s) => (
           <CheckRow
             key={s}
@@ -176,7 +176,7 @@ const FlightFilterPanel = ({
         ))}
       </Group>
 
-      <Group title="Airlines">
+      <Group title="Airlines" activeCount={filters.airlines.length}>
         {airlines.length === 0 && (
           <p className="text-xs text-muted-foreground">No airlines in current results.</p>
         )}
@@ -190,7 +190,7 @@ const FlightFilterPanel = ({
         ))}
       </Group>
 
-      <Group title="Baggage & flexibility">
+      <Group title="Baggage & flexibility" activeCount={(filters.baggageIncluded ? 1 : 0) + (filters.refundableOnly ? 1 : 0)}>
         <CheckRow
           label="Baggage included"
           checked={filters.baggageIncluded}
@@ -204,7 +204,7 @@ const FlightFilterPanel = ({
         />
       </Group>
 
-      <Group title="Travixis intelligence" hint="Calm, calculated, optional">
+      <Group title="Travixis intelligence" hint="Calm, calculated, optional" activeCount={filters.lowStressOnly ? 1 : 0}>
         <CheckRow
           label="Low stress only"
           checked={filters.lowStressOnly}
