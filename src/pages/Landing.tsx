@@ -51,14 +51,30 @@ const Landing = () => {
   const [toAirport, setToAirport] = useState<Airport | null>(null);
   const [depart, setDepart] = useState("");
   const [ret, setRet] = useState("");
-  const [travelers, setTravelers] = useState("1");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState<number[]>([]); // ages
+  const [infants, setInfants] = useState(0);
   const [cabin, setCabin] = useState("Economy");
+  const [paxOpen, setPaxOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [voiceText, setVoiceText] = useState("");
   const voice = useVoiceInput();
 
-  const travelersCount = Math.max(0, parseInt(travelers, 10) || 0);
+  const travelersCount = adults + children.length + infants;
+  const updateChildren = (next: number) => {
+    setChildren((prev) => {
+      if (next > prev.length) return [...prev, ...Array(next - prev.length).fill(6)];
+      return prev.slice(0, Math.max(0, next));
+    });
+  };
+  const travelersSummary = (() => {
+    const parts: string[] = [];
+    parts.push(`${adults} ${adults === 1 ? "Adult" : "Adults"}`);
+    if (children.length) parts.push(`${children.length} ${children.length === 1 ? "Child" : "Children"}`);
+    if (infants) parts.push(`${infants} ${infants === 1 ? "Infant" : "Infants"}`);
+    return `${parts.join(" · ")} · ${cabin}`;
+  })();
   const canSearch =
     !!fromAirport && !!toAirport && !!depart && travelersCount >= 1 && !submitting;
 
