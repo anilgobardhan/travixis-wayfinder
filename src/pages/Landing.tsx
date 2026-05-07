@@ -11,7 +11,7 @@ import {
   ArrowRight,
   Plane,
   Hotel,
-  Car,
+  
   Package,
   Wallet,
   Gauge,
