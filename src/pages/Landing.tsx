@@ -377,6 +377,8 @@ const Landing = () => {
         </div>
       </section>
 
+      <IntelligenceCapabilitiesSection />
+
       {/* Principles */}
       <section className="container py-20">
         <div className="grid md:grid-cols-2 gap-10 items-center">
