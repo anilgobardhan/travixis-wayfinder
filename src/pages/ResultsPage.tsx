@@ -648,7 +648,7 @@ const ResultsPage = () => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
           return (
-            <article key={o.id} className="rounded-2xl border bg-card p-5 md:p-6 shadow-card transition-base hover:shadow-elevated">
+            <article key={o.id} className="result-card rounded-2xl border border-border/70 bg-card p-5 md:p-6 shadow-card">
               <div className="grid lg:grid-cols-[1fr,auto] gap-6">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -718,9 +718,12 @@ const ResultsPage = () => {
         </div>
       </div>
       {compare.length > 0 && (
-        <div className="hidden md:flex sticky bottom-4 z-30 mx-auto w-full max-w-md rounded-full border bg-card px-5 py-3 shadow-elevated items-center justify-between">
-          <span className="text-sm font-medium">{compare.length} selected to compare</span>
-          <Button size="sm" variant="hero" onClick={() => setCompareOpen(true)}>
+        <div className="hidden md:flex sticky bottom-5 z-30 mx-auto w-full max-w-md rounded-full bg-card/95 px-5 py-3 compare-floating items-center justify-between transition-premium">
+          <span className="inline-flex items-center gap-2 text-[13px] font-medium tracking-tight">
+            <span className="filter-active-dot" />
+            {compare.length} selected to compare
+          </span>
+          <Button size="sm" variant="hero" onClick={() => setCompareOpen(true)} className="cta-bloom">
             {compare.length >= 2 ? "Open compare" : "Select 1 more"}
           </Button>
         </div>

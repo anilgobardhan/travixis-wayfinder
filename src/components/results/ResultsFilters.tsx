@@ -65,23 +65,32 @@ const Group = ({
   defaultOpen = true,
   children,
   hint,
+  activeCount = 0,
 }: {
   title: string;
   defaultOpen?: boolean;
   children: React.ReactNode;
   hint?: string;
+  activeCount?: number;
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="border-b border-border/40 py-4 last:border-b-0 last:pb-0">
-      <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-left group">
-        <div>
-          <p className="text-[13.5px] font-semibold text-foreground tracking-tight">{title}</p>
+      <CollapsibleTrigger className="filter-group-trigger flex w-full items-center justify-between gap-2 text-left group">
+        <div className="min-w-0">
+          <p className="filter-group-title flex items-center gap-2 text-[13.5px] font-semibold text-foreground tracking-tight transition-colors">
+            {title}
+            {activeCount > 0 && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--primary-soft))] text-primary px-1.5 py-px text-[10px] font-semibold tabular-nums leading-none">
+                {activeCount}
+              </span>
+            )}
+          </p>
           {hint && <p className="mt-1 text-[11.5px] text-muted-foreground/80 leading-relaxed">{hint}</p>}
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:text-foreground",
+            "h-4 w-4 text-muted-foreground/50 transition-transform duration-300 group-hover:text-foreground shrink-0",
             open && "rotate-180",
           )}
         />
@@ -138,7 +147,7 @@ const FlightFilterPanel = ({
 
   return (
     <>
-      <Group title="Budget" hint="True total per traveler">
+      <Group title="Budget" hint="True total per traveler" activeCount={filters.maxPrice !== priceMax ? 1 : 0}>
         <div className="px-1">
           <Slider
             min={priceMin}
@@ -155,7 +164,7 @@ const FlightFilterPanel = ({
         </div>
       </Group>
 
-      <Group title="Stops">
+      <Group title="Stops" activeCount={filters.stops.length}>
         {stops.map((s) => (
           <CheckRow
             key={s}
@@ -167,7 +176,7 @@ const FlightFilterPanel = ({
         ))}
       </Group>
 
-      <Group title="Airlines">
+      <Group title="Airlines" activeCount={filters.airlines.length}>
         {airlines.length === 0 && (
           <p className="text-xs text-muted-foreground">No airlines in current results.</p>
         )}
@@ -181,7 +190,7 @@ const FlightFilterPanel = ({
         ))}
       </Group>
 
-      <Group title="Baggage & flexibility">
+      <Group title="Baggage & flexibility" activeCount={(filters.baggageIncluded ? 1 : 0) + (filters.refundableOnly ? 1 : 0)}>
         <CheckRow
           label="Baggage included"
           checked={filters.baggageIncluded}
@@ -195,7 +204,7 @@ const FlightFilterPanel = ({
         />
       </Group>
 
-      <Group title="Travixis intelligence" hint="Calm, calculated, optional">
+      <Group title="Travixis intelligence" hint="Calm, calculated, optional" activeCount={filters.lowStressOnly ? 1 : 0}>
         <CheckRow
           label="Low stress only"
           checked={filters.lowStressOnly}
