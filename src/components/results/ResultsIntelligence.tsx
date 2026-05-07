@@ -257,7 +257,7 @@ export const ComparisonPanel = ({
 };
 
 /* ───── Smart filter logic ───── */
-export const applySmartFilter = (opts: IntelOption[], key: SmartFilterKey): IntelOption[] => {
+export const applySmartFilter = <T extends IntelOption>(opts: T[], key: SmartFilterKey): T[] => {
   switch (key) {
     case "lowest-risk": return [...opts].sort((a, b) => a.riskScore - b.riskScore);
     case "best-value": return [...opts].sort((a, b) => confidenceScore(b).score - confidenceScore(a).score);
