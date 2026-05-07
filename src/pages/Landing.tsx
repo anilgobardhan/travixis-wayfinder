@@ -32,6 +32,16 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { AirportSelect } from "@/components/AirportSelect";
 import type { Airport } from "@/lib/airports";
 import { EnvDebugPanel } from "@/components/EnvDebugPanel";
+import {
+  SmartCalendarSection,
+  TrendingDestinationsSection,
+  FlexibleTravelSection,
+  IntelligenceCapabilitiesSection,
+  TripsEcosystemSection,
+  PriceAlertsSection,
+  TransparencySection,
+  DiscoverySection,
+} from "@/components/landing/IntelligenceSections";
 
 const Landing = () => {
   const navigate = useNavigate();
