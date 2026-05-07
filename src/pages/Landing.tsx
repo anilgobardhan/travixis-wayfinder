@@ -174,11 +174,12 @@ const Landing = () => {
               <Sparkles className="h-3 w-3" /> Travel Operating System · Smart Search
             </BadgeSoft>
             <h1 className="text-[2.75rem] md:text-[4.5rem] font-semibold leading-[1.02] tracking-[-0.028em]">
-              Search your way.
+              Search your way.<br />
+              <span className="text-white/55 font-light">Decide with confidence.</span>
             </h1>
-            <p className="mt-6 text-[17px] md:text-[19px] text-white/75 max-w-[36rem] leading-[1.7] font-light">
-              Type, describe, or speak your trip. Travixis compares routes, true total
-              prices and stress — then explains the trade-offs so you can decide with confidence.
+            <p className="mt-7 text-[16.5px] md:text-[18px] text-white/78 max-w-[34rem] leading-[1.7] font-normal">
+              Type, describe, or speak your trip. Travixis compares routes, true total prices and stress —
+              then explains the trade-offs so the call stays yours.
             </p>
 
             <div className="mt-10 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
@@ -500,21 +501,21 @@ const Landing = () => {
           {[
             {
               icon: Wallet,
-              title: "True total price",
-              desc: "Includes baggage, taxes, seat fees and surcharges. The price you see is the price you pay.",
+              title: "No hidden costs later",
+              desc: "Baggage, taxes, seat fees and surcharges — all counted upfront. The price you see is the price you pay.",
             },
             {
               icon: Gauge,
-              title: "Risk & stress clarity",
-              desc: "Tight connections, overnight transfers and cancellation risk explained in plain language.",
+              title: "Fewer stressful connections",
+              desc: "Tight transfers, overnight layovers and disruption history — explained calmly, in plain language.",
             },
             {
               icon: Sparkles,
-              title: "Explainable recommendations",
-              desc: "Why this option? Why this price? You always see the reasoning behind every suggestion.",
+              title: "Why this trip feels calmer",
+              desc: "Every recommendation comes with a reason. You always see the trade-offs behind the suggestion.",
             },
           ].map((f) => (
-            <div key={f.title} className="rounded-2xl border bg-card p-7 shadow-card transition-base hover:shadow-elevated hover:-translate-y-0.5">
+            <div key={f.title} className="result-card rounded-2xl border border-border/70 bg-card p-7 shadow-card">
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
                 <f.icon className="h-5 w-5" />
               </div>
