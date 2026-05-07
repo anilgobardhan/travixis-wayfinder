@@ -52,7 +52,7 @@ export const Layout = () => {
 
           <div className="hidden items-center gap-3 md:flex">
             <SystemStatus compact />
-            <Button asChild variant="hero" size="sm">
+            <Button asChild variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-[hsl(var(--primary-soft))]">
               <Link to="/search">Start searching</Link>
             </Button>
           </div>

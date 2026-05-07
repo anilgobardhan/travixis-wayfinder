@@ -186,8 +186,8 @@ const Landing = () => {
       </section>
 
       {/* Search entry: Quick / Smart / Voice */}
-      <section className="container -mt-10 relative z-10">
-        <div className="rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
+      <section className="container -mt-4 relative z-10">
+        <div className="mx-auto max-w-[92%] md:max-w-[94%] rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <div className="inline-flex flex-wrap rounded-xl border bg-muted/40 p-1">
               <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-1.5 text-sm font-medium shadow-sm">
@@ -497,7 +497,7 @@ const Landing = () => {
 
             {/* RIGHT — Trip Operating System mini cards */}
             <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4">
-              <EcoCard icon={Gift}     title="Gifted travel credits" desc="Send travel credit for birthdays, honeymoons or family trips." />
+              <EcoCard icon={Gift}     title="Gifted travel credits" desc="Send travel credits to friends, family or shared trips." />
               <EcoCard icon={Bell}     title="Smart alerts"          desc="Price drops and disruption changes explained clearly." />
               <EcoCard icon={FileText} title="Documents"             desc="Passports, tickets and confirmations organized." />
               <EcoCard icon={Users}    title="Shared funding"        desc="Family and group contributions stay transparent." />
@@ -525,6 +525,29 @@ const Landing = () => {
           <Button asChild variant="cta" size="xl" className="mt-6">
             <Link to="/search">Start searching <ArrowRight className="h-4 w-4" /></Link>
           </Button>
+        </div>
+      </section>
+
+      {/* ───────── 7. TRUST STRIP ───────── */}
+      <section className="border-t bg-card/50">
+        <div className="container py-5">
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+            {[
+              "Transparent pricing",
+              "Explainable AI",
+              "Smart travel wallet",
+              "Shared trip funding",
+              "Disruption intelligence",
+            ].map((t, i) => (
+              <li key={t} className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-[hsl(var(--success))]" />
+                  {t}
+                </span>
+                {i < 4 && <span className="opacity-30 hidden sm:inline">·</span>}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       <EnvDebugPanel />
