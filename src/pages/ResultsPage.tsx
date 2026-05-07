@@ -495,9 +495,24 @@ const ResultsPage = () => {
         </div>
       </section>
 
+      {/* Smart filters */}
+      <SmartFiltersBar active={smartFilter} onChange={setSmartFilter} />
+
+      {/* Side-by-side comparison */}
+      {compareOptions.length >= 2 && (
+        <ComparisonPanel
+          options={compareOptions}
+          onClear={() => setCompare([])}
+          onRemove={(id) => setCompare((c) => c.filter((x) => x !== id))}
+        />
+      )}
+
       {/* Full list */}
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
+          <span className="text-xs text-muted-foreground">{displayOptions.length} matching · sorted by Travixis confidence</span>
+        </div>
         {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
