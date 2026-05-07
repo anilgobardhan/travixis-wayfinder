@@ -215,7 +215,41 @@
       0 4px 14px -8px hsl(var(--primary) / 0.18);
   }
 
+  /* Result card — calm operational hover, never flashy */
+  .result-card {
+    transition: border-color 0.35s ease, box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .result-card:hover {
+    border-color: hsl(var(--primary) / 0.22);
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.06),
+      0 18px 40px -24px hsl(var(--primary) / 0.22),
+      0 4px 12px -8px hsl(var(--primary) / 0.10);
+    transform: translateY(-1px);
+  }
+
+  /* Filter group — quiet collapsible motion */
+  .filter-group-trigger:hover .filter-group-title { color: hsl(var(--foreground)); }
+  .filter-active-dot {
+    display: inline-block;
+    height: 6px; width: 6px;
+    border-radius: 9999px;
+    background: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
+  }
+
+  /* Sticky compare bar — premium floating authority */
+  .compare-floating {
+    box-shadow:
+      0 0 0 1px hsl(var(--border) / 0.8),
+      0 24px 48px -20px hsl(var(--primary) / 0.28),
+      0 6px 16px -8px hsl(var(--primary) / 0.14);
+    backdrop-filter: blur(14px) saturate(140%);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .hero-dots, .ambient-pulse, .signal-fade { animation: none; }
+    .result-card, .field-cluster, .swap-magnetic { transition: none; }
+    .result-card:hover { transform: none; }
   }
 }
