@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Compass, Search, LayoutDashboard, FileText, LifeBuoy, Menu, X } from "lucide-react";
+import { Compass, Search, LayoutDashboard, FileText, Wallet, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SystemStatus } from "./SystemStatus";
@@ -7,9 +7,9 @@ import { Button } from "./ui/button";
 
 const nav = [
   { to: "/search", label: "Search", icon: Search },
-  { to: "/trip", label: "My Trip", icon: LayoutDashboard },
+  { to: "/trip", label: "My Trips", icon: LayoutDashboard },
+  { to: "/wallet", label: "Wallet", icon: Wallet, balance: "€1,420" },
   { to: "/documents", label: "Documents", icon: FileText },
-  { to: "/support", label: "Support", icon: LifeBuoy },
 ];
 
 export const Layout = () => {
@@ -38,7 +38,7 @@ export const Layout = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "rounded-md px-3 py-2 text-sm font-medium transition-base",
+                    "rounded-md px-3 py-2 text-sm font-medium transition-base inline-flex items-center gap-2",
                     isActive
                       ? "bg-[hsl(var(--primary-soft))] text-primary"
                       : "text-muted-foreground hover:text-foreground"
@@ -46,6 +46,12 @@ export const Layout = () => {
                 }
               >
                 {item.label}
+                {item.balance && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-[hsl(var(--primary-soft))] px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
+                    {item.balance}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -117,7 +123,7 @@ export const Layout = () => {
           <FooterCol title="Trips" items={["My trips", "Documents", "Alerts"]} />
           <FooterCol title="Wallet" items={["Travel credits", "Gift travel", "Shared funding", "Coverage"]} />
           <FooterCol title="Trust" items={["Transparency", "Methodology", "AI policy"]} />
-          <FooterCol title="Company" items={["About", "Support", "Contact"]} />
+          <FooterCol title="Help" items={["Support", "Help center", "Contact"]} />
         </div>
         <div className="border-t">
           <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
