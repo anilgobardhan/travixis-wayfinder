@@ -378,7 +378,6 @@ const Landing = () => {
                 </Popover>
               </div>
             </div>
-            </div>
 
             {/* CTA + intelligence row */}
             <div className="flex flex-col-reverse md:flex-row md:items-center gap-3">
