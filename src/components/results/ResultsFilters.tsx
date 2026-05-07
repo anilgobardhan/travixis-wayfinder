@@ -416,19 +416,19 @@ const TypeIcon = ({ t }: { t: SearchType }) => {
 export const ResultsFilters = (props: Props) => {
   const label = props.searchType.charAt(0).toUpperCase() + props.searchType.slice(1);
   return (
-    <aside className="hidden lg:block w-[260px] shrink-0">
-      <div className="sticky top-20 rounded-2xl border bg-card p-4 shadow-card">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-[hsl(var(--primary-soft))] text-primary">
+    <aside className="hidden lg:block w-[272px] shrink-0">
+      <div className="sticky top-24 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-5 shadow-[0_4px_24px_-8px_hsl(var(--primary)/0.08)]">
+        <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/60">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
               <TypeIcon t={props.searchType} />
             </span>
             <div>
-              <p className="text-sm font-semibold">Refine {label.toLowerCase()}</p>
+              <p className="text-[13px] font-semibold tracking-tight">Refine {label.toLowerCase()}</p>
               <p className="text-[11px] text-muted-foreground tabular-nums">{props.resultCount} matching</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="h-7 px-2 text-[11px]" onClick={props.onClear}>
+          <Button variant="ghost" size="sm" className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground" onClick={props.onClear}>
             Clear
           </Button>
         </div>
