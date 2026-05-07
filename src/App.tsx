@@ -12,6 +12,7 @@ import OptionDetailPage from "./pages/OptionDetailPage";
 import TripDashboardPage from "./pages/TripDashboardPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import SupportPage from "./pages/SupportPage";
+import WalletPage from "./pages/WalletPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/trip" element={<TripDashboardPage />} />
             <Route path="/trip-dashboard" element={<TripDashboardPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/wallet" element={<WalletPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
