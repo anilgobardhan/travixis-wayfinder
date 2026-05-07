@@ -42,6 +42,13 @@ import {
   TransparencySection,
   DiscoverySection,
 } from "@/components/landing/IntelligenceSections";
+import {
+  TravelWalletSection,
+  SmartCoverageSection,
+  SharedFundingSection,
+  FundingInsightsSection,
+  WalletCategoriesStrip,
+} from "@/components/wallet/WalletSections";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -441,6 +448,11 @@ const Landing = () => {
       </section>
 
       <TripsEcosystemSection />
+      <TravelWalletSection />
+      <WalletCategoriesStrip />
+      <SmartCoverageSection />
+      <SharedFundingSection />
+      <FundingInsightsSection />
       <PriceAlertsSection />
       <TransparencySection />
       <DiscoverySection />
