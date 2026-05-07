@@ -446,7 +446,7 @@ export const MobileFiltersButton = (props: Props) => {
     <div className="lg:hidden sticky top-16 z-20 -mx-4 px-4 py-2 bg-background/85 backdrop-blur border-b border-border/60">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" size="sm" className="w-full justify-between">
+          <Button data-mobile-filters-trigger variant="outline" size="sm" className="w-full justify-between">
             <span className="inline-flex items-center gap-2">
               <FilterIcon className="h-4 w-4" /> Filters
             </span>
