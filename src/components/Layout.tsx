@@ -80,21 +80,74 @@ export const Layout = () => {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-2.5 md:flex">
             <SystemStatus compact />
             <span className="h-5 w-px bg-border" aria-hidden />
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="h-9 px-3 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--primary-soft))]/60"
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="relative grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--primary-soft))]/60 transition-base"
             >
-              <Link to="/login" className="inline-flex items-center gap-1.5">
-                <UserRound className="h-4 w-4" />
-                Sign in
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="h-9 border-primary/30 text-primary hover:bg-[hsl(var(--primary-soft))]">
+              <Bell className="h-[17px] w-[17px]" />
+              <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))] ring-2 ring-background" />
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full pl-1 pr-3 py-1 text-[13px] font-medium text-foreground hover:bg-[hsl(var(--primary-soft))]/60 transition-base ring-1 ring-border/60"
+                >
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-[hsl(var(--primary-soft))] text-primary">
+                    <UserRound className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="hidden lg:inline">Account</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={10}
+                className="w-72 rounded-2xl p-0 border bg-card shadow-[0_24px_60px_-28px_hsl(var(--primary)/0.35),0_8px_24px_-12px_hsl(var(--foreground)/0.08)]"
+              >
+                <div className="px-4 pt-4 pb-3">
+                  <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Travel profile</p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-[hsl(var(--primary-soft))] text-primary">
+                      <UserRound className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">Guest traveler</p>
+                      <Link to="/login" className="text-[11.5px] text-primary hover:underline">Sign in to personalize</Link>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between rounded-lg bg-[hsl(var(--primary-soft))]/60 px-3 py-2">
+                    <div className="flex items-center gap-2 text-[12px] text-primary">
+                      <Wallet className="h-3.5 w-3.5" />
+                      <span className="font-semibold">€1,420</span>
+                      <span className="text-primary/70">· 3 active credits</span>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-[10.5px] text-[hsl(var(--success))] font-medium">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" /> Active
+                    </span>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Travel</DropdownMenuLabel>
+                <DropdownMenuItem asChild><Link to="/trip" className="cursor-pointer"><LayoutDashboard className="h-4 w-4" /> My trips</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/wallet" className="cursor-pointer"><Wallet className="h-4 w-4" /> Wallet overview</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/documents" className="cursor-pointer"><FileText className="h-4 w-4" /> Documents</Link></DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer"><Bookmark className="h-4 w-4" /> Saved searches</DropdownMenuItem>
+                <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Intelligence</DropdownMenuLabel>
+                <DropdownMenuItem className="cursor-pointer"><Sparkles className="h-4 w-4" /> AI recommendations</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer"><Bell className="h-4 w-4" /> Notifications</DropdownMenuItem>
+                <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Wallet</DropdownMenuLabel>
+                <DropdownMenuItem className="cursor-pointer"><Users className="h-4 w-4" /> Shared funding</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer"><Gift className="h-4 w-4" /> Gift travel credits</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer"><Settings className="h-4 w-4" /> Travel preferences</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-muted-foreground"><LogOut className="h-4 w-4" /> Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button asChild variant="hero" size="sm" className="h-9 px-4">
               <Link to="/search">Start searching</Link>
             </Button>
           </div>
