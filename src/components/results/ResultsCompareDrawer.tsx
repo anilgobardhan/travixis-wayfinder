@@ -20,15 +20,15 @@ const buildRationale = (winner: IntelOption, others: IntelOption[]) => {
     (a.price + a.taxes + a.baggage + a.fees) - (b.price + b.taxes + b.baggage + b.fees))[0];
   const safest = [...others, winner].sort((a, b) => a.riskScore - b.riskScore)[0];
 
-  if (winner.id === safest.id) reasons.push("Lowest disruption probability among compared options.");
-  if (winner.id === cheapest.id) reasons.push("Cheapest true total — no hidden checkout surcharges.");
+  if (winner.id === safest.id) reasons.push("Historically the calmer route — lower disruption probability across compared options.");
+  if (winner.id === cheapest.id) reasons.push("Cheapest true total — every fee already counted, no checkout surprises.");
   else {
     const diff = winnerTotal - (cheapest.price + cheapest.taxes + cheapest.baggage + cheapest.fees);
-    if (diff > 0) reasons.push(`Costs ${fmt(diff, winner.currency)} more than the cheapest, but trades up on reliability and stress.`);
+    if (diff > 0) reasons.push(`${fmt(diff, winner.currency)} more than the cheapest — buys reliability and a smoother day of travel.`);
   }
-  if (/direct/i.test(winner.stops)) reasons.push("Direct routing — no transfer fatigue or missed-connection risk.");
-  if (winner.baggage === 0 || /included/i.test(winner.baggageInfo)) reasons.push("Carry-on or checked baggage included in the fare.");
-  if (/refundable|flexible|free changes/i.test(winner.refund)) reasons.push("Flexible refund — protects against last-minute changes.");
+  if (/direct/i.test(winner.stops)) reasons.push("Direct routing — no transfer fatigue, better overnight recovery.");
+  if (winner.baggage === 0 || /included/i.test(winner.baggageInfo)) reasons.push("Baggage included — protects against last-mile surprise fees.");
+  if (/refundable|flexible|free changes/i.test(winner.refund)) reasons.push("Flexible refund — calm fallback if plans shift.");
   return reasons.slice(0, 4);
 };
 
