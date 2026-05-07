@@ -500,21 +500,21 @@ const Landing = () => {
           {[
             {
               icon: Wallet,
-              title: "True total price",
-              desc: "Includes baggage, taxes, seat fees and surcharges. The price you see is the price you pay.",
+              title: "No hidden costs later",
+              desc: "Baggage, taxes, seat fees and surcharges — all counted upfront. The price you see is the price you pay.",
             },
             {
               icon: Gauge,
-              title: "Risk & stress clarity",
-              desc: "Tight connections, overnight transfers and cancellation risk explained in plain language.",
+              title: "Fewer stressful connections",
+              desc: "Tight transfers, overnight layovers and disruption history — explained calmly, in plain language.",
             },
             {
               icon: Sparkles,
-              title: "Explainable recommendations",
-              desc: "Why this option? Why this price? You always see the reasoning behind every suggestion.",
+              title: "Why this trip feels calmer",
+              desc: "Every recommendation comes with a reason. You always see the trade-offs behind the suggestion.",
             },
           ].map((f) => (
-            <div key={f.title} className="rounded-2xl border bg-card p-7 shadow-card transition-base hover:shadow-elevated hover:-translate-y-0.5">
+            <div key={f.title} className="result-card rounded-2xl border border-border/70 bg-card p-7 shadow-card">
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
                 <f.icon className="h-5 w-5" />
               </div>
