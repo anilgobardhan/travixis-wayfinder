@@ -46,9 +46,15 @@ const giftIdeas = [
 ];
 
 const pools = [
-  { icon: Heart, title: "Honeymoon fund", progress: 72, raised: "€2,160", goal: "€3,000" },
-  { icon: Users, title: "Family vacation", progress: 45, raised: "€1,800", goal: "€4,000" },
-  { icon: Briefcase, title: "Team offsite pool", progress: 88, raised: "€7,040", goal: "€8,000" },
+  { icon: Heart, title: "Honeymoon in Tuscany", progress: 72, raised: "€2,160", goal: "€3,000", contributors: 8, lead: "Started by Emma" },
+  { icon: Users, title: "Family Summer 2026", progress: 45, raised: "€1,800", goal: "€4,000", contributors: 5, lead: "3 contributors this week" },
+  { icon: Briefcase, title: "Lisbon team offsite", progress: 88, raised: "€7,040", goal: "€8,000", contributors: 14, lead: "Funded by 14 teammates" },
+];
+
+const recentActivity = [
+  { kind: "gift", icon: Gift, title: "€120 gifted by Emma", desc: "For your honeymoon fund · 2h ago", tone: "accent" },
+  { kind: "milestone", icon: Sparkles, title: "Tuscany fund reached 72%", desc: "Just €840 to your goal", tone: "primary" },
+  { kind: "join", icon: Users, title: "Marco joined Family Summer 2026", desc: "Now 5 contributors · transparent split", tone: "primary" },
 ];
 
 const insights = [
@@ -225,25 +231,60 @@ const WalletPage = () => {
                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
                   <p.icon className="h-5 w-5" />
                 </div>
-                <p className="font-semibold">{p.title}</p>
+                <div className="min-w-0">
+                  <p className="font-semibold text-[14.5px] tracking-tight">{p.title}</p>
+                  <p className="mt-0.5 text-[11.5px] text-muted-foreground leading-relaxed">{p.lead}</p>
+                </div>
               </div>
               <div className="mt-5 flex items-baseline justify-between">
-                <p className="text-sm font-semibold">{p.raised} <span className="text-xs font-normal text-muted-foreground">of {p.goal}</span></p>
-                <p className="text-xs font-semibold text-[hsl(var(--success))]">{p.progress}%</p>
+                <p className="text-[13.5px] font-semibold tabular-nums">{p.raised} <span className="text-[11.5px] font-normal text-muted-foreground">of {p.goal}</span></p>
+                <p className="text-[11.5px] font-semibold text-[hsl(var(--success))] tabular-nums">{p.progress}%</p>
               </div>
               <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">
                 <div className="h-full rounded-full bg-gradient-to-r from-primary to-[hsl(var(--accent))]" style={{ width: `${p.progress}%` }} />
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <div className="flex -space-x-2">
-                  {[0, 1, 2].map((i) => (
-                    <span key={i} className={cn("h-6 w-6 rounded-full ring-2 ring-card", i === 0 ? "bg-[hsl(var(--accent))]" : i === 1 ? "bg-primary" : "bg-[hsl(var(--success))]")} />
-                  ))}
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {[0, 1, 2].map((i) => (
+                      <span key={i} className={cn("h-6 w-6 rounded-full ring-2 ring-card", i === 0 ? "bg-[hsl(var(--accent))]" : i === 1 ? "bg-primary" : "bg-[hsl(var(--success))]")} />
+                    ))}
+                    {p.contributors > 3 && (
+                      <span className="h-6 px-1.5 rounded-full ring-2 ring-card bg-muted text-[10px] font-medium grid place-items-center text-muted-foreground">
+                        +{p.contributors - 3}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">{p.contributors} contributors</span>
                 </div>
                 <Button variant="ghost" size="sm" className="text-primary">Contribute <ArrowRight className="h-3.5 w-3.5" /></Button>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Social activity strip — calm, human */}
+        <div className="mt-8 rounded-2xl border bg-card p-5 shadow-card">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-muted-foreground">Recent shared activity</p>
+            <span className="text-[11px] text-muted-foreground">Visible only to your circle</span>
+          </div>
+          <ul className="mt-4 divide-y divide-border/60">
+            {recentActivity.map((a) => (
+              <li key={a.title} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+                <span className={cn(
+                  "grid h-8 w-8 place-items-center rounded-lg shrink-0",
+                  a.tone === "accent" ? "bg-[hsl(var(--accent-soft))] text-primary" : "bg-[hsl(var(--primary-soft))] text-primary"
+                )}>
+                  <a.icon className="h-3.5 w-3.5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[13.5px] font-medium leading-snug">{a.title}</p>
+                  <p className="mt-0.5 text-[12px] text-muted-foreground leading-relaxed">{a.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

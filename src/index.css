@@ -112,6 +112,12 @@
     font-feature-settings: "ss01", "cv11";
   }
   h1, h2, h3, h4 { @apply tracking-tight; }
+  /* Editorial rhythm: lift micro/helper text readability without bulking layout */
+  p { line-height: 1.6; }
+  .text-xs   { font-size: 12.5px; line-height: 1.55; letter-spacing: 0.005em; }
+  .text-\[11px\], .text-\[11\.5px\] { line-height: 1.5; letter-spacing: 0.01em; }
+  .text-\[10px\], .text-\[10\.5px\] { letter-spacing: 0.06em; }
+  .text-muted-foreground { font-weight: 400; }
 }
 
 @layer utilities {
