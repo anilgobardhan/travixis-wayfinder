@@ -286,7 +286,7 @@ const Landing = () => {
                   type="button"
                   onClick={() => { const a = fromAirport; setFromAirport(toAirport); setToAirport(a); }}
                   aria-label="Swap origin and destination"
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-full bg-card text-primary border shadow-sm hover:bg-[hsl(var(--primary-soft))] hover:rotate-180 transition-premium"
+                  className="swap-magnetic absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-full bg-card text-primary border border-border/70 shadow-sm hover:bg-[hsl(var(--primary-soft))] hover:border-primary/30 hover:text-primary"
                 >
                   <ArrowLeftRight className="h-4 w-4" />
                 </button>
@@ -418,7 +418,7 @@ const Landing = () => {
                   Flexible dates may reduce fares by ~18% on this route.
                 </span>
               </p>
-              <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full px-7 gap-2.5" disabled={!canSearch}>
+              <Button type="submit" variant="hero" size="lg" className="cta-bloom md:w-auto w-full px-7 gap-2.5" disabled={!canSearch}>
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                 <span className="tracking-tight">{submitting ? "Searching…" : "Search with Travixis"}</span>
                 {!submitting && <ArrowRight className="h-4 w-4 opacity-80" />}
@@ -901,7 +901,7 @@ const LiveIntelligencePanel = () => {
   const headline = HEADLINES[headlineIdx];
 
   return (
-    <div className="rounded-[20px] bg-white/[0.05] backdrop-blur-xl ring-1 ring-white/10 p-7 shadow-[0_30px_80px_-32px_rgba(0,0,0,0.55)]">
+    <div className="rounded-[22px] bg-gradient-to-b from-white/[0.07] to-white/[0.025] backdrop-blur-2xl ring-1 ring-white/[0.09] p-7 shadow-[0_36px_90px_-36px_rgba(0,0,0,0.55)]">
       <div className="flex items-center gap-2.5 text-white/85">
         <span className="grid h-7 w-7 place-items-center rounded-lg bg-white/[0.08] ring-1 ring-white/10">
           <Sparkles className="h-3.5 w-3.5" />
