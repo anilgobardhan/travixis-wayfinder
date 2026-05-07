@@ -408,20 +408,20 @@ const Landing = () => {
                         onChange={setInfants}
                       />
 
-                      <div className="pt-3 border-t">
-                        <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+                      <div className="pt-4 border-t border-border/60">
+                        <Label className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-semibold">
                           Cabin class
                         </Label>
-                        <div className="mt-2 grid grid-cols-2 gap-1.5">
+                        <div className="mt-2.5 grid grid-cols-2 gap-1.5">
                           {["Economy", "Premium Economy", "Business", "First"].map((c) => (
                             <button
                               key={c}
                               type="button"
                               onClick={() => setCabin(c)}
-                              className={`text-xs rounded-lg px-2.5 py-2 ring-1 transition-base ${
+                              className={`text-xs rounded-lg px-2.5 py-2 ring-1 transition-premium ${
                                 cabin === c
-                                  ? "bg-[hsl(var(--primary-soft))] text-primary ring-primary/30 font-semibold"
-                                  : "bg-muted/40 text-foreground/80 ring-border/60 hover:bg-muted"
+                                  ? "bg-[hsl(var(--primary-soft))] text-primary ring-primary/30 font-semibold shadow-[0_0_0_3px_hsl(var(--primary)/0.06)]"
+                                  : "bg-muted/30 text-foreground/75 ring-border/50 hover:bg-muted hover:ring-border"
                               }`}
                             >
                               {c}
