@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Compass, Search, LayoutDashboard, FileText, Wallet, Menu, X } from "lucide-react";
+import { Compass, Search, LayoutDashboard, FileText, Wallet, Menu, X, UserRound } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SystemStatus } from "./SystemStatus";
@@ -56,9 +56,21 @@ export const Layout = () => {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-3 md:flex">
             <SystemStatus compact />
-            <Button asChild variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-[hsl(var(--primary-soft))]">
+            <span className="h-5 w-px bg-border" aria-hidden />
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="h-9 px-3 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--primary-soft))]/60"
+            >
+              <Link to="/login" className="inline-flex items-center gap-1.5">
+                <UserRound className="h-4 w-4" />
+                Sign in
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="h-9 border-primary/30 text-primary hover:bg-[hsl(var(--primary-soft))]">
               <Link to="/search">Start searching</Link>
             </Button>
           </div>
