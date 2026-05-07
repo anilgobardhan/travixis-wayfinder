@@ -500,11 +500,13 @@ const ResultsPage = () => {
 
       {/* Side-by-side comparison */}
       {compareOptions.length >= 2 && (
-        <ComparisonPanel
-          options={compareOptions}
-          onClear={() => setCompare([])}
-          onRemove={(id) => setCompare((c) => c.filter((x) => x !== id))}
-        />
+        <div data-compare-panel>
+          <ComparisonPanel
+            options={compareOptions}
+            onClear={() => setCompare([])}
+            onRemove={(id) => setCompare((c) => c.filter((x) => x !== id))}
+          />
+        </div>
       )}
 
       {/* Full list */}
