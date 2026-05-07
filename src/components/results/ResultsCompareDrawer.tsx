@@ -52,47 +52,58 @@ export const CompareDrawer = ({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto p-0">
-        <SheetHeader className="px-6 pt-6 pb-4 border-b">
-          <div className="flex items-center gap-2">
+        <SheetHeader className="px-7 pt-7 pb-5 border-b border-border/60">
+          <div className="flex items-center gap-2.5">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
               <GitCompare className="h-4 w-4" />
             </span>
-            <SheetTitle className="text-base font-semibold tracking-tight">
-              Side-by-side comparison
-            </SheetTitle>
+            <div>
+              <SheetTitle className="text-[15px] font-semibold tracking-tight leading-none">
+                Side-by-side comparison
+              </SheetTitle>
+              <p className="mt-1.5 text-[11.5px] text-muted-foreground leading-relaxed">
+                Travixis advises — you decide. Differences highlighted, never hidden.
+              </p>
+            </div>
           </div>
         </SheetHeader>
 
         {options.length < 2 ? (
-          <div className="px-6 py-12 text-center text-sm text-muted-foreground">
+          <div className="px-7 py-14 text-center text-[13px] text-muted-foreground leading-relaxed">
             Select at least 2 options to compare.
           </div>
         ) : (
-          <div className="px-6 py-6 space-y-6">
+          <div className="px-7 py-7 space-y-7">
             {winner && (
-              <div className="rounded-2xl border border-primary/20 bg-[hsl(var(--primary-soft))]/50 p-5">
-                <div className="flex items-center gap-2">
-                  <BadgeSoft variant="primary"><Sparkles className="h-3 w-3" /> Travixis recommends</BadgeSoft>
-                  <span className="text-[11px] text-muted-foreground">AI rationale · explainable</span>
+              <div className="rounded-2xl border border-primary/25 bg-gradient-to-b from-[hsl(var(--primary-soft))]/70 to-[hsl(var(--primary-soft))]/20 p-6 shadow-card relative">
+                <span className="absolute -top-2.5 left-6 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2.5 py-0.5 text-[10px] font-semibold tracking-wide shadow-sm">
+                  <Sparkles className="h-2.5 w-2.5" /> AI recommends this one
+                </span>
+                <div className="flex items-center gap-2 mt-1">
+                  <BadgeSoft variant="primary"><ShieldCheck className="h-3 w-3" /> Highest confidence</BadgeSoft>
+                  <span className="text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground font-medium">Explainable rationale</span>
                 </div>
-                <p className="mt-3 text-lg font-semibold tracking-tight">
+                <p className="mt-4 text-[20px] font-semibold tracking-tight leading-tight">
                   {winner.airline} <span className="text-muted-foreground font-normal">— {winner.route}</span>
                 </p>
-                <ul className="mt-3 space-y-1.5">
+                <ul className="mt-4 space-y-2.5">
                   {rationale.map((r) => (
-                    <li key={r} className="flex items-start gap-2 text-[13px] text-foreground/85">
-                      <Lightbulb className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                    <li key={r} className="flex items-start gap-2.5 text-[13.5px] text-foreground/85 leading-[1.55]">
+                      <Lightbulb className="h-3.5 w-3.5 mt-1 text-primary shrink-0" />
                       <span>{r}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 inline-flex items-center gap-1.5 text-[11px] text-primary/80">
+                <p className="mt-5 inline-flex items-center gap-1.5 text-[11px] text-primary/75 tracking-wide">
                   <ShieldCheck className="h-3 w-3" /> AI helps. You decide.
                 </p>
               </div>
             )}
 
-            <ComparisonPanel options={options} onClear={onClear} onRemove={onRemove} />
+            <div className="opacity-95">
+              <p className="mb-3 text-[10.5px] uppercase tracking-[0.14em] font-semibold text-muted-foreground">Full breakdown</p>
+              <ComparisonPanel options={options} onClear={onClear} onRemove={onRemove} />
+            </div>
           </div>
         )}
       </SheetContent>
