@@ -188,26 +188,27 @@ const Landing = () => {
       </section>
 
       {/* Search entry: Quick / Smart / Voice */}
-      <section className="container -mt-4 relative z-10">
-        <div className="mx-auto max-w-[92%] md:max-w-[94%] rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
+      <section className="container -mt-6 relative z-10">
+        <div className="mx-auto max-w-[94%] md:max-w-[92%] rounded-2xl bg-card p-5 md:p-6 shadow-[0_24px_60px_-28px_hsl(var(--primary)/0.35),0_8px_24px_-12px_hsl(var(--foreground)/0.08)] border border-border/70 ring-1 ring-foreground/[0.03]">
+          {/* Mode tabs */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-            <div className="inline-flex flex-wrap rounded-xl border bg-muted/40 p-1">
-              <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-1.5 text-sm font-medium shadow-sm">
-                <Search className="h-4 w-4 text-primary" /> 🔍 Quick Search
+            <div className="inline-flex flex-wrap items-center rounded-xl border bg-muted/40 p-1">
+              <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3.5 py-1.5 text-sm font-semibold text-foreground shadow-sm ring-1 ring-border/60">
+                <Search className="h-4 w-4 text-primary" /> Quick Search
               </span>
               <Link
                 to="/search?mode=autopilot"
-                className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
+                className="inline-flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
               >
-                <Wand2 className="h-4 w-4" /> ✨ Smart Search
+                <Wand2 className="h-4 w-4" /> Smart Search
               </Link>
               <button
                 type="button"
                 onClick={onVoiceClick}
-                className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
+                className="inline-flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-base"
               >
                 {voice.listening ? <MicOff className="h-4 w-4 text-[hsl(var(--accent))]" /> : <Mic className="h-4 w-4" />}
-                🎤 Voice Search
+                Voice Search
               </button>
             </div>
             <p className="text-xs text-muted-foreground hidden md:block">
@@ -215,19 +216,87 @@ const Landing = () => {
             </p>
           </div>
 
-          <form onSubmit={onQuickSearch} className="flex flex-col md:flex-row gap-4 items-stretch">
-            <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-3">
-              <AirportSelect label="From" value={fromAirport} onChange={setFromAirport} placeholder="Search city or airport" />
-              <AirportSelect label="To" value={toAirport} onChange={setToAirport} placeholder="Search city or airport" />
-              <FieldInput label="Departure" type="date" value={depart} onChange={setDepart} />
-              <FieldInput label="Return" type="date" value={ret} onChange={setRet} />
-              <FieldInput label="Travelers" type="number" value={travelers} onChange={setTravelers} placeholder="1" />
+          <form onSubmit={onQuickSearch} className="space-y-3">
+            {/* Cluster row */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch">
+              {/* Route cluster */}
+              <div className="md:col-span-5 relative rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+                  <AirportSelect label="From" value={fromAirport} onChange={setFromAirport} placeholder="City or airport" />
+                </div>
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+                  <AirportSelect label="To" value={toAirport} onChange={setToAirport} placeholder="City or airport" />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { const a = fromAirport; setFromAirport(toAirport); setToAirport(a); }}
+                  aria-label="Swap origin and destination"
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid h-8 w-8 place-items-center rounded-full bg-card text-primary border shadow-sm hover:bg-[hsl(var(--primary-soft))] transition-base"
+                >
+                  <ArrowLeftRight className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Dates cluster */}
+              <div className="md:col-span-4 rounded-xl border bg-muted/30 p-1 grid grid-cols-2 gap-1">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+                  <FieldInput label="Departure" type="date" value={depart} onChange={setDepart} />
+                </div>
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50">
+                  <FieldInput label="Return" type="date" value={ret} onChange={setRet} />
+                </div>
+              </div>
+
+              {/* Travelers + Class cluster */}
+              <div className="md:col-span-3 rounded-xl border bg-muted/30 p-1">
+                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 h-full flex flex-col justify-center">
+                  <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+                    Travelers · Class
+                  </Label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <Users className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <Input
+                      type="number"
+                      min={1}
+                      value={travelers}
+                      onChange={(e) => setTravelers(e.target.value)}
+                      className="h-8 w-12 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 text-sm font-semibold"
+                    />
+                    <span className="text-sm font-medium text-foreground/80">
+                      {travelersCount === 1 ? "Adult" : "Adults"}
+                    </span>
+                    <span className="opacity-30">·</span>
+                    <select
+                      value={cabin}
+                      onChange={(e) => setCabin(e.target.value)}
+                      className="bg-transparent text-sm font-medium text-foreground/80 focus:outline-none cursor-pointer"
+                    >
+                      <option>Economy</option>
+                      <option>Premium</option>
+                      <option>Business</option>
+                      <option>First</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
-            <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full md:self-end" disabled={!canSearch}>
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-              {submitting ? "Searching…" : "Search with Travixis"}
-            </Button>
+
+            {/* CTA + intelligence row */}
+            <div className="flex flex-col-reverse md:flex-row md:items-center gap-3">
+              <p className="flex-1 inline-flex items-center gap-2 text-xs text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5 text-primary/70" />
+                <span>
+                  <span className="text-foreground/80 font-medium">Travixis intelligence:</span>{" "}
+                  Flexible dates may reduce fares by ~18% on this route.
+                </span>
+              </p>
+              <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full" disabled={!canSearch}>
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                {submitting ? "Searching…" : "Search with Travixis"}
+              </Button>
+            </div>
           </form>
+
           {!canSearch && !submitting && (
             <p className="mt-3 text-xs text-muted-foreground">
               Select your airports and travel date to search.
@@ -269,7 +338,7 @@ const Landing = () => {
             </div>
           )}
 
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+          <div className="mt-4 pt-4 border-t border-border/60 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <Wand2 className="h-3.5 w-3.5" /> Prefer to describe it?
             </span>
