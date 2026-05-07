@@ -397,16 +397,20 @@ const ResultsPage = () => {
             const total = o.price + o.taxes + o.baggage + o.fees;
             return (
               <div key={o.id} className="rounded-2xl border bg-card p-5 shadow-card flex flex-col">
-                <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <BadgeSoft variant={meta.variant}>{meta.icon}{meta.label}</BadgeSoft>
+                  <ConfidenceChip option={o} />
+                </div>
                 <p className="mt-3 font-semibold">{o.airline}</p>
                 <p className="text-xs text-muted-foreground">{o.route} · {o.stops} · {o.duration}</p>
                 <p className="mt-3 text-2xl font-bold">{formatMoney(total, o.currency)}</p>
                 <p className="text-xs text-muted-foreground">true total price</p>
+                <div className="mt-3"><RiskChips option={o} /></div>
                 <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground">
                   <li className="flex items-start gap-1.5"><Luggage className="h-3 w-3 mt-0.5 shrink-0" /> {o.baggageInfo}</li>
                   <li className="flex items-start gap-1.5"><ShieldCheck className="h-3 w-3 mt-0.5 shrink-0" /> {o.refund}</li>
-                  <li className="flex items-start gap-1.5"><Gauge className="h-3 w-3 mt-0.5 shrink-0" /> Stress score {o.riskScore}/100</li>
                 </ul>
+                <div className="mt-3"><WhyChips option={o} /></div>
                 <p className="mt-3 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2 text-xs text-primary">
                   <span className="font-semibold">Why: </span>{o.why}
                 </p>
