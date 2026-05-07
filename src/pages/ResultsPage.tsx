@@ -26,6 +26,15 @@ import { BadgeSoft } from "@/components/BadgeSoft";
 import { cn } from "@/lib/utils";
 import { api, type SearchRequestSnapshot } from "@/lib/api";
 import { ENABLE_REAL_SEARCH } from "@/lib/flags";
+import {
+  SmartFiltersBar,
+  ComparisonPanel,
+  ConfidenceChip,
+  RiskChips,
+  WhyChips,
+  applySmartFilter,
+  type SmartFilterKey,
+} from "@/components/results/ResultsIntelligence";
 
 type Option = {
   id: string;
