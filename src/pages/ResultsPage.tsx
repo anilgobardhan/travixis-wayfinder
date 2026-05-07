@@ -36,6 +36,14 @@ import {
   type SmartFilterKey,
 } from "@/components/results/ResultsIntelligence";
 import { WalletInsightsPanel, WalletAwareChip } from "@/components/wallet/WalletIntelligence";
+import {
+  ResultsFilters,
+  MobileFiltersButton,
+  ActiveFilterChips,
+  defaultFlightFilters,
+  type FlightFilters,
+  type SearchType,
+} from "@/components/results/ResultsFilters";
 
 type Option = {
   id: string;
