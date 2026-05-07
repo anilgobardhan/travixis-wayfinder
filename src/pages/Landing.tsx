@@ -636,26 +636,34 @@ const Landing = () => {
               tag: "Low risk",
               title: "Calm destinations this season",
               desc: "Strong reliability scores, stable weather, minimal disruption history.",
-              tone: "from-[hsl(199_100%_56%/0.18)] to-[hsl(211_80%_22%/0.20)]",
+              image: discoverCalm,
             },
             {
               icon: Sun,
               tag: "Spring 2026",
               title: "Best spring escapes",
               desc: "Warm enough, quiet enough, priced right — before peak season hits.",
-              tone: "from-[hsl(38_92%_50%/0.18)] to-[hsl(199_100%_56%/0.18)]",
+              image: discoverSpring,
             },
             {
               icon: Briefcase,
               tag: "Workation",
               title: "Remote-work friendly",
               desc: "Fast Wi-Fi, time-zone fit and visa ease — work from anywhere comfortably.",
-              tone: "from-[hsl(142_71%_36%/0.18)] to-[hsl(199_100%_56%/0.18)]",
+              image: discoverWorkation,
             },
           ].map((c) => (
             <article key={c.title} className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-elevated transition-base hover:-translate-y-0.5">
-              <div className={`relative h-36 bg-gradient-to-br ${c.tone}`}>
-                <div className="absolute inset-0 [background-image:radial-gradient(circle_at_30%_30%,white_1px,transparent_1px)] [background-size:18px_18px] opacity-30" />
+              <div className="relative h-40 overflow-hidden">
+                <img
+                  src={c.image}
+                  alt=""
+                  loading="lazy"
+                  width={1024}
+                  height={640}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/35 via-foreground/0 to-foreground/0" />
                 <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-card/90 backdrop-blur px-2.5 py-1 text-[11px] font-medium text-primary">
                   <c.icon className="h-3 w-3" /> {c.tag}
                 </div>
