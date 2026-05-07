@@ -17,7 +17,7 @@ import {
   Settings,
   LifeBuoy,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { SystemStatus } from "./SystemStatus";
 import { Button } from "./ui/button";
@@ -48,6 +48,7 @@ export const Layout = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const onLanding = location.pathname === "/";
+  useEffect(() => { setOpen(false); }, [location.pathname]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
