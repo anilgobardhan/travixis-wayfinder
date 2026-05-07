@@ -534,6 +534,7 @@ const ResultsPage = () => {
                     )}
                     <RiskBadge score={o.riskScore} />
                     <ConfidenceChip option={o} />
+                    <WalletAwareChip totalPrice={o.price + o.taxes + o.baggage + o.fees} />
                   </div>
                   <div className="mt-3 flex items-start gap-4">
                     <div className="grid h-11 w-11 place-items-center rounded-lg bg-[hsl(var(--primary-soft))] text-primary">
