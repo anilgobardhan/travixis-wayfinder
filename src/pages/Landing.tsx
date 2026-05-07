@@ -186,8 +186,8 @@ const Landing = () => {
       </section>
 
       {/* Search entry: Quick / Smart / Voice */}
-      <section className="container -mt-10 relative z-10">
-        <div className="rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
+      <section className="container -mt-4 relative z-10">
+        <div className="mx-auto max-w-[92%] md:max-w-[94%] rounded-2xl bg-card p-5 md:p-6 shadow-elevated border">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <div className="inline-flex flex-wrap rounded-xl border bg-muted/40 p-1">
               <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-1.5 text-sm font-medium shadow-sm">
