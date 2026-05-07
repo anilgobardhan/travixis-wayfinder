@@ -563,7 +563,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5">
               <BadgeSoft variant="primary"><ShieldCheck className="h-3 w-3" /> Our principles</BadgeSoft>
-              <h2 className="mt-4 text-4xl md:text-5xl font-bold leading-tight">AI helps.<br/>You decide.</h2>
+              <h2 className="mt-4 text-4xl md:text-[3.25rem] font-semibold editorial-h2">AI helps.<br/>You decide.</h2>
               <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
                 Travixis surfaces the best options for you — but every choice stays in your hands.
                 We never hide trade-offs, and every recommendation comes with a reason.
@@ -626,7 +626,7 @@ const Landing = () => {
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div className="max-w-xl">
             <BadgeSoft variant="accent"><Sparkles className="h-3 w-3" /> Smart discovery</BadgeSoft>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold">A few ideas, intelligently curated.</h2>
+            <h2 className="mt-4 text-3xl md:text-4xl font-semibold editorial-h2">A few ideas, intelligently curated.</h2>
             <p className="mt-3 text-muted-foreground">
               Hand-picked travel directions based on reliability, value and time of year.
             </p>
@@ -689,7 +689,7 @@ const Landing = () => {
         <div className="container py-24">
           <div className="max-w-2xl">
             <BadgeSoft variant="primary"><LayoutIcon /> Travel Operating System</BadgeSoft>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold">Your trip stays managed.</h2>
+            <h2 className="mt-4 text-3xl md:text-4xl font-semibold editorial-h2">Your trip stays managed.</h2>
             <p className="mt-3 text-muted-foreground">
               Travel wallet, gifted travel credits, documents, alerts and shared funding — connected in one calm travel system.
             </p>
@@ -758,7 +758,7 @@ const Landing = () => {
       {/* ───────── 6. FINAL CTA ───────── */}
       <section className="container py-20">
         <div className="rounded-3xl bg-hero p-10 md:p-14 text-primary-foreground text-center shadow-elevated">
-          <h2 className="text-3xl md:text-4xl font-bold">Ready to plan a calmer trip?</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold editorial-h2">Ready to plan a calmer trip?</h2>
           <p className="mt-3 text-white/80 max-w-xl mx-auto">
             Start a search and let Travixis show you the true cost, the real risks, and the best fit for you.
           </p>
