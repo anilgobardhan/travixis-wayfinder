@@ -161,19 +161,39 @@ const Landing = () => {
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
 
-            {/* Trip type chips */}
-            <div className="mt-8 flex flex-wrap gap-2">
+            {/* Search mode tabs */}
+            <div className="mt-8 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
               {[
-                { icon: Plane, label: "Flights" },
+                { icon: Plane, label: "Flights", active: true },
                 { icon: Hotel, label: "Hotels" },
                 { icon: Package, label: "Packages" },
-                { icon: Car, label: "Cars" },
+                { icon: ArrowRight, label: "Multi-city" },
               ].map((t) => (
                 <span
                   key={t.label}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm backdrop-blur"
+                  className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-base ${
+                    t.active ? "bg-white text-primary font-medium shadow-sm" : "text-white/80 hover:text-white"
+                  }`}
                 >
                   <t.icon className="h-3.5 w-3.5" /> {t.label}
+                </span>
+              ))}
+            </div>
+
+            {/* Intelligent travel chips */}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                "Lowest disruption risk",
+                "Best overall value",
+                "No hidden baggage fees",
+                "Shortest total travel time",
+                "Smart layover balance",
+              ].map((c) => (
+                <span
+                  key={c}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur"
+                >
+                  <Sparkles className="h-3 w-3 opacity-70" /> {c}
                 </span>
               ))}
             </div>
