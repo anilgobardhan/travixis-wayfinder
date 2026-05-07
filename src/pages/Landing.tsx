@@ -405,32 +405,45 @@ const Landing = () => {
             </ul>
           </div>
           <div className="rounded-2xl border bg-card p-6 shadow-elevated">
-            <p className="text-xs font-medium text-muted-foreground">EXAMPLE EXPLANATION</p>
-            <h3 className="mt-2 text-lg font-semibold">Why we recommend this flight</h3>
-            <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="success">+</BadgeSoft>
-                Direct flight, low disruption risk
-              </li>
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="success">+</BadgeSoft>
-                Total price includes 23kg baggage
-              </li>
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="warning">!</BadgeSoft>
-                Departure at 06:15 — early morning
-              </li>
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="primary">i</BadgeSoft>
-                Refundable up to 24h before departure
-              </li>
-            </ul>
+            <p className="text-xs font-medium text-muted-foreground">EXPLAINABLE RECOMMENDATIONS</p>
+            <h3 className="mt-2 text-lg font-semibold">Why we recommend Option A over B</h3>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-xl border bg-[hsl(var(--success-soft))]/40 p-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-primary">Option A</p>
+                  <BadgeSoft variant="success">Recommended</BadgeSoft>
+                </div>
+                <ul className="mt-3 space-y-2 text-xs">
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Best overall value</li>
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Reliable airline (94%)</li>
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Carry-on included</li>
+                  <li className="flex gap-2"><BadgeSoft variant="primary">i</BadgeSoft> Better arrival timing</li>
+                </ul>
+              </div>
+              <div className="rounded-xl border bg-card p-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-muted-foreground">Option B</p>
+                  <BadgeSoft variant="warning">Tradeoffs</BadgeSoft>
+                </div>
+                <ul className="mt-3 space-y-2 text-xs">
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> €18 cheaper</li>
+                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> 55-min layover at CDG</li>
+                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> Higher cancellation rate</li>
+                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> Baggage not included</li>
+                </ul>
+              </div>
+            </div>
             <Button asChild variant="soft" className="mt-6 w-full">
               <Link to="/results">See a real example</Link>
             </Button>
           </div>
         </div>
       </section>
+
+      <TripsEcosystemSection />
+      <PriceAlertsSection />
+      <TransparencySection />
+      <DiscoverySection />
 
       {/* Final CTA */}
       <section className="container pb-20">
