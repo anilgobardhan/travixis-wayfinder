@@ -527,6 +527,29 @@ const Landing = () => {
           </Button>
         </div>
       </section>
+
+      {/* ───────── 7. TRUST STRIP ───────── */}
+      <section className="border-t bg-card/50">
+        <div className="container py-5">
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+            {[
+              "Transparent pricing",
+              "Explainable AI",
+              "Smart travel wallet",
+              "Shared trip funding",
+              "Disruption intelligence",
+            ].map((t, i) => (
+              <li key={t} className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-[hsl(var(--success))]" />
+                  {t}
+                </span>
+                {i < 4 && <span className="opacity-30 hidden sm:inline">·</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
       <EnvDebugPanel />
     </div>
   );
