@@ -29,11 +29,18 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-const nav = [
+type NavItem = { to: string; label: string; icon: typeof Search; balance?: string };
+const nav: NavItem[] = [
   { to: "/search", label: "Search", icon: Search },
   { to: "/my-trips", label: "My Trips", icon: LayoutDashboard },
   { to: "/wallet", label: "Wallet", icon: Wallet, balance: "€1,420" },
   { to: "/documents", label: "Documents", icon: FileText },
+];
+const mobileExtra: NavItem[] = [
+  { to: "/saved-searches", label: "Saved searches", icon: Bookmark },
+  { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/profile", label: "Travel profile", icon: UserRound },
+  { to: "/support", label: "Support", icon: LifeBuoyIcon as unknown as typeof Search },
 ];
 
 export const Layout = () => {
@@ -86,14 +93,14 @@ export const Layout = () => {
           <div className="hidden items-center gap-2.5 md:flex">
             <SystemStatus compact />
             <span className="h-5 w-px bg-border" aria-hidden />
-            <button
-              type="button"
+            <Link
+              to="/notifications"
               aria-label="Notifications"
               className="relative grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--primary-soft))]/60 transition-base"
             >
               <Bell className="h-[17px] w-[17px]" />
               <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))] ring-2 ring-background" />
-            </button>
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
