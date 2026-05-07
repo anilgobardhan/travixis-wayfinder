@@ -654,6 +654,7 @@ const ResultsPage = () => {
                     <span className="font-semibold">Why recommended: </span>{o.why}
                   </p>
                   <AiInsightRow option={o} />
+                  <ConfidenceSignals option={o} />
                 </div>
 
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
