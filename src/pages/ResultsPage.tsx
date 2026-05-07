@@ -648,7 +648,7 @@ const ResultsPage = () => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
           return (
-            <article key={o.id} className="rounded-2xl border bg-card p-5 md:p-6 shadow-card transition-base hover:shadow-elevated">
+            <article key={o.id} className="result-card rounded-2xl border border-border/70 bg-card p-5 md:p-6 shadow-card">
               <div className="grid lg:grid-cols-[1fr,auto] gap-6">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
