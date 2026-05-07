@@ -261,15 +261,10 @@ const OptionDetailPage = () => {
             </ul>
 
             <Button asChild variant="hero" size="lg" className="mt-5 w-full">
-              <Link to={searchId ? `/trip-dashboard?id=${encodeURIComponent(searchId)}` : "/trip-dashboard"}>Continue <ArrowRight className="h-4 w-4" /></Link>
+              <Link to={`/booking-review?option=${id}${searchId ? `&id=${encodeURIComponent(searchId)}` : ""}`}>Continue to review <ArrowRight className="h-4 w-4" /></Link>
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-2 w-full"
-              onClick={() => toast.info("Booking flow coming soon.")}
-            >
-              Book this option
+            <Button asChild variant="outline" size="sm" className="mt-2 w-full">
+              <Link to={searchId ? `/trip-dashboard?id=${encodeURIComponent(searchId)}` : "/trip-dashboard"}>Open trip dashboard</Link>
             </Button>
             <p className="mt-3 text-[11px] text-muted-foreground text-center">
               You'll review every detail before any payment is taken.

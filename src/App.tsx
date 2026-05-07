@@ -13,6 +13,11 @@ import TripDashboardPage from "./pages/TripDashboardPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import SupportPage from "./pages/SupportPage";
 import WalletPage from "./pages/WalletPage";
+import BookingReviewPage from "./pages/BookingReviewPage";
+import MyTripsPage from "./pages/MyTripsPage";
+import SavedSearchesPage from "./pages/SavedSearchesPage";
+import TravelProfilePage from "./pages/TravelProfilePage";
+import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -35,6 +40,12 @@ const App = () => (
             <Route path="/trip-dashboard" element={<TripDashboardPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/booking-review" element={<BookingReviewPage />} />
+            <Route path="/my-trips" element={<MyTripsPage />} />
+            <Route path="/saved-searches" element={<SavedSearchesPage />} />
+            <Route path="/profile" element={<TravelProfilePage />} />
+            <Route path="/account" element={<TravelProfilePage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>

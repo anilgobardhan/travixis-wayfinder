@@ -31,7 +31,7 @@ import {
 
 const nav = [
   { to: "/search", label: "Search", icon: Search },
-  { to: "/trip", label: "My Trips", icon: LayoutDashboard },
+  { to: "/my-trips", label: "My Trips", icon: LayoutDashboard },
   { to: "/wallet", label: "Wallet", icon: Wallet, balance: "€1,420" },
   { to: "/documents", label: "Documents", icon: FileText },
 ];
@@ -135,18 +135,19 @@ export const Layout = () => {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Travel</DropdownMenuLabel>
-                <DropdownMenuItem asChild><Link to="/trip" className="cursor-pointer"><LayoutDashboard className="h-4 w-4" /> My trips</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/my-trips" className="cursor-pointer"><LayoutDashboard className="h-4 w-4" /> My trips</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/saved-searches" className="cursor-pointer"><Bookmark className="h-4 w-4" /> Saved searches</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/wallet" className="cursor-pointer"><Wallet className="h-4 w-4" /> Wallet overview</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/documents" className="cursor-pointer"><FileText className="h-4 w-4" /> Documents</Link></DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer"><Bookmark className="h-4 w-4" /> Saved searches</DropdownMenuItem>
                 <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Intelligence</DropdownMenuLabel>
-                <DropdownMenuItem className="cursor-pointer"><Sparkles className="h-4 w-4" /> AI recommendations</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer"><Bell className="h-4 w-4" /> Notifications</DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/notifications" className="cursor-pointer"><Bell className="h-4 w-4" /> Notifications</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/profile" className="cursor-pointer"><Sparkles className="h-4 w-4" /> AI recommendations</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/profile" className="cursor-pointer"><UserRound className="h-4 w-4" /> Travel profile</Link></DropdownMenuItem>
                 <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Wallet</DropdownMenuLabel>
-                <DropdownMenuItem className="cursor-pointer"><Users className="h-4 w-4" /> Shared funding</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer"><Gift className="h-4 w-4" /> Gift travel credits</DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/wallet" className="cursor-pointer"><Users className="h-4 w-4" /> Shared funding</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/wallet" className="cursor-pointer"><Gift className="h-4 w-4" /> Gift travel credits</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer"><Settings className="h-4 w-4" /> Travel preferences</DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/profile" className="cursor-pointer"><Settings className="h-4 w-4" /> Travel preferences</Link></DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer text-muted-foreground"><LogOut className="h-4 w-4" /> Sign out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

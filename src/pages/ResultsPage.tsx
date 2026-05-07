@@ -537,8 +537,8 @@ const ResultsPage = () => {
                   </p>
                 )}
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  <Button variant={isPrimary ? "hero" : "soft"} size="sm" className={isPrimary ? "cta-bloom" : ""} onClick={() => toast.info("Booking flow coming soon.")}>
-                    Book now
+                  <Button asChild variant={isPrimary ? "hero" : "soft"} size="sm" className={isPrimary ? "cta-bloom" : ""}>
+                    <Link to={`/booking-review?option=${o.id}${searchId ? `&id=${encodeURIComponent(searchId)}` : ""}`}>Book now</Link>
                   </Button>
                   <Button asChild variant={isPrimary ? "soft" : "ghost"} size="sm">
                     <Link to={searchId ? `/option/${o.id}?id=${encodeURIComponent(searchId)}` : `/option/${o.id}`}>View details</Link>
