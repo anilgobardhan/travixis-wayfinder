@@ -387,7 +387,14 @@ const ResultsPage = () => {
     return true;
   });
 
-  const displayOptions = applySmartFilter(refinedOptions, smartFilter);
+  const filtered = applySmartFilter(refinedOptions, smartFilter);
+  const sortFn: Record<SortKey, (a: Option, b: Option) => number> = {
+    recommended: () => 0,
+    price: (a, b) => (a.price + a.taxes + a.baggage + a.fees) - (b.price + b.taxes + b.baggage + b.fees),
+    stress: (a, b) => a.riskScore - b.riskScore,
+    duration: (a, b) => a.duration.localeCompare(b.duration),
+  };
+  const displayOptions = [...filtered].sort(sortFn[sortKey]);
   const recommended = displayOptions.filter((o) => o.tag);
   const compareOptions = baseOptions.filter((o) => compare.includes(o.id));
 
