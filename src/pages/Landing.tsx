@@ -448,6 +448,11 @@ const Landing = () => {
       </section>
 
       <TripsEcosystemSection />
+      <TravelWalletSection />
+      <WalletCategoriesStrip />
+      <SmartCoverageSection />
+      <SharedFundingSection />
+      <FundingInsightsSection />
       <PriceAlertsSection />
       <TransparencySection />
       <DiscoverySection />
