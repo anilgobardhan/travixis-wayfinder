@@ -98,29 +98,32 @@ export const Layout = () => {
       </main>
 
       <footer className="mt-12 border-t bg-card">
-        <div className="container py-10 grid gap-8 md:grid-cols-4">
-          <div>
+        <div className="container py-12 grid gap-8 md:grid-cols-3 lg:grid-cols-5">
+          <div className="md:col-span-3 lg:col-span-2">
             <div className="flex items-center gap-2 font-semibold text-primary">
               <span className="grid h-7 w-7 place-items-center rounded-md bg-hero text-primary-foreground">
                 <Compass className="h-4 w-4" />
               </span>
               Travixis
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">
-              The Travel Operating System. Search, compare, book, and manage your full trip in one place.
+            <p className="mt-3 text-sm text-muted-foreground max-w-sm">
+              The Travel Operating System. Search, compare, book and manage your full trip — with transparent,
+              explainable intelligence at every step.
             </p>
+            <div className="mt-4">
+              <SystemStatus />
+            </div>
           </div>
-          <FooterCol title="Product" items={["Search", "Compare", "Trip dashboard", "Documents"]} />
-          <FooterCol title="Trust" items={["True Price Engine", "Risk Engine", "Explainability", "Human-in-the-loop"]} />
-          <div>
-            <p className="mb-3 text-sm font-semibold">System</p>
-            <SystemStatus />
-          </div>
+          <FooterCol title="Explore" items={["Trending destinations", "Flexible travel", "Popular routes", "Travel guides"]} />
+          <FooterCol title="Trips" items={["My trips", "Documents", "Smart reminders", "Booking status"]} />
+          <FooterCol title="Intelligence" items={["Price alerts", "Disruption alerts", "Risk scoring", "True Price Engine"]} />
+          <FooterCol title="Trust" items={["Transparency", "Methodology", "AI policy", "How we rank"]} />
+          <FooterCol title="Company" items={["About", "Support", "Careers", "Contact"]} />
         </div>
         <div className="border-t">
           <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
             <p>© {new Date().getFullYear()} Travixis. Travel Operating System.</p>
-            <p>Built for clarity, trust, and calm travel.</p>
+            <p>Built for clarity, trust and calm travel · AI helps. You decide.</p>
           </div>
         </div>
       </footer>

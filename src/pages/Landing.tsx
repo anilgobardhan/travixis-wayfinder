@@ -11,7 +11,7 @@ import {
   ArrowRight,
   Plane,
   Hotel,
-  Car,
+  
   Package,
   Wallet,
   Gauge,
@@ -32,6 +32,16 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { AirportSelect } from "@/components/AirportSelect";
 import type { Airport } from "@/lib/airports";
 import { EnvDebugPanel } from "@/components/EnvDebugPanel";
+import {
+  SmartCalendarSection,
+  TrendingDestinationsSection,
+  FlexibleTravelSection,
+  IntelligenceCapabilitiesSection,
+  TripsEcosystemSection,
+  PriceAlertsSection,
+  TransparencySection,
+  DiscoverySection,
+} from "@/components/landing/IntelligenceSections";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -151,19 +161,39 @@ const Landing = () => {
               prices and stress — then explains the trade-offs so you can decide with confidence.
             </p>
 
-            {/* Trip type chips */}
-            <div className="mt-8 flex flex-wrap gap-2">
+            {/* Search mode tabs */}
+            <div className="mt-8 inline-flex flex-wrap gap-1 rounded-xl bg-white/10 p-1 backdrop-blur">
               {[
-                { icon: Plane, label: "Flights" },
+                { icon: Plane, label: "Flights", active: true },
                 { icon: Hotel, label: "Hotels" },
                 { icon: Package, label: "Packages" },
-                { icon: Car, label: "Cars" },
+                { icon: ArrowRight, label: "Multi-city" },
               ].map((t) => (
                 <span
                   key={t.label}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm backdrop-blur"
+                  className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-base ${
+                    t.active ? "bg-white text-primary font-medium shadow-sm" : "text-white/80 hover:text-white"
+                  }`}
                 >
                   <t.icon className="h-3.5 w-3.5" /> {t.label}
+                </span>
+              ))}
+            </div>
+
+            {/* Intelligent travel chips */}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                "Lowest disruption risk",
+                "Best overall value",
+                "No hidden baggage fees",
+                "Shortest total travel time",
+                "Smart layover balance",
+              ].map((c) => (
+                <span
+                  key={c}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur"
+                >
+                  <Sparkles className="h-3 w-3 opacity-70" /> {c}
                 </span>
               ))}
             </div>
@@ -271,6 +301,10 @@ const Landing = () => {
         </div>
       </section>
 
+      <SmartCalendarSection />
+      <TrendingDestinationsSection />
+      <FlexibleTravelSection />
+
       {/* Trust */}
       <section className="container py-20">
         <div className="max-w-2xl">
@@ -343,6 +377,8 @@ const Landing = () => {
         </div>
       </section>
 
+      <IntelligenceCapabilitiesSection />
+
       {/* Principles */}
       <section className="container py-20">
         <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -369,32 +405,45 @@ const Landing = () => {
             </ul>
           </div>
           <div className="rounded-2xl border bg-card p-6 shadow-elevated">
-            <p className="text-xs font-medium text-muted-foreground">EXAMPLE EXPLANATION</p>
-            <h3 className="mt-2 text-lg font-semibold">Why we recommend this flight</h3>
-            <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="success">+</BadgeSoft>
-                Direct flight, low disruption risk
-              </li>
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="success">+</BadgeSoft>
-                Total price includes 23kg baggage
-              </li>
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="warning">!</BadgeSoft>
-                Departure at 06:15 — early morning
-              </li>
-              <li className="flex items-start gap-3">
-                <BadgeSoft variant="primary">i</BadgeSoft>
-                Refundable up to 24h before departure
-              </li>
-            </ul>
+            <p className="text-xs font-medium text-muted-foreground">EXPLAINABLE RECOMMENDATIONS</p>
+            <h3 className="mt-2 text-lg font-semibold">Why we recommend Option A over B</h3>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-xl border bg-[hsl(var(--success-soft))]/40 p-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-primary">Option A</p>
+                  <BadgeSoft variant="success">Recommended</BadgeSoft>
+                </div>
+                <ul className="mt-3 space-y-2 text-xs">
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Best overall value</li>
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Reliable airline (94%)</li>
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> Carry-on included</li>
+                  <li className="flex gap-2"><BadgeSoft variant="primary">i</BadgeSoft> Better arrival timing</li>
+                </ul>
+              </div>
+              <div className="rounded-xl border bg-card p-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-muted-foreground">Option B</p>
+                  <BadgeSoft variant="warning">Tradeoffs</BadgeSoft>
+                </div>
+                <ul className="mt-3 space-y-2 text-xs">
+                  <li className="flex gap-2"><BadgeSoft variant="success">+</BadgeSoft> €18 cheaper</li>
+                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> 55-min layover at CDG</li>
+                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> Higher cancellation rate</li>
+                  <li className="flex gap-2"><BadgeSoft variant="warning">!</BadgeSoft> Baggage not included</li>
+                </ul>
+              </div>
+            </div>
             <Button asChild variant="soft" className="mt-6 w-full">
               <Link to="/results">See a real example</Link>
             </Button>
           </div>
         </div>
       </section>
+
+      <TripsEcosystemSection />
+      <PriceAlertsSection />
+      <TransparencySection />
+      <DiscoverySection />
 
       {/* Final CTA */}
       <section className="container pb-20">
