@@ -27,6 +27,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Minus, Plus } from "lucide-react";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 import { api } from "@/lib/api";
@@ -42,14 +51,30 @@ const Landing = () => {
   const [toAirport, setToAirport] = useState<Airport | null>(null);
   const [depart, setDepart] = useState("");
   const [ret, setRet] = useState("");
-  const [travelers, setTravelers] = useState("1");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState<number[]>([]); // ages
+  const [infants, setInfants] = useState(0);
   const [cabin, setCabin] = useState("Economy");
+  const [paxOpen, setPaxOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [voiceText, setVoiceText] = useState("");
   const voice = useVoiceInput();
 
-  const travelersCount = Math.max(0, parseInt(travelers, 10) || 0);
+  const travelersCount = adults + children.length + infants;
+  const updateChildren = (next: number) => {
+    setChildren((prev) => {
+      if (next > prev.length) return [...prev, ...Array(next - prev.length).fill(6)];
+      return prev.slice(0, Math.max(0, next));
+    });
+  };
+  const travelersSummary = (() => {
+    const parts: string[] = [];
+    parts.push(`${adults} ${adults === 1 ? "Adult" : "Adults"}`);
+    if (children.length) parts.push(`${children.length} ${children.length === 1 ? "Child" : "Children"}`);
+    if (infants) parts.push(`${infants} ${infants === 1 ? "Infant" : "Infants"}`);
+    return `${parts.join(" · ")} · ${cabin}`;
+  })();
   const canSearch =
     !!fromAirport && !!toAirport && !!depart && travelersCount >= 1 && !submitting;
 
@@ -249,35 +274,108 @@ const Landing = () => {
 
               {/* Travelers + Class cluster */}
               <div className="md:col-span-3 rounded-xl border bg-muted/30 p-1">
-                <div className="rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 h-full flex flex-col justify-center">
-                  <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
-                    Travelers · Class
-                  </Label>
-                  <div className="mt-1 flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <Input
-                      type="number"
-                      min={1}
-                      value={travelers}
-                      onChange={(e) => setTravelers(e.target.value)}
-                      className="h-8 w-12 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 text-sm font-semibold"
-                    />
-                    <span className="text-sm font-medium text-foreground/80">
-                      {travelersCount === 1 ? "Adult" : "Adults"}
-                    </span>
-                    <span className="opacity-30">·</span>
-                    <select
-                      value={cabin}
-                      onChange={(e) => setCabin(e.target.value)}
-                      className="bg-transparent text-sm font-medium text-foreground/80 focus:outline-none cursor-pointer"
+                <Popover open={paxOpen} onOpenChange={setPaxOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full text-left rounded-lg bg-card px-3 py-2 ring-1 ring-border/50 h-full flex flex-col justify-center hover:bg-card/80 transition-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      <option>Economy</option>
-                      <option>Premium</option>
-                      <option>Business</option>
-                      <option>First</option>
-                    </select>
-                  </div>
-                </div>
+                      <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold cursor-pointer">
+                        Travelers · Class
+                      </Label>
+                      <div className="mt-1 flex items-center gap-2 min-w-0">
+                        <Users className="h-4 w-4 text-muted-foreground shrink-0" />
+                        <span className="text-sm font-semibold text-foreground truncate">
+                          {travelersSummary}
+                        </span>
+                      </div>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="end"
+                    sideOffset={10}
+                    className="w-[20rem] p-0 rounded-2xl border bg-card shadow-[0_24px_60px_-28px_hsl(var(--primary)/0.35),0_8px_24px_-12px_hsl(var(--foreground)/0.08)]"
+                  >
+                    <div className="p-5 space-y-4">
+                      <PaxRow
+                        label="Adults"
+                        sub="Aged 18+"
+                        value={adults}
+                        min={1}
+                        max={9}
+                        onChange={setAdults}
+                      />
+                      <PaxRow
+                        label="Children"
+                        sub="Aged 2–17"
+                        value={children.length}
+                        min={0}
+                        max={6}
+                        onChange={updateChildren}
+                      />
+                      {children.length > 0 && (
+                        <div className="grid grid-cols-2 gap-2 pl-1">
+                          {children.map((age, i) => (
+                            <Select
+                              key={i}
+                              value={String(age)}
+                              onValueChange={(v) =>
+                                setChildren((prev) => prev.map((a, idx) => (idx === i ? parseInt(v, 10) : a)))
+                              }
+                            >
+                              <SelectTrigger className="h-9 text-xs">
+                                <SelectValue placeholder={`Child ${i + 1} age`} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Array.from({ length: 16 }, (_, n) => n + 2).map((n) => (
+                                  <SelectItem key={n} value={String(n)}>
+                                    {`Child ${i + 1} · ${n} yrs`}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ))}
+                        </div>
+                      )}
+                      <PaxRow
+                        label="Infants"
+                        sub="Under 2, on lap"
+                        value={infants}
+                        min={0}
+                        max={Math.max(1, adults)}
+                        onChange={setInfants}
+                      />
+
+                      <div className="pt-3 border-t">
+                        <Label className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+                          Cabin class
+                        </Label>
+                        <div className="mt-2 grid grid-cols-2 gap-1.5">
+                          {["Economy", "Premium Economy", "Business", "First"].map((c) => (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => setCabin(c)}
+                              className={`text-xs rounded-lg px-2.5 py-2 ring-1 transition-base ${
+                                cabin === c
+                                  ? "bg-[hsl(var(--primary-soft))] text-primary ring-primary/30 font-semibold"
+                                  : "bg-muted/40 text-foreground/80 ring-border/60 hover:bg-muted"
+                              }`}
+                            >
+                              {c}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end pt-1">
+                        <Button type="button" size="sm" variant="outline" onClick={() => setPaxOpen(false)}>
+                          Done
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -683,5 +781,42 @@ const FieldInput = ({
     />
   </div>
 );
+
+const PaxRow = ({
+  label,
+  sub,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string;
+  sub: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (v: number) => void;
+}) => {
+  const dec = () => onChange(Math.max(min, value - 1));
+  const inc = () => onChange(Math.min(max, value + 1));
+  const btn = "grid h-8 w-8 place-items-center rounded-full border bg-card text-foreground/80 hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-base";
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-foreground">{label}</p>
+        <p className="text-xs text-muted-foreground">{sub}</p>
+      </div>
+      <div className="flex items-center gap-3">
+        <button type="button" onClick={dec} disabled={value <= min} className={btn} aria-label={`Decrease ${label}`}>
+          <Minus className="h-3.5 w-3.5" />
+        </button>
+        <span className="w-5 text-center text-sm font-semibold tabular-nums">{value}</span>
+        <button type="button" onClick={inc} disabled={value >= max} className={btn} aria-label={`Increase ${label}`}>
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default Landing;
