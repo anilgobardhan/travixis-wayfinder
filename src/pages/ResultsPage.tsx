@@ -44,6 +44,17 @@ import {
   type FlightFilters,
   type SearchType,
 } from "@/components/results/ResultsFilters";
+import { CompareDrawer, MobileResultsBar } from "@/components/results/ResultsCompareDrawer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CloudSun, Leaf } from "lucide-react";
+
+type SortKey = "recommended" | "price" | "stress" | "duration";
 
 type Option = {
   id: string;
