@@ -402,8 +402,29 @@ const ResultsPage = () => {
       : "";
   const tripSummary = [summaryRoute, summaryDates, summaryTravelers].filter(Boolean).join(" · ");
 
+  const filterProps = {
+    searchType,
+    airlines: airlineList,
+    priceMin,
+    priceMax,
+    filters,
+    onChange: setFilters,
+    onClear: () => setFilters(defaultFlightFilters(priceMax)),
+    resultCount: displayOptions.length,
+  };
+
   return (
-    <div className="container max-w-6xl space-y-10">
+    <div className="container max-w-7xl">
+      <MobileFiltersButton {...filterProps} />
+      <div className="flex gap-8 items-start">
+        <ResultsFilters {...filterProps} />
+        <div className="flex-1 min-w-0 space-y-10">
+          <ActiveFilterChips
+            filters={filters}
+            defaults={defaults}
+            onChange={setFilters}
+            onClear={() => setFilters(defaultFlightFilters(priceMax))}
+          />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           {fromAutopilot && (
