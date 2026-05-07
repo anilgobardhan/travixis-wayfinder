@@ -883,7 +883,7 @@ const PaxRow = ({
 }) => {
   const dec = () => onChange(Math.max(min, value - 1));
   const inc = () => onChange(Math.min(max, value + 1));
-  const btn = "grid h-8 w-8 place-items-center rounded-full border bg-card text-foreground/80 hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-base";
+  const btn = "grid h-8 w-8 place-items-center rounded-full border bg-card text-foreground/80 hover:bg-[hsl(var(--primary-soft))] hover:text-primary hover:border-primary/30 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-premium";
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0">
