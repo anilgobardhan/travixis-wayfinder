@@ -15,6 +15,7 @@ import {
   Gift,
   LogOut,
   Settings,
+  LifeBuoy,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ const mobileExtra: NavItem[] = [
   { to: "/saved-searches", label: "Saved searches", icon: Bookmark },
   { to: "/notifications", label: "Notifications", icon: Bell },
   { to: "/profile", label: "Travel profile", icon: UserRound },
-  { to: "/support", label: "Support", icon: LifeBuoyIcon as unknown as typeof Search },
+  { to: "/support", label: "Support", icon: LifeBuoy },
 ];
 
 export const Layout = () => {
