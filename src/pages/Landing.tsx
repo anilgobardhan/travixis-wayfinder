@@ -509,7 +509,7 @@ const Landing = () => {
               <EcoCard icon={Bell}     title="Smart alerts"   desc="Price dropped €38 on a similar route." />
               <EcoCard icon={FileText} title="Documents"      desc="Passport & tickets organized." />
               <EcoCard icon={Users}    title="Shared funding" desc="Family contributions active." />
-              <EcoCard icon={LayoutIcon as unknown as any} title="Trip timeline" desc="All transfers synced." />
+              <EcoCard icon={LayoutIcon} title="Trip timeline" desc="All transfers synced." />
             </div>
           </div>
         </div>
