@@ -617,6 +617,7 @@ const ResultsPage = () => {
                   <p className="mt-4 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2 text-xs text-primary">
                     <span className="font-semibold">Why recommended: </span>{o.why}
                   </p>
+                  <AiInsightRow option={o} />
                 </div>
 
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
