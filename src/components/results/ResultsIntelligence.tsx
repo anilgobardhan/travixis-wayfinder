@@ -34,6 +34,7 @@ export type IntelOption = {
   baggageInfo: string;
   refund: string;
   why: string;
+  tag?: string;
 };
 
 const fmt = (n: number, c = "EUR") => {
