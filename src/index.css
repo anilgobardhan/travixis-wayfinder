@@ -120,4 +120,38 @@
   .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-elevated { box-shadow: var(--shadow-elevated); }
   .transition-base { transition: var(--transition-base); }
+  .transition-premium { transition: all 0.35s cubic-bezier(0.32, 0.72, 0, 1); }
+
+  /* Ambient hero motion — extremely subtle */
+  .hero-dots {
+    background-image: radial-gradient(circle at 20% 20%, hsl(0 0% 100% / 0.9) 1px, transparent 1px);
+    background-size: 26px 26px;
+    animation: hero-drift 28s linear infinite;
+    opacity: 0.18;
+  }
+  @keyframes hero-drift {
+    0%   { background-position: 0 0; }
+    100% { background-position: 26px 26px; }
+  }
+
+  .ambient-pulse {
+    animation: ambient-pulse 3.4s ease-in-out infinite;
+  }
+  @keyframes ambient-pulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.18); }
+  }
+
+  /* Premium field focus — calm, intentional */
+  .field-cluster {
+    transition: box-shadow 0.3s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.3s ease;
+  }
+  .field-cluster:focus-within {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.08), 0 8px 24px -16px hsl(var(--primary) / 0.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-dots, .ambient-pulse { animation: none; }
+  }
 }
