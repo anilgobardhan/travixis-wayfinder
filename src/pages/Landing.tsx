@@ -497,7 +497,7 @@ const Landing = () => {
 
             {/* RIGHT — Trip Operating System mini cards */}
             <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4">
-              <EcoCard icon={Gift}     title="Gifted travel credits" desc="Send travel credit for birthdays, honeymoons or family trips." />
+              <EcoCard icon={Gift}     title="Gifted travel credits" desc="Send travel credits to friends, family or shared trips." />
               <EcoCard icon={Bell}     title="Smart alerts"          desc="Price drops and disruption changes explained clearly." />
               <EcoCard icon={FileText} title="Documents"             desc="Passports, tickets and confirmations organized." />
               <EcoCard icon={Users}    title="Shared funding"        desc="Family and group contributions stay transparent." />
