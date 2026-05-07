@@ -761,6 +761,19 @@ const Landing = () => {
           <Button asChild variant="cta" size="xl" className="mt-6">
             <Link to="/search">Start searching <ArrowRight className="h-4 w-4" /></Link>
           </Button>
+          <ul className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] text-white/75">
+            {[
+              { icon: Wallet, label: "Wallet-aware pricing" },
+              { icon: Sparkles, label: "AI travel intelligence" },
+              { icon: Users, label: "Shared trip funding" },
+              { icon: ShieldCheck, label: "Transparent travel scoring" },
+            ].map((m) => (
+              <li key={m.label} className="inline-flex items-center gap-1.5">
+                <m.icon className="h-3.5 w-3.5 opacity-80" />
+                {m.label}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
