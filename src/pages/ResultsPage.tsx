@@ -617,6 +617,7 @@ const ResultsPage = () => {
                   <p className="mt-4 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2 text-xs text-primary">
                     <span className="font-semibold">Why recommended: </span>{o.why}
                   </p>
+                  <AiInsightRow option={o} />
                 </div>
 
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
@@ -708,5 +709,31 @@ const AltCard = ({ icon, title, body }: { icon: React.ReactNode; title: string; 
     <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{body}</p>
   </button>
 );
+
+const AiInsightRow = ({ option }: { option: Option }) => {
+  const total = option.price + option.taxes + option.baggage + option.fees;
+  const insights: { icon: React.ReactNode; label: string; tone: "success" | "muted" | "warning" }[] = [];
+  if (option.riskScore < 20) insights.push({ icon: <ShieldCheck className="h-3 w-3" />, label: "Low disruption probability", tone: "success" });
+  if (option.stops.toLowerCase().startsWith("direct")) insights.push({ icon: <Sparkles className="h-3 w-3" />, label: "Historically reliable route", tone: "success" });
+  if (total < 200) insights.push({ icon: <TrendingDown className="h-3 w-3" />, label: "Below typical fare", tone: "success" });
+  else if (total > 280) insights.push({ icon: <Info className="h-3 w-3" />, label: "Price expected to rise", tone: "warning" });
+  insights.push({ icon: <Gauge className="h-3 w-3" />, label: `AI confidence: ${option.riskScore < 20 ? "High" : option.riskScore < 40 ? "Medium" : "Low"}`, tone: "muted" });
+
+  return (
+    <ul className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] text-muted-foreground">
+      {insights.slice(0, 4).map((i, idx) => (
+        <li key={idx} className="inline-flex items-center gap-1.5">
+          <span className={cn(
+            "inline-flex items-center justify-center",
+            i.tone === "success" && "text-[hsl(var(--success))]",
+            i.tone === "warning" && "text-[hsl(var(--warning))]",
+            i.tone === "muted" && "text-muted-foreground/70",
+          )}>{i.icon}</span>
+          <span>{i.label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 export default ResultsPage;

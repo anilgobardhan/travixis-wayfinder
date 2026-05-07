@@ -113,15 +113,61 @@ const WalletPage = () => {
         </div>
       </section>
 
+      {/* Smart wallet assistant — proactive intelligence */}
+      <section className="container pt-14">
+        <div className="flex items-end justify-between gap-4 flex-wrap">
+          <div className="max-w-2xl">
+            <BadgeSoft variant="primary"><Sparkles className="h-3 w-3" /> Smart wallet assistant</BadgeSoft>
+            <h2 className="mt-3 text-2xl md:text-3xl font-bold">Proactive suggestions, never pushy.</h2>
+            <p className="mt-2 text-[15px] text-muted-foreground leading-relaxed">
+              Travixis watches your balance, your trips and your travel goals — and quietly surfaces what's worth your attention.
+            </p>
+          </div>
+          <span className="hidden md:inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1.5 text-[11px] font-medium text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))] animate-pulse" />
+            4 active insights
+          </span>
+        </div>
+        <div className="mt-7 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { icon: TrendingUp, tone: "primary", title: "Cheaper departure dates", desc: "Shifting Lisbon by 2 days saves ~€86 from your wallet.", cta: "View dates" },
+            { icon: Users, tone: "accent", title: "Combine balances", desc: "Pool with 2 family members to fully fund a summer trip.", cta: "Start pool" },
+            { icon: PiggyBank, tone: "primary", title: "Destination savings goal", desc: "On track for Tokyo by November — €420 to go.", cta: "Adjust goal" },
+            { icon: ShieldCheck, tone: "warning", title: "Credits expire in 18 days", desc: "€140 in package credits — apply to a Q3 trip.", cta: "Use credits" },
+          ].map((s) => (
+            <div key={s.title} className="rounded-2xl border bg-card p-5 shadow-card hover:shadow-elevated transition-base">
+              <div className="flex items-start justify-between">
+                <div className={cn(
+                  "grid h-9 w-9 place-items-center rounded-lg",
+                  s.tone === "warning"
+                    ? "bg-[hsl(var(--accent-soft))] text-[hsl(var(--warning))]"
+                    : s.tone === "accent"
+                    ? "bg-[hsl(var(--accent-soft))] text-primary"
+                    : "bg-[hsl(var(--primary-soft))] text-primary"
+                )}>
+                  <s.icon className="h-4 w-4" />
+                </div>
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Insight</span>
+              </div>
+              <p className="mt-4 text-sm font-semibold leading-snug">{s.title}</p>
+              <p className="mt-1.5 text-[13px] text-muted-foreground leading-relaxed">{s.desc}</p>
+              <button type="button" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+                {s.cta} <ArrowRight className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Wallet actions */}
       <section className="container py-16">
         <div className="max-w-2xl">
           <BadgeSoft variant="accent"><Sparkles className="h-3 w-3" /> Wallet actions</BadgeSoft>
           <h2 className="mt-3 text-3xl font-bold">Move, gift and share travel money.</h2>
-          <p className="mt-2 text-muted-foreground">Premium financial clarity — built for the way modern travelers actually plan.</p>
+          <p className="mt-2 text-[15px] text-muted-foreground">Premium financial clarity — built for the way modern travelers actually plan.</p>
         </div>
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {actions.map((a) => (
+          {[...actions, { icon: Users, title: "Split trip with friends", desc: "Divide a trip's true total cost evenly — Travixis tracks balances." }].map((a) => (
             <button
               key={a.title}
               type="button"
@@ -131,7 +177,7 @@ const WalletPage = () => {
                 <a.icon className="h-5 w-5" />
               </div>
               <p className="mt-4 font-semibold">{a.title}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{a.desc}</p>
+              <p className="mt-1 text-[13px] text-muted-foreground leading-relaxed">{a.desc}</p>
             </button>
           ))}
         </div>

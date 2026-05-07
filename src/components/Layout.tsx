@@ -20,25 +20,25 @@ export const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
+        <div className="container flex h-[68px] items-center justify-between gap-6">
+          <Link to="/" className="flex items-center gap-2.5 font-semibold text-primary">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-hero text-primary-foreground">
               <Compass className="h-4 w-4" />
             </span>
-            <span className="text-lg tracking-tight">Travixis</span>
+            <span className="text-lg tracking-tight leading-none">Travixis</span>
             <span className="ml-1 hidden rounded-full bg-[hsl(var(--accent-soft))] px-2 py-0.5 text-[10px] font-medium text-primary sm:inline">
               TOS
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-2 md:flex">
             {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "rounded-md px-3 py-2 text-sm font-medium transition-base inline-flex items-center gap-2",
+                    "rounded-md px-3.5 py-2 text-[13.5px] font-medium leading-none transition-base inline-flex items-center gap-2.5",
                     isActive
                       ? "bg-[hsl(var(--primary-soft))] text-primary"
                       : "text-muted-foreground hover:text-foreground"
@@ -47,7 +47,7 @@ export const Layout = () => {
               >
                 {item.label}
                 {item.balance && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-[hsl(var(--primary-soft))] px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-[hsl(var(--primary-soft))] px-2 py-0.5 text-[10px] font-semibold text-primary">
                     <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--success))]" />
                     {item.balance}
                   </span>
@@ -56,7 +56,7 @@ export const Layout = () => {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-4 md:flex">
             <SystemStatus compact />
             <Button asChild variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-[hsl(var(--primary-soft))]">
               <Link to="/search">Start searching</Link>
@@ -138,8 +138,8 @@ export const Layout = () => {
 
 const FooterCol = ({ title, items }: { title: string; items: string[] }) => (
   <div>
-    <p className="mb-3 text-sm font-semibold">{title}</p>
-    <ul className="space-y-2 text-sm text-muted-foreground">
+    <p className="mb-3 text-[13px] font-semibold tracking-tight text-foreground">{title}</p>
+    <ul className="space-y-2 text-[13px] text-muted-foreground/90 leading-relaxed">
       {items.map((i) => (
         <li key={i} className="hover:text-foreground transition-base cursor-default">{i}</li>
       ))}
