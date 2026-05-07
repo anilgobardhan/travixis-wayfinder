@@ -447,9 +447,10 @@ const Landing = () => {
                   Flexible dates may reduce fares by ~18% on this route.
                 </span>
               </p>
-              <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full" disabled={!canSearch}>
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-                {submitting ? "Searching…" : "Search with Travixis"}
+              <Button type="submit" variant="hero" size="lg" className="md:w-auto w-full px-7 gap-2.5" disabled={!canSearch}>
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                <span className="tracking-tight">{submitting ? "Searching…" : "Search with Travixis"}</span>
+                {!submitting && <ArrowRight className="h-4 w-4 opacity-80" />}
               </Button>
             </div>
           </form>
