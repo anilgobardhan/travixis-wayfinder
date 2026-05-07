@@ -564,8 +564,8 @@ const ResultsPage = () => {
             <Lightbulb className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold">Why Travixis recommends this</h2>
-            <p className="text-sm text-muted-foreground">A transparent breakdown of the factors behind our top pick.</p>
+            <h2 className="text-xl font-semibold">Why this trip feels better</h2>
+            <p className="text-sm text-muted-foreground">Travixis advises — you decide. Every factor behind the top pick, in plain language.</p>
           </div>
         </div>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
