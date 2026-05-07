@@ -138,8 +138,8 @@ export const Layout = () => {
 
 const FooterCol = ({ title, items }: { title: string; items: string[] }) => (
   <div>
-    <p className="mb-3 text-sm font-semibold">{title}</p>
-    <ul className="space-y-2 text-sm text-muted-foreground">
+    <p className="mb-3 text-[13px] font-semibold tracking-tight text-foreground">{title}</p>
+    <ul className="space-y-2 text-[13px] text-muted-foreground/90 leading-relaxed">
       {items.map((i) => (
         <li key={i} className="hover:text-foreground transition-base cursor-default">{i}</li>
       ))}
