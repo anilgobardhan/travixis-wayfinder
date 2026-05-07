@@ -499,8 +499,8 @@ const ResultsPage = () => {
                 className={cn(
                   "rounded-2xl p-5 flex flex-col transition-premium",
                   isPrimary
-                    ? "border-2 border-primary/25 bg-gradient-to-b from-[hsl(var(--primary-soft))]/60 to-card shadow-elevated relative"
-                    : "border bg-card shadow-card hover:shadow-elevated"
+                    ? "border border-primary/25 bg-gradient-to-b from-[hsl(var(--primary-soft))]/70 to-card ai-top-halo relative md:scale-[1.015]"
+                    : "border bg-card shadow-card hover:shadow-elevated md:opacity-[0.96]"
                 )}
               >
                 {isPrimary && (
@@ -754,11 +754,12 @@ const ConfidenceSignals = ({ option }: { option: Option }) => {
   const reliability = Math.max(78, Math.min(98, 100 - option.riskScore));
   const signals: { label: string; tone: "success" | "muted" | "warning"; icon: React.ReactNode }[] = [];
   if (option.riskScore < 20) signals.push({ label: `${reliability}% on-time on this route`, tone: "success", icon: <ShieldCheck className="h-3 w-3" /> });
-  if (/direct/i.test(option.stops)) signals.push({ label: "Direct — no transfer fatigue", tone: "success", icon: <Plane className="h-3 w-3" /> });
+  if (/direct/i.test(option.stops)) signals.push({ label: "Direct — better overnight recovery", tone: "success", icon: <Plane className="h-3 w-3" /> });
   else if (option.riskScore < 30) signals.push({ label: "Comfortable connection timing", tone: "muted", icon: <Clock className="h-3 w-3" /> });
   else signals.push({ label: "Tight connection — plan a buffer", tone: "warning", icon: <AlertTriangle className="h-3 w-3" /> });
   if (option.baggage > 0 || /included/i.test(option.baggageInfo)) signals.push({ label: "Generous baggage included", tone: "success", icon: <Luggage className="h-3 w-3" /> });
   if (option.riskScore < 25) signals.push({ label: "Arrives at calmer airport hours", tone: "muted", icon: <CloudSun className="h-3 w-3" /> });
+  if (option.riskScore < 18) signals.push({ label: "Historically calmer route", tone: "muted", icon: <Leaf className="h-3 w-3" /> });
 
   return (
     <div className="mt-3.5 flex flex-wrap gap-1.5">
