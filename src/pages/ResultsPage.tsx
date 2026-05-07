@@ -44,6 +44,17 @@ import {
   type FlightFilters,
   type SearchType,
 } from "@/components/results/ResultsFilters";
+import { CompareDrawer, MobileResultsBar } from "@/components/results/ResultsCompareDrawer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CloudSun, Leaf } from "lucide-react";
+
+type SortKey = "recommended" | "price" | "stress" | "duration";
 
 type Option = {
   id: string;
@@ -279,6 +290,8 @@ const formatTripDate = (iso?: string | null): string => {
 const ResultsPage = () => {
   const [compare, setCompare] = useState<string[]>([]);
   const [smartFilter, setSmartFilter] = useState<SmartFilterKey>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("recommended");
+  const [compareOpen, setCompareOpen] = useState(false);
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
@@ -374,7 +387,14 @@ const ResultsPage = () => {
     return true;
   });
 
-  const displayOptions = applySmartFilter(refinedOptions, smartFilter);
+  const filtered = applySmartFilter(refinedOptions, smartFilter);
+  const sortFn: Record<SortKey, (a: Option, b: Option) => number> = {
+    recommended: () => 0,
+    price: (a, b) => (a.price + a.taxes + a.baggage + a.fees) - (b.price + b.taxes + b.baggage + b.fees),
+    stress: (a, b) => a.riskScore - b.riskScore,
+    duration: (a, b) => a.duration.localeCompare(b.duration),
+  };
+  const displayOptions = [...filtered].sort(sortFn[sortKey]);
   const recommended = displayOptions.filter((o) => o.tag);
   const compareOptions = baseOptions.filter((o) => compare.includes(o.id));
 
@@ -414,7 +434,7 @@ const ResultsPage = () => {
   };
 
   return (
-    <div className="container max-w-7xl">
+    <div className="container max-w-7xl pb-24 lg:pb-0">
       <MobileFiltersButton {...filterProps} />
       <div className="flex gap-8 items-start">
         <ResultsFilters {...filterProps} />
@@ -579,9 +599,25 @@ const ResultsPage = () => {
 
       {/* Full list */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
-          <span className="text-xs text-muted-foreground">{displayOptions.length} matching · sorted by Travixis confidence</span>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">All options</h2>
+            <p className="text-[11.5px] text-muted-foreground/80 mt-0.5">{displayOptions.length} matching · explainable Travixis ranking</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-muted-foreground hidden sm:inline">Sort by</span>
+            <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+              <SelectTrigger className="h-8 w-[180px] text-[12.5px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recommended">Travixis recommendation</SelectItem>
+                <SelectItem value="price">Lowest true total</SelectItem>
+                <SelectItem value="stress">Lowest stress</SelectItem>
+                <SelectItem value="duration">Shortest duration</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
@@ -618,6 +654,7 @@ const ResultsPage = () => {
                     <span className="font-semibold">Why recommended: </span>{o.why}
                   </p>
                   <AiInsightRow option={o} />
+                  <ConfidenceSignals option={o} />
                 </div>
 
                 <div className="flex flex-col items-stretch lg:items-end gap-3 lg:min-w-[220px] lg:border-l lg:pl-6">
@@ -656,19 +693,66 @@ const ResultsPage = () => {
         </div>
       </div>
       {compare.length > 0 && (
-        <div className="sticky bottom-4 z-30 mx-auto w-full max-w-md rounded-full border bg-card px-5 py-3 shadow-elevated flex items-center justify-between">
+        <div className="hidden md:flex sticky bottom-4 z-30 mx-auto w-full max-w-md rounded-full border bg-card px-5 py-3 shadow-elevated items-center justify-between">
           <span className="text-sm font-medium">{compare.length} selected to compare</span>
-          <Button size="sm" variant="hero" onClick={() => {
-            const el = document.querySelector('[data-compare-panel]') ?? document.body;
-            (el as HTMLElement).scrollIntoView({ behavior: "smooth", block: "start" });
-          }}>
-            {compare.length >= 2 ? "View comparison" : "Select 1 more"}
+          <Button size="sm" variant="hero" onClick={() => setCompareOpen(true)}>
+            {compare.length >= 2 ? "Open compare" : "Select 1 more"}
           </Button>
         </div>
       )}
+
+      <CompareDrawer
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        options={compareOptions}
+        onClear={() => { setCompare([]); setCompareOpen(false); }}
+        onRemove={(id) => setCompare((c) => c.filter((x) => x !== id))}
+      />
+
+      <MobileResultsBar
+        compareCount={compare.length}
+        onCompare={() => setCompareOpen(true)}
+        onFilters={() => document.querySelector<HTMLButtonElement>('[data-mobile-filters-trigger]')?.click()}
+        onSort={() => {
+          const order: SortKey[] = ["recommended", "price", "stress", "duration"];
+          setSortKey(order[(order.indexOf(sortKey) + 1) % order.length]);
+          toast.info(`Sorted by ${order[(order.indexOf(sortKey) + 1) % order.length]}`);
+        }}
+        onWallet={() => toast.info("Wallet intelligence active — credits applied where eligible.")}
+        onExplain={() => document.getElementById("explanation")?.scrollIntoView({ behavior: "smooth" })}
+      />
     </div>
   );
 };
+
+const ConfidenceSignals = ({ option }: { option: Option }) => {
+  const signals: { label: string; tone: "success" | "muted" | "warning"; icon: React.ReactNode }[] = [];
+  if (option.riskScore < 20) signals.push({ label: "Low disruption probability", tone: "success", icon: <ShieldCheck className="h-3 w-3" /> });
+  if (/direct/i.test(option.stops)) signals.push({ label: "Safe transfer · no connection", tone: "success", icon: <Plane className="h-3 w-3" /> });
+  else if (option.riskScore < 30) signals.push({ label: "Comfortable transfer window", tone: "muted", icon: <Clock className="h-3 w-3" /> });
+  else signals.push({ label: "Tight transfer — plan buffer", tone: "warning", icon: <AlertTriangle className="h-3 w-3" /> });
+  if (option.baggage > 0 || /included/i.test(option.baggageInfo)) signals.push({ label: "Generous baggage policy", tone: "success", icon: <Luggage className="h-3 w-3" /> });
+  if (option.riskScore < 25) signals.push({ label: "Quiet arrival airport", tone: "muted", icon: <CloudSun className="h-3 w-3" /> });
+
+  return (
+    <div className="mt-3 flex flex-wrap gap-1.5">
+      {signals.slice(0, 4).map((s, i) => (
+        <span
+          key={i}
+          className={cn(
+            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-medium border",
+            s.tone === "success" && "border-[hsl(var(--success))]/20 bg-[hsl(var(--success-soft))] text-[hsl(var(--success))]",
+            s.tone === "warning" && "border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning-soft))] text-[hsl(var(--warning))]",
+            s.tone === "muted" && "border-border/60 bg-muted/40 text-muted-foreground",
+          )}
+        >
+          {s.icon} {s.label}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 
 const RiskBadge = ({ score }: { score: number }) => {
   const variant = score < 20 ? "success" : score < 40 ? "warning" : "danger";
