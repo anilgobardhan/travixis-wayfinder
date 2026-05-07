@@ -27,6 +27,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Minus, Plus } from "lucide-react";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { ENABLE_REAL_SEARCH } from "@/lib/flags";
 import { api } from "@/lib/api";
