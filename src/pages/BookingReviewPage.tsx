@@ -124,7 +124,7 @@ const BookingReviewPage = () => {
         </div>
 
         {/* Sidebar */}
-        <aside className="space-y-4 lg:sticky lg:top-24 self-start">
+        <aside className="space-y-4 lg:sticky lg:top-24 self-start pb-20 lg:pb-0">
           <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-elevated">
             <p className="text-[10.5px] uppercase tracking-[0.14em] font-semibold text-muted-foreground">True total price</p>
             <p className="mt-1.5 text-[34px] font-semibold tracking-tight tabular-nums">{fmt(total)}</p>
@@ -153,12 +153,12 @@ const BookingReviewPage = () => {
             <Button
               variant="hero"
               size="lg"
-              className="mt-5 w-full cta-bloom"
+              className="mt-5 w-full cta-bloom hidden lg:inline-flex"
               onClick={() => toast.success("This is a UI preview. No payment was taken.")}
             >
               Continue booking <ArrowRight className="h-4 w-4" />
             </Button>
-            <p className="mt-3 inline-flex items-center gap-1.5 justify-center w-full text-[11px] text-muted-foreground">
+            <p className="mt-3 hidden lg:inline-flex items-center gap-1.5 justify-center w-full text-[11px] text-muted-foreground">
               <Lock className="h-3 w-3" /> No payment is taken on this screen.
             </p>
           </div>
@@ -172,6 +172,17 @@ const BookingReviewPage = () => {
             </ul>
           </div>
         </aside>
+      </div>
+
+      {/* Mobile sticky CTA */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border/60 bg-background/95 backdrop-blur px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground font-semibold">True total</p>
+            <p className="text-[18px] font-semibold tabular-nums leading-tight">{fmt(total)} <span className="text-[11px] text-muted-foreground font-normal">· {fmt(remaining)} after wallet</span></p>
+          </div>
+          <Button variant="hero" size="sm" className="cta-bloom shrink-0" onClick={() => toast.success("This is a UI preview. No payment was taken.")}>Continue <ArrowRight className="h-4 w-4" /></Button>
+        </div>
       </div>
     </div>
   );

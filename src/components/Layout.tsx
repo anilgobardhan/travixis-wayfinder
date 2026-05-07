@@ -15,8 +15,9 @@ import {
   Gift,
   LogOut,
   Settings,
+  LifeBuoy,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { SystemStatus } from "./SystemStatus";
 import { Button } from "./ui/button";
@@ -29,17 +30,25 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-const nav = [
+type NavItem = { to: string; label: string; icon: typeof Search; balance?: string };
+const nav: NavItem[] = [
   { to: "/search", label: "Search", icon: Search },
   { to: "/my-trips", label: "My Trips", icon: LayoutDashboard },
   { to: "/wallet", label: "Wallet", icon: Wallet, balance: "€1,420" },
   { to: "/documents", label: "Documents", icon: FileText },
+];
+const mobileExtra: NavItem[] = [
+  { to: "/saved-searches", label: "Saved searches", icon: Bookmark },
+  { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/profile", label: "Travel profile", icon: UserRound },
+  { to: "/support", label: "Support", icon: LifeBuoy },
 ];
 
 export const Layout = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const onLanding = location.pathname === "/";
+  useEffect(() => { setOpen(false); }, [location.pathname]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -86,14 +95,14 @@ export const Layout = () => {
           <div className="hidden items-center gap-2.5 md:flex">
             <SystemStatus compact />
             <span className="h-5 w-px bg-border" aria-hidden />
-            <button
-              type="button"
+            <Link
+              to="/notifications"
               aria-label="Notifications"
               className="relative grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--primary-soft))]/60 transition-base"
             >
               <Bell className="h-[17px] w-[17px]" />
               <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))] ring-2 ring-background" />
-            </button>
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -168,23 +177,26 @@ export const Layout = () => {
         {open && (
           <div className="border-t md:hidden">
             <div className="container flex flex-col gap-1 py-3">
-              {nav.map((item) => (
+              {[...nav, ...mobileExtra].map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
-                      isActive ? "bg-[hsl(var(--primary-soft))] text-primary" : "text-muted-foreground"
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[14px] font-medium min-h-[44px] transition-base",
+                      isActive ? "bg-[hsl(var(--primary-soft))] text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     )
                   }
                 >
                   <item.icon className="h-4 w-4" />
-                  {item.label}
+                  <span className="flex-1">{item.label}</span>
+                  {item.balance && (
+                    <span className="text-[11px] font-semibold text-primary tabular-nums">{item.balance}</span>
+                  )}
                 </NavLink>
               ))}
-              <div className="px-3 pt-2">
+              <div className="px-3 pt-3 border-t border-border/60 mt-2">
                 <SystemStatus compact />
               </div>
             </div>
