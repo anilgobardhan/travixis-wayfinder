@@ -36,6 +36,14 @@ import {
   type SmartFilterKey,
 } from "@/components/results/ResultsIntelligence";
 import { WalletInsightsPanel, WalletAwareChip } from "@/components/wallet/WalletIntelligence";
+import {
+  ResultsFilters,
+  MobileFiltersButton,
+  ActiveFilterChips,
+  defaultFlightFilters,
+  type FlightFilters,
+  type SearchType,
+} from "@/components/results/ResultsFilters";
 
 type Option = {
   id: string;
@@ -274,6 +282,7 @@ const ResultsPage = () => {
   const [params] = useSearchParams();
   const fromAutopilot = params.get("from") === "autopilot";
   const searchId = params.get("id") || undefined;
+  const searchType = ((params.get("type") as SearchType) || "flights") as SearchType;
 
   // Trip context comes ONLY from the backend's request snapshot now —
   // no URL-param fallbacks, no mocks. If the snapshot is missing the
@@ -331,7 +340,41 @@ const ResultsPage = () => {
 
   // Once live options arrive, the mock `options` array MUST not be used.
   const baseOptions = liveOptions && liveOptions.length > 0 ? liveOptions : options;
-  const displayOptions = applySmartFilter(baseOptions, smartFilter);
+
+  // Derive filter facets from current base options
+  const priceMin = Math.max(0, Math.floor(Math.min(...baseOptions.map((o) => o.price + o.taxes + o.baggage + o.fees))));
+  const priceMax = Math.ceil(Math.max(...baseOptions.map((o) => o.price + o.taxes + o.baggage + o.fees), priceMin + 100));
+  const airlineList = Array.from(new Set(baseOptions.map((o) => o.airline))).sort();
+  const defaults = defaultFlightFilters(priceMax);
+  const [filters, setFilters] = useState<FlightFilters>(defaults);
+  // Re-baseline maxPrice when result set changes
+  useEffect(() => {
+    setFilters((f) => (f.maxPrice > priceMax || f.maxPrice === 0 ? { ...f, maxPrice: priceMax } : f));
+  }, [priceMax]);
+
+  const matchStops = (stops: string, selected: string[]) => {
+    if (selected.length === 0) return true;
+    const s = stops.toLowerCase();
+    return selected.some((sel) => {
+      if (sel === "Direct") return s.startsWith("direct");
+      if (sel === "1 stop") return s.startsWith("1 stop");
+      if (sel === "2+ stops") return /^([2-9]|\d{2,})\s+stops?/.test(s);
+      return false;
+    });
+  };
+
+  const refinedOptions = baseOptions.filter((o) => {
+    const total = o.price + o.taxes + o.baggage + o.fees;
+    if (total > filters.maxPrice) return false;
+    if (!matchStops(o.stops, filters.stops)) return false;
+    if (filters.airlines.length > 0 && !filters.airlines.includes(o.airline)) return false;
+    if (filters.baggageIncluded && o.baggage <= 0 && !/included/i.test(o.baggageInfo)) return false;
+    if (filters.refundableOnly && !/refundable|flexible|free changes/i.test(o.refund)) return false;
+    if (filters.lowStressOnly && o.riskScore >= 20) return false;
+    return true;
+  });
+
+  const displayOptions = applySmartFilter(refinedOptions, smartFilter);
   const recommended = displayOptions.filter((o) => o.tag);
   const compareOptions = baseOptions.filter((o) => compare.includes(o.id));
 
@@ -359,8 +402,29 @@ const ResultsPage = () => {
       : "";
   const tripSummary = [summaryRoute, summaryDates, summaryTravelers].filter(Boolean).join(" · ");
 
+  const filterProps = {
+    searchType,
+    airlines: airlineList,
+    priceMin,
+    priceMax,
+    filters,
+    onChange: setFilters,
+    onClear: () => setFilters(defaultFlightFilters(priceMax)),
+    resultCount: displayOptions.length,
+  };
+
   return (
-    <div className="container max-w-6xl space-y-10">
+    <div className="container max-w-7xl">
+      <MobileFiltersButton {...filterProps} />
+      <div className="flex gap-8 items-start">
+        <ResultsFilters {...filterProps} />
+        <div className="flex-1 min-w-0 space-y-10">
+          <ActiveFilterChips
+            filters={filters}
+            defaults={defaults}
+            onChange={setFilters}
+            onClear={() => setFilters(defaultFlightFilters(priceMax))}
+          />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           {fromAutopilot && (
@@ -588,6 +652,8 @@ const ResultsPage = () => {
         })}
       </section>
 
+        </div>
+      </div>
       {compare.length > 0 && (
         <div className="sticky bottom-4 z-30 mx-auto w-full max-w-md rounded-full border bg-card px-5 py-3 shadow-elevated flex items-center justify-between">
           <span className="text-sm font-medium">{compare.length} selected to compare</span>
