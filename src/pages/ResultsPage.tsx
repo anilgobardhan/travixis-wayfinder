@@ -522,8 +522,15 @@ const ResultsPage = () => {
                   <li className="flex items-start gap-1.5"><ShieldCheck className="h-3 w-3 mt-0.5 shrink-0" /> {o.refund}</li>
                 </ul>
                 <p className="mt-4 rounded-lg bg-[hsl(var(--accent-soft))] px-3 py-2.5 text-[12.5px] text-primary leading-relaxed">
-                  <span className="font-semibold">Why: </span>{o.why}
+                  <span className="font-semibold">Why this feels better: </span>{o.why}
                 </p>
+                {isPrimary && (
+                  <ul className="mt-3 space-y-1.5 text-[11.5px] text-muted-foreground/90 leading-relaxed">
+                    <li className="flex items-start gap-1.5"><ShieldCheck className="h-3 w-3 mt-0.5 text-primary/70 shrink-0" /> Historically reliable route — fewer overnight surprises.</li>
+                    <li className="flex items-start gap-1.5"><Timer className="h-3 w-3 mt-0.5 text-primary/70 shrink-0" /> Better recovery timing on arrival.</li>
+                    <li className="flex items-start gap-1.5"><CloudSun className="h-3 w-3 mt-0.5 text-primary/70 shrink-0" /> Stable arrival window for the next 7 days.</li>
+                  </ul>
+                )}
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <Button variant={isPrimary ? "hero" : "soft"} size="sm" onClick={() => toast.info("Booking flow coming soon.")}>
                     Book now
@@ -557,23 +564,23 @@ const ResultsPage = () => {
             <Lightbulb className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold">Why Travixis recommends this</h2>
-            <p className="text-sm text-muted-foreground">A transparent breakdown of the factors behind our top pick.</p>
+            <h2 className="text-xl font-semibold">Why this trip feels better</h2>
+            <p className="text-sm text-muted-foreground">Travixis advises — you decide. Every factor behind the top pick, in plain language.</p>
           </div>
         </div>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ExplainCard icon={<Wallet className="h-4 w-4" />} title="True total price"
-            body="Base fare €218 + taxes €42 + baggage €25 = €285 — no hidden surcharges added at checkout." />
-          <ExplainCard icon={<Info className="h-4 w-4" />} title="Hidden cost factors"
-            body="No seat-selection fees, no payment surcharge. Baggage is included rather than upsold later." />
-          <ExplainCard icon={<Compass className="h-4 w-4" />} title="Route quality"
-            body="Direct AMS → LIS, 3h 25m. Avoids tight connections and overnight transfers." />
-          <ExplainCard icon={<Gauge className="h-4 w-4" />} title="Risk & stress"
-            body="Carrier on-time rate >85%, low historical disruption on this route. Stress score: 12/100." />
-          <ExplainCard icon={<Luggage className="h-4 w-4" />} title="Baggage & refund"
-            body="Carry-on + 23kg checked included. Refundable up to 24h before departure." />
-          <ExplainCard icon={<Sparkles className="h-4 w-4" />} title="Your preferences"
-            body="You asked for balanced budget + low stress. This option matches both better than alternatives." />
+          <ExplainCard icon={<Wallet className="h-4 w-4" />} title="No hidden costs later"
+            body="Base fare €218 + taxes €42 + baggage €25 = €285. The number you see now is the number you pay at checkout." />
+          <ExplainCard icon={<Info className="h-4 w-4" />} title="What we already counted"
+            body="Seat selection, payment surcharge and baggage are already included — nothing quietly added at the end." />
+          <ExplainCard icon={<Compass className="h-4 w-4" />} title="A calmer route"
+            body="Direct AMS → LIS, 3h 25m. No tight connections, no overnight transfer fatigue." />
+          <ExplainCard icon={<Gauge className="h-4 w-4" />} title="Calmer connections, fewer surprises"
+            body="Carrier on-time rate above 85% with a historically smooth track record on this route." />
+          <ExplainCard icon={<Luggage className="h-4 w-4" />} title="Bag and flexibility, handled"
+            body="Carry-on + 23kg checked included. Refundable up to 24h before departure if plans shift." />
+          <ExplainCard icon={<Sparkles className="h-4 w-4" />} title="Why this trip feels better"
+            body="You asked for balanced budget and low stress. This option honors both more honestly than the alternatives." />
         </div>
         <p className="mt-6 inline-flex items-start gap-2 rounded-lg bg-[hsl(var(--accent-soft))] px-4 py-3 text-xs text-primary">
           <ShieldCheck className="h-4 w-4 mt-0.5 shrink-0" />
