@@ -32,8 +32,9 @@ import {
 
 type NavItem = { to: string; label: string; icon: typeof Search; balance?: string };
 const nav: NavItem[] = [
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/search", label: "Search", icon: Search },
-  { to: "/my-trips", label: "My Trips", icon: LayoutDashboard },
+  { to: "/my-trips", label: "My Trips", icon: Compass },
   { to: "/wallet", label: "Wallet", icon: Wallet, balance: "€1,420" },
   { to: "/documents", label: "Documents", icon: FileText },
 ];
@@ -128,7 +129,7 @@ export const Layout = () => {
                     </span>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">Guest traveler</p>
-                      <Link to="/login" className="text-[11.5px] text-primary hover:underline">Sign in to personalize</Link>
+                      <Link to="/dashboard" className="text-[11.5px] text-primary hover:underline">Open your dashboard</Link>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-between rounded-lg bg-[hsl(var(--primary-soft))]/60 px-3 py-2">
@@ -144,7 +145,8 @@ export const Layout = () => {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold pt-3">Travel</DropdownMenuLabel>
-                <DropdownMenuItem asChild><Link to="/my-trips" className="cursor-pointer"><LayoutDashboard className="h-4 w-4" /> My trips</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/dashboard" className="cursor-pointer"><LayoutDashboard className="h-4 w-4" /> Dashboard</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/my-trips" className="cursor-pointer"><Compass className="h-4 w-4" /> My trips</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/saved-searches" className="cursor-pointer"><Bookmark className="h-4 w-4" /> Saved searches</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/wallet" className="cursor-pointer"><Wallet className="h-4 w-4" /> Wallet overview</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/documents" className="cursor-pointer"><FileText className="h-4 w-4" /> Documents</Link></DropdownMenuItem>
