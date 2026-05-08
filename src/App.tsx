@@ -18,6 +18,7 @@ import MyTripsPage from "./pages/MyTripsPage";
 import SavedSearchesPage from "./pages/SavedSearchesPage";
 import TravelProfilePage from "./pages/TravelProfilePage";
 import NotificationsPage from "./pages/NotificationsPage";
+import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/profile" element={<TravelProfilePage />} />
             <Route path="/account" element={<TravelProfilePage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
