@@ -656,6 +656,21 @@ const ResultsPage = () => {
             </Select>
           </div>
         </div>
+        {displayOptions.length === 0 ? (
+          <div className="rounded-2xl border border-border/70 bg-card p-10 shadow-card text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-[hsl(var(--primary-soft))] text-primary">
+              <Compass className="h-5 w-5" />
+            </div>
+            <p className="mt-4 text-[15px] font-semibold tracking-tight">No calmer routes match these filters.</p>
+            <p className="mt-1.5 mx-auto max-w-md text-[13px] text-muted-foreground leading-relaxed">
+              Try flexible dates for better timing, allow one stop, or check nearby airports — Travixis often finds smoother options just outside tight constraints.
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              <Button variant="soft" size="sm" onClick={() => setFilters(defaultFlightFilters(priceMax))}>Reset filters</Button>
+              <Button asChild variant="ghost" size="sm"><Link to="/search">Edit dates</Link></Button>
+            </div>
+          </div>
+        ) : null}
         {displayOptions.map((o) => {
           const total = o.price + o.taxes + o.baggage + o.fees;
           const checked = compare.includes(o.id);
