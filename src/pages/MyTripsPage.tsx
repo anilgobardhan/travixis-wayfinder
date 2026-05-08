@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
-import { Plane, MapPin, CalendarRange, Sparkles, ShieldCheck, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
+import { Plane, MapPin, CalendarRange, Sparkles, ShieldCheck, ArrowRight, Clock, CheckCircle2, Hotel } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const trips = [
   {
     id: "lis-2026",
     title: "Lisbon retreat",
-    route: "AMS → LIS",
+    route: "AMS → LIS · TAP TP671",
     dates: "14–21 Jul 2026",
+    hotel: "Locke de Santa Joana",
     status: "Confirmed",
     statusTone: "success" as const,
     insight: "Calmer arrival window detected — no action needed.",
@@ -16,8 +18,9 @@ const trips = [
   {
     id: "rome-2026",
     title: "Rome with family",
-    route: "AMS → FCO",
+    route: "AMS → FCO · KLM KL1601",
     dates: "12–19 Sep 2026",
+    hotel: "Mama Shelter Roma",
     status: "In planning",
     statusTone: "primary" as const,
     insight: "Wallet would cover 64% — good time to lock the dates.",
@@ -25,8 +28,9 @@ const trips = [
   {
     id: "tokyo-2027",
     title: "Tokyo · honeymoon",
-    route: "AMS → HND",
+    route: "AMS → HND · KLM KL861",
     dates: "Apr 2027",
+    hotel: "Hotel Okura Tokyo",
     status: "Saved",
     statusTone: "warning" as const,
     insight: "Prices historically dip 10–14 weeks out.",
@@ -44,29 +48,40 @@ const MyTripsPage = () => (
       <Button asChild variant="hero" size="sm"><Link to="/search">Plan a new trip <ArrowRight className="h-4 w-4" /></Link></Button>
     </header>
 
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {trips.map((t) => (
-        <article key={t.id} className="result-card rounded-2xl border border-border/70 bg-card p-5 shadow-card flex flex-col">
-          <div className="flex items-center justify-between">
-            <BadgeSoft variant={t.statusTone}>
-              {t.status === "Confirmed" ? <CheckCircle2 className="h-3 w-3" /> : t.status === "In planning" ? <Clock className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
-              {t.status}
-            </BadgeSoft>
-            <Plane className="h-3.5 w-3.5 text-muted-foreground" />
-          </div>
-          <h2 className="mt-3 text-[17px] font-semibold tracking-tight">{t.title}</h2>
-          <p className="mt-1 inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><MapPin className="h-3 w-3" /> {t.route}</p>
-          <p className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><CalendarRange className="h-3 w-3" /> {t.dates}</p>
-          <p className="mt-4 rounded-lg bg-[hsl(var(--primary-soft))]/60 px-3 py-2 text-[12px] text-primary leading-relaxed">
-            <Sparkles className="inline h-3 w-3 mr-1" /> {t.insight}
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button asChild variant="soft" size="sm"><Link to="/trip">Open trip</Link></Button>
-            <Button asChild variant="ghost" size="sm"><Link to="/booking-review">Review</Link></Button>
-          </div>
-        </article>
-      ))}
-    </div>
+    {trips.length === 0 ? (
+      <EmptyState
+        icon={<Plane className="h-5 w-5" />}
+        title="No trips planned yet"
+        description="Start with a destination or a feeling. Travixis assembles a calm, transparent plan — no upsells, no clutter."
+        examples={["A weekend in Lisbon", "Family week in Tuscany", "Quiet retreat in the Alps"]}
+        action={<Button asChild variant="hero" size="sm"><Link to="/search">Plan your first trip <ArrowRight className="h-4 w-4" /></Link></Button>}
+      />
+    ) : (
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {trips.map((t) => (
+          <article key={t.id} className="result-card rounded-2xl border border-border/70 bg-card p-5 shadow-card flex flex-col">
+            <div className="flex items-center justify-between">
+              <BadgeSoft variant={t.statusTone}>
+                {t.status === "Confirmed" ? <CheckCircle2 className="h-3 w-3" /> : t.status === "In planning" ? <Clock className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
+                {t.status}
+              </BadgeSoft>
+              <Plane className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+            <h2 className="mt-3 text-[17px] font-semibold tracking-tight">{t.title}</h2>
+            <p className="mt-1 inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><MapPin className="h-3 w-3" /> {t.route}</p>
+            <p className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><CalendarRange className="h-3 w-3" /> {t.dates}</p>
+            <p className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><Hotel className="h-3 w-3" /> Stay · {t.hotel}</p>
+            <p className="mt-4 rounded-lg bg-[hsl(var(--primary-soft))]/60 px-3 py-2 text-[12px] text-primary leading-relaxed">
+              <Sparkles className="inline h-3 w-3 mr-1" /> {t.insight}
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button asChild variant="soft" size="sm"><Link to="/trip">Open trip</Link></Button>
+              <Button asChild variant="ghost" size="sm"><Link to="/booking-review">Review</Link></Button>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
 
     <section className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
       <p className="flex items-center gap-2 text-[12px] font-semibold"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> AI watching for you</p>
