@@ -281,8 +281,48 @@
     color: hsl(var(--success));
   }
 
+  /* Premium shimmer for skeleton loaders — calm, Bloomberg-quiet */
+  .travixis-shimmer {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .travixis-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--foreground) / 0.04) 45%,
+      hsl(var(--foreground) / 0.07) 50%,
+      hsl(var(--foreground) / 0.04) 55%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: travixis-shimmer 1.6s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+  }
+  @keyframes travixis-shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  /* Production-grade focus-visible — accessible without visual noise */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary) / 0.55);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+    outline-color: hsl(var(--primary) / 0.65);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .hero-dots, .ambient-pulse, .signal-fade { animation: none; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+    .hero-dots, .ambient-pulse, .signal-fade, .travixis-shimmer::after { animation: none; }
     .result-card, .field-cluster, .swap-magnetic, .field-tactile { transition: none; }
     .result-card:hover { transform: none; }
   }

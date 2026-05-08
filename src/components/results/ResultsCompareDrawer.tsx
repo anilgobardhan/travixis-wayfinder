@@ -69,8 +69,14 @@ export const CompareDrawer = ({
         </SheetHeader>
 
         {options.length < 2 ? (
-          <div className="px-7 py-14 text-center text-[13px] text-muted-foreground leading-relaxed">
-            Select at least 2 options to compare.
+          <div className="px-7 py-14 text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-[hsl(var(--primary-soft))] text-primary">
+              <GitCompare className="h-5 w-5" />
+            </div>
+            <p className="mt-4 text-[14px] font-semibold tracking-tight">Select 2 or more options</p>
+            <p className="mt-1.5 mx-auto max-w-sm text-[12.5px] text-muted-foreground leading-relaxed">
+              Compare routes, stress levels and wallet efficiency — Travixis highlights the calmer choice.
+            </p>
           </div>
         ) : (
           <div className="px-7 py-7 space-y-7">
@@ -141,14 +147,15 @@ export const MobileResultsBar = ({
             key={i.label}
             type="button"
             onClick={i.onClick}
+            aria-label={i.label}
             className={cn(
-              "flex flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10.5px] font-medium transition-base",
+              "flex flex-col items-center justify-center gap-0.5 rounded-lg min-h-[44px] py-1.5 text-[10.5px] font-medium transition-base",
               i.accent
                 ? "text-primary bg-[hsl(var(--primary-soft))]"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <i.icon className="h-[17px] w-[17px]" />
+            <i.icon className="h-[17px] w-[17px]" aria-hidden="true" />
             <span className="leading-none">{i.label}</span>
           </button>
         ))}
