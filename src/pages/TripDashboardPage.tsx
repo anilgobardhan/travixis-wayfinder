@@ -18,8 +18,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { api, type SearchRequestSnapshot } from "@/lib/api";
-import { TripTimeline, SmartAlertsCenter, TripHealthOverview } from "@/components/trip/TripIntelligence";
+import { SmartAlertsCenter, TripHealthOverview } from "@/components/trip/TripIntelligence";
+import { OperationalTimeline } from "@/components/trip/OperationalTimeline";
+import { ConnectedInsights } from "@/components/intelligence/ConnectedInsights";
 import { WalletOverviewModule, SharedTripFundingModule, BudgetAndPaymentModule } from "@/components/wallet/WalletIntelligence";
+import { seedActiveTrip, seedUser, seedWallet } from "@/lib/travel-os";
+import { generateInsights } from "@/lib/intelligence-engine";
 
 // "2026-04-29" -> "Wed, 29 Apr"
 const formatDate = (iso?: string | null): string => {
@@ -268,14 +272,21 @@ const TripDashboardPage = () => {
         </aside>
       </div>
 
+      <ConnectedInsights
+        events={generateInsights({
+          user: seedUser,
+          trip: seedActiveTrip,
+          wallet: seedWallet.accounts,
+        })}
+      />
+
+      <OperationalTimeline trip={seedActiveTrip} />
+
       <WalletOverviewModule />
 
       <TripHealthOverview />
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <TripTimeline />
-        <SmartAlertsCenter />
-      </div>
+      <SmartAlertsCenter />
 
       <div className="grid lg:grid-cols-2 gap-6">
         <SharedTripFundingModule />
