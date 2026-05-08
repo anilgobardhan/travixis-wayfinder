@@ -211,3 +211,56 @@ export const seedWallet: { accounts: WalletAccount[]; transactions: Transaction[
 
 export const totalWalletBalance = (accounts: WalletAccount[] = seedWallet.accounts) =>
   accounts.reduce((sum, a) => sum + a.balance, 0);
+
+// ─── Reference entities (frontend-only mock catalog) ─────────────────────
+
+export type Airport = {
+  code: string; // IATA
+  city: string;
+  country: string;
+  terminals: string[];
+  timezone: string;
+};
+
+export type Airline = {
+  code: string; // IATA
+  name: string;
+  alliance?: "SkyTeam" | "Star Alliance" | "Oneworld" | "None";
+  onTimeScore: number; // 0–100
+};
+
+export type Hotel = {
+  id: ID;
+  name: string;
+  city: string;
+  stars: 3 | 4 | 5;
+  calmScore: number;
+  priceFrom: number;
+  currency: string;
+};
+
+export const seedAirports: Airport[] = [
+  { code: "AMS", city: "Amsterdam", country: "NL", terminals: ["Terminal 1", "Terminal 2", "Terminal 3"], timezone: "Europe/Amsterdam" },
+  { code: "LIS", city: "Lisbon", country: "PT", terminals: ["Terminal 1", "Terminal 2"], timezone: "Europe/Lisbon" },
+  { code: "CDG", city: "Paris", country: "FR", terminals: ["Terminal 1", "Terminal 2", "Terminal 3"], timezone: "Europe/Paris" },
+  { code: "LHR", city: "London", country: "GB", terminals: ["Terminal 2", "Terminal 3", "Terminal 4", "Terminal 5"], timezone: "Europe/London" },
+  { code: "FCO", city: "Rome", country: "IT", terminals: ["Terminal 1", "Terminal 3"], timezone: "Europe/Rome" },
+  { code: "BCN", city: "Barcelona", country: "ES", terminals: ["Terminal 1", "Terminal 2"], timezone: "Europe/Madrid" },
+];
+
+export const seedAirlines: Airline[] = [
+  { code: "KL", name: "KLM", alliance: "SkyTeam", onTimeScore: 88 },
+  { code: "TP", name: "TAP Air Portugal", alliance: "Star Alliance", onTimeScore: 81 },
+  { code: "AF", name: "Air France", alliance: "SkyTeam", onTimeScore: 84 },
+  { code: "BA", name: "British Airways", alliance: "Oneworld", onTimeScore: 82 },
+  { code: "IB", name: "Iberia", alliance: "Oneworld", onTimeScore: 83 },
+  { code: "LH", name: "Lufthansa", alliance: "Star Alliance", onTimeScore: 86 },
+];
+
+export const seedHotels: Hotel[] = [
+  { id: "h_lis_memmo", name: "Memmo Alfama", city: "Lisbon", stars: 4, calmScore: 92, priceFrom: 210, currency: "EUR" },
+  { id: "h_lis_santiago", name: "Santiago de Alfama", city: "Lisbon", stars: 5, calmScore: 95, priceFrom: 340, currency: "EUR" },
+  { id: "h_par_brach", name: "Brach Paris", city: "Paris", stars: 5, calmScore: 90, priceFrom: 410, currency: "EUR" },
+  { id: "h_lon_hoxton", name: "The Hoxton, Shoreditch", city: "London", stars: 4, calmScore: 87, priceFrom: 280, currency: "GBP" },
+];
+
