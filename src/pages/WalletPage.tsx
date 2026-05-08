@@ -22,6 +22,9 @@ import {
 import { BadgeSoft } from "@/components/BadgeSoft";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ConnectedInsights } from "@/components/intelligence/ConnectedInsights";
+import { seedActiveTrip, seedUser, seedWallet } from "@/lib/travel-os";
+import { generateInsights } from "@/lib/intelligence-engine";
 
 const balances = [
   { icon: Plane, label: "Flights", value: "€620" },
@@ -314,6 +317,20 @@ const WalletPage = () => {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Connected wallet intelligence */}
+      <section className="container pb-4">
+        <ConnectedInsights
+          events={generateInsights({
+            user: seedUser,
+            trip: seedActiveTrip,
+            wallet: seedWallet.accounts,
+            scope: ["wallet", "operational"],
+          })}
+          title="What your wallet enables right now"
+          subtitle="How your balances connect to your active trip and recent activity."
+        />
       </section>
 
       {/* Closing CTA */}

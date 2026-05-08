@@ -30,6 +30,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BadgeSoft } from "@/components/BadgeSoft";
+import { ConnectedInsights } from "@/components/intelligence/ConnectedInsights";
+import { seedActiveTrip, seedUser, seedWallet } from "@/lib/travel-os";
+import { generateInsights } from "@/lib/intelligence-engine";
 
 // ============================================================================
 // Travel OS — Personal Dashboard
@@ -194,6 +197,17 @@ const DashboardPage = () => {
           <NotificationsCenter />
         </div>
       </div>
+
+      {/* === Connected intelligence (cross-module) ========================= */}
+      <ConnectedInsights
+        events={generateInsights({
+          user: seedUser,
+          trip: seedActiveTrip,
+          wallet: seedWallet.accounts,
+        })}
+        title="Today's connected signals"
+        subtitle="Wallet, profile and operational systems talking to each other for your next trip."
+      />
 
       {/* === Saved searches + Travel profile ================================ */}
       <div className="grid lg:grid-cols-[1.5fr_1fr] gap-5">
